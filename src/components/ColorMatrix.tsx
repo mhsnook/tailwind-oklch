@@ -85,7 +85,7 @@ export default function ColorMatrix() {
 					<>
 						<div className="swatch w-8 h-8 rounded-md" style={{ backgroundColor: preview.color }} />
 						<div>
-							<div className="text-hi-mhi-primary">{preview.className}</div>
+							<div className="text-full-mhi-primary">{preview.className}</div>
 							<div className="text-mid-lo-primary text-xs">{preview.oklch}</div>
 						</div>
 					</>

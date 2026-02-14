@@ -8,11 +8,11 @@ export const HUES = [
 ] as const
 
 export const L_STOPS = [
-	{ name: 'lo', val: 0.25 },
-	{ name: 'mlo', val: 0.4 },
+	{ name: 'base', val: 0.25 },
+	{ name: 'subtle', val: 0.4 },
 	{ name: 'mid', val: 0.55 },
-	{ name: 'mhi', val: 0.72 },
-	{ name: 'hi', val: 0.9 },
+	{ name: 'strong', val: 0.72 },
+	{ name: 'full', val: 0.9 },
 ] as const
 
 export const C_STOPS = [

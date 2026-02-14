@@ -3,85 +3,85 @@
 
 <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
   <!-- Subtle Card -->
-  <div class="rounded-xl p-6 border border-lo-lo-primary bg-hi-lo-primary text-lo-mid-primary">
+  <div class="rounded-xl p-6 border border-base-lo-primary bg-full-lo-primary text-base-mid-primary">
     <h4 class="text-[0.85rem] mb-3 font-semibold">Subtle Card</h4>
-    <p class="text-mlo-mlo-primary text-[0.85rem] leading-normal mb-4">
-      bg-hi-lo-primary + text-lo-mid-primary. Low chroma background, strong
+    <p class="text-subtle-mlo-primary text-[0.85rem] leading-normal mb-4">
+      bg-full-lo-primary + text-base-mid-primary. Low chroma background, strong
       text. Portable anywhere.
     </p>
     <div
-      class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-mid-mhi-primary text-hi-lo-primary hover:bg-l-60"
+      class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-mid-mhi-primary text-full-lo-primary hover:bg-l-60"
     >
       bg-mid-mhi-primary
     </div>
   </div>
 
   <!-- Cascade Demo -->
-  <div class="rounded-xl p-6 border border-lo-lo-primary bg-mid-hi-accent text-hi-lo-accent">
+  <div class="rounded-xl p-6 border border-base-lo-primary bg-mid-hi-accent text-full-lo-accent">
     <h4 class="text-[0.85rem] mb-3 font-semibold">Cascade Override</h4>
     <p class="text-[0.85rem] leading-normal mb-4">
       Parent sets bg-mid-hi-accent. Children inherit chroma + hue, override only
       luminance — no need to redeclare the full color.
     </p>
     <div class="flex gap-2">
-      <div class="bg-l-lo px-4 py-2 rounded-lg text-[0.75rem] font-mono font-semibold text-hi-lo-accent">bg-l-lo</div>
-      <div class="bg-l-mhi px-4 py-2 rounded-lg text-[0.75rem] font-mono font-semibold text-lo-mlo-accent">bg-l-mhi</div>
-      <div class="bg-l-hi px-4 py-2 rounded-lg text-[0.75rem] font-mono font-semibold text-lo-mid-accent">bg-l-hi</div>
+      <div class="bg-l-base px-4 py-2 rounded-lg text-[0.75rem] font-mono font-semibold text-full-lo-accent">bg-l-base</div>
+      <div class="bg-l-strong px-4 py-2 rounded-lg text-[0.75rem] font-mono font-semibold text-base-mlo-accent">bg-l-strong</div>
+      <div class="bg-l-full px-4 py-2 rounded-lg text-[0.75rem] font-mono font-semibold text-base-mid-accent">bg-l-full</div>
     </div>
   </div>
 
   <!-- Success State -->
-  <div class="rounded-xl p-6 border border-mhi-mid-success bg-hi-lo-success text-lo-mid-success">
+  <div class="rounded-xl p-6 border border-strong-mid-success bg-full-lo-success text-base-mid-success">
     <h4 class="text-[0.85rem] mb-3 font-semibold">Success State</h4>
-    <p class="text-mlo-mlo-success text-[0.85rem] leading-normal mb-4">
-      bg-hi-lo-success with mid-chroma border. Same pattern, different hue —
+    <p class="text-subtle-mlo-success text-[0.85rem] leading-normal mb-4">
+      bg-full-lo-success with mid-chroma border. Same pattern, different hue —
       instant semantic color.
     </p>
     <div
-      class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-mid-mhi-success text-hi-lo-success hover:bg-l-60"
+      class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-mid-mhi-success text-full-lo-success hover:bg-l-60"
     >
       bg-mid-mhi-success
     </div>
   </div>
 
   <!-- Danger Alert -->
-  <div class="rounded-xl p-6 border border-mlo-mhi-danger bg-lo-mid-danger text-hi-lo-danger">
+  <div class="rounded-xl p-6 border border-subtle-mhi-danger bg-base-mid-danger text-full-lo-danger">
     <h4 class="text-[0.85rem] mb-3 font-semibold">Danger Alert</h4>
-    <p class="text-mhi-mlo-danger text-[0.85rem] leading-normal mb-4">
-      bg-lo-mid-danger. Deep, saturated backgrounds that read correctly
+    <p class="text-strong-mlo-danger text-[0.85rem] leading-normal mb-4">
+      bg-base-mid-danger. Deep, saturated backgrounds that read correctly
       regardless of context.
     </p>
     <div
-      class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-mid-mhi-danger text-hi-lo-danger"
+      class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-mid-mhi-danger text-full-lo-danger"
     >
       Acknowledge
     </div>
   </div>
 
   <!-- Multi-Hue Composition -->
-  <div class="rounded-xl p-6 border border-lo-lo-primary bg-lo-lo-primary text-hi-lo-primary">
+  <div class="rounded-xl p-6 border border-base-lo-primary bg-base-lo-primary text-full-lo-primary">
     <h4 class="text-[0.85rem] mb-3 font-semibold">Multi-Hue Composition</h4>
     <p class="text-mid-lo-primary text-[0.85rem] leading-normal mb-4">
       Primary container with accent and warning badges, no transparency needed:
     </p>
     <div class="flex gap-2 mt-2">
-      <span class="bg-mlo-mid-accent text-hi-lo-accent px-3 py-1 rounded-full text-xs font-semibold">accent</span>
-      <span class="bg-mlo-mid-warning text-hi-lo-warning px-3 py-1 rounded-full text-xs font-semibold">warning</span>
-      <span class="bg-mlo-mid-success text-hi-lo-success px-3 py-1 rounded-full text-xs font-semibold">success</span>
+      <span class="bg-subtle-mid-accent text-full-lo-accent px-3 py-1 rounded-full text-xs font-semibold">accent</span>
+      <span class="bg-subtle-mid-warning text-full-lo-warning px-3 py-1 rounded-full text-xs font-semibold">warning</span>
+      <span class="bg-subtle-mid-success text-full-lo-success px-3 py-1 rounded-full text-xs font-semibold">success</span>
     </div>
   </div>
 
   <!-- Axis Inheritance -->
-  <div class="rounded-xl p-6 border border-lo-lo-primary bg-lo-mlo-primary text-hi-lo-primary">
+  <div class="rounded-xl p-6 border border-base-lo-primary bg-base-mlo-primary text-full-lo-primary">
     <h4 class="text-[0.85rem] mb-3 font-semibold">Axis Inheritance</h4>
     <p class="text-mid-lo-primary text-[0.85rem] leading-normal mb-4">
       Parent sets hue to primary. Children swap only the hue axis — luminance
       and chroma stay inherited.
     </p>
     <div class="flex gap-2 mt-2">
-      <span class="text-center bg-h-success bg-l-mlo bg-c-mid px-3 py-1.5 rounded-full text-xs font-semibold text-hi-lo-success">bg-h-success</span>
-      <span class="text-center bg-h-warning bg-l-mlo bg-c-mid px-3 py-1.5 rounded-full text-xs font-semibold text-hi-lo-warning">bg-h-warning</span>
-      <span class="text-center bg-h-danger bg-l-mlo bg-c-mid px-3 py-1.5 rounded-full text-xs font-semibold text-hi-lo-danger">bg-h-danger</span>
+      <span class="text-center bg-h-success bg-l-subtle bg-c-mid px-3 py-1.5 rounded-full text-xs font-semibold text-full-lo-success">bg-h-success</span>
+      <span class="text-center bg-h-warning bg-l-subtle bg-c-mid px-3 py-1.5 rounded-full text-xs font-semibold text-full-lo-warning">bg-h-warning</span>
+      <span class="text-center bg-h-danger bg-l-subtle bg-c-mid px-3 py-1.5 rounded-full text-xs font-semibold text-full-lo-danger">bg-h-danger</span>
     </div>
   </div>
 </div>

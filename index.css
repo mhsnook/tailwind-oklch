@@ -24,11 +24,11 @@
 
   /* ── Named Luminance Stops ───────────────────────────────────────────
      OKLCH lightness: 0 = black, 1 = white */
-  --l-lo: 0.25;
-  --l-mlo: 0.40;
+  --l-base: 0.25;
+  --l-subtle: 0.40;
   --l-mid: 0.55;
-  --l-mhi: 0.72;
-  --l-hi: 0.90;
+  --l-strong: 0.72;
+  --l-full: 0.90;
 
   /* ── Named Chroma Stops ──────────────────────────────────────────────
      OKLCH chroma: practical range 0–0.25 */
@@ -73,11 +73,11 @@
   --bg-c: var(--c-lo);
   --bg-h: var(--hue-primary);
 
-  --tx-l: var(--l-hi);
+  --tx-l: var(--l-full);
   --tx-c: var(--c-lo);
   --tx-h: var(--hue-primary);
 
-  --bd-l: var(--l-mlo);
+  --bd-l: var(--l-subtle);
   --bd-c: var(--c-lo);
   --bd-h: var(--hue-primary);
 
@@ -97,7 +97,7 @@
   --sh-c: var(--c-lo);
   --sh-h: var(--hue-primary);
 
-  --bdb-l: var(--l-mlo);
+  --bdb-l: var(--l-subtle);
   --bdb-c: var(--c-lo);
   --bdb-h: var(--hue-primary);
 }

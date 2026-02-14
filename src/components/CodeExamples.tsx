@@ -42,20 +42,20 @@ const CODE_EXAMPLES = {
 <div class="bg-mid-hi-accent p-6 rounded-xl">
 
   <!-- Child overrides ONLY luminance — inherits chroma + hue -->
-  <button class="hover:bg-l-mhi px-4 py-2 rounded">
+  <button class="hover:bg-l-strong px-4 py-2 rounded">
     Lighter on hover
   </button>
 
   <!-- Another child shifts to low luminance -->
-  <footer class="bg-l-lo p-4 rounded">
+  <footer class="bg-l-base p-4 rounded">
     Dark footer, same chroma + hue as parent
   </footer>
 </div>
 
 <!-- Works across nesting levels too -->
-<div class="bg-lo-mlo-primary">           <!-- L:lo C:mlo H:primary -->
+<div class="bg-base-mlo-primary">           <!-- L:base C:mlo H:primary -->
   <div class="bg-h-success">              <!-- swap hue, keep L+C -->
-    <div class="bg-l-hi">                 <!-- swap luminance, keep C+H -->
+    <div class="bg-l-full">                 <!-- swap luminance, keep C+H -->
       Three levels deep, each overriding one axis.
     </div>
   </div>
@@ -63,9 +63,9 @@ const CODE_EXAMPLES = {
 
 <!-- Hover/focus only changes what matters -->
 <button class="
-  bg-mid-hi-primary text-hi-lo-primary
-  hover:bg-l-mhi              only luminance shifts
-  active:bg-l-mlo             darker on press
+  bg-mid-hi-primary text-full-lo-primary
+  hover:bg-l-strong              only luminance shifts
+  active:bg-l-subtle             darker on press
   focus:bg-c-mhi              more saturated on focus
 ">Interactive</button>
 
@@ -81,10 +81,10 @@ const CODE_EXAMPLES = {
    Pattern: {property}-{luminance}-{chroma}-{hue}
    Best for: setting a complete color in one class. -->
 
-<div class="bg-hi-lo-primary rounded-xl p-6">
-  <h2 class="text-lo-hi-primary text-xl font-bold">Dashboard</h2>
-  <p class="text-mlo-mlo-primary">Muted body text</p>
-  <button class="bg-mid-hi-accent text-hi-lo-accent px-4 py-2 rounded">
+<div class="bg-full-lo-primary rounded-xl p-6">
+  <h2 class="text-base-hi-primary text-xl font-bold">Dashboard</h2>
+  <p class="text-subtle-mlo-primary">Muted body text</p>
+  <button class="bg-mid-hi-accent text-full-lo-accent px-4 py-2 rounded">
     Action
   </button>
 </div>
@@ -96,12 +96,12 @@ const CODE_EXAMPLES = {
 
 <button class="
   bg-l-mid bg-c-hi bg-h-primary
-  hover:bg-l-mhi
+  hover:bg-l-strong
 ">Only luminance changes on hover</button>
 
 <!-- ── NUMERIC VALUES ──────────────────────────────────────
    Use the 10–95 scale for fine-grained steps between
-   the named stops (lo/mlo/mid/mhi/hi). -->
+   the named stops (base/subtle/mid/strong/full). -->
 
 <div class="bg-l-70 bg-c-30 bg-h-primary">
   Luminance 70, Chroma 30
@@ -117,7 +117,7 @@ const CODE_EXAMPLES = {
 <!-- ── SEMANTIC ALERTS ─────────────────────────────────────
    Swap the hue for instant semantic meaning. -->
 
-<div class="bg-hi-mlo-danger text-lo-mid-danger border-mhi-mid-danger border rounded-lg p-4">
+<div class="bg-full-mlo-danger text-base-mid-danger border-strong-mid-danger border rounded-lg p-4">
   Something went wrong
 </div>`,
 	},
@@ -161,8 +161,8 @@ const CODE_EXAMPLES = {
    Parent:  bg-mid-hi-accent
      └─ sets --bg-l: mid, --bg-c: hi, --bg-h: accent
 
-   Child:   bg-l-mhi
-     └─ overrides --bg-l: mhi
+   Child:   bg-l-strong
+     └─ overrides --bg-l: strong
      └─ --bg-c and --bg-h INHERIT from parent
      └─ result: oklch(0.72 0.25 30) — lighter accent
 
@@ -176,8 +176,8 @@ const CODE_EXAMPLES = {
      hover:bg-primary/20      washes out over other colors
 
    OKLCH composed (new):
-     bg-hi-lo-primary         absolute color, portable
-     hover:bg-l-mhi           single-axis shift, no blending
+     bg-full-lo-primary         absolute color, portable
+     hover:bg-l-strong           single-axis shift, no blending
 
    The color is the SAME regardless of what sits behind it.
    No stacking-context surprises. No blending artifacts. */`,

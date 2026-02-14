@@ -6,13 +6,13 @@
  *
  * Each shorthand sets the three axis variables AND applies the
  * resolved color, so children can inherit and override single axes
- * via decomposed utilities (e.g. hover:bg-l-mhi).
+ * via decomposed utilities (e.g. hover:bg-l-strong).
  *
  * Load via: @plugin "tailwind-oklch/plugin";
  */
 
 module.exports = function ({ addUtilities }) {
-  const luminances = ['lo', 'mlo', 'mid', 'mhi', 'hi'];
+  const luminances = ['base', 'subtle', 'mid', 'strong', 'full'];
   const chromas = ['lo', 'mlo', 'mid', 'mhi', 'hi'];
   const hues = ['primary', 'accent', 'success', 'warning', 'danger', 'info', 'neutral'];
 

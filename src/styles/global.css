@@ -118,5 +118,5 @@
 /* Code blocks — OKLCH themed */
 .code-block {
   background: oklch(var(--l-10) var(--c-lo) var(--hue-primary));
-  border: 1px solid oklch(var(--l-lo) var(--c-lo) var(--hue-primary));
+  border: 1px solid oklch(var(--l-base) var(--c-lo) var(--hue-primary));
 }
