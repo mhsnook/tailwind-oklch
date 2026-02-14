@@ -14,8 +14,8 @@
 @theme {
   /* ── Hue Definitions ─────────────────────────────────────────────────
      Change these to re-theme your entire app. */
-  --hue-primary: 260;
-  --hue-accent: 30;
+  --hue-primary: 233;
+  --hue-accent: 350;
   --hue-success: 145;
   --hue-warning: 55;
   --hue-danger: 15;

@@ -75,11 +75,6 @@
 
 /* ── Demo-specific styles ─────────────────────────────────────────── */
 
-/* -webkit-text-fill-color has no Tailwind utility */
-h1 span {
-  -webkit-text-fill-color: transparent;
-}
-
 /* Matrix cells — generated in tight JS loops, CSS more efficient */
 .matrix-label {
   display: flex;

@@ -6,19 +6,21 @@ import ComponentDemos from "@/components/ComponentDemos.astro";
 import CodeExamples from "@/components/CodeExamples";
 ---
 
-<Layout title="OKLCH Composer — Tailwind Color System">
+<Layout title="tw-ok — Tailwind OKLCH Color System">
   <div class="max-w-[1200px] mx-auto px-8 py-12">
-    <h1 class="text-[2.5rem] font-bold tracking-[-0.03em] mb-2">
-      <span class="bg-gradient-to-br from-mhi-mhi-primary to-mhi-mhi-accent bg-clip-text">
-        OKLCH Composer
-      </span>
-    </h1>
+    <div class="rounded-2xl mb-6 inline-block overflow-hidden bg-white/10!" style="border: 1px solid oklch(0.35 0.02 260)">
+      <div class="flex items-center gap-2 px-5 py-1	text-white/40" style="border-bottom: 1px solid oklch(0.35 0.02 260)">tailwind-oklch plugin</div>
+      <div class="px-10 py-8">
+        <h1 class="text-[4rem] font-bold tracking-[-0.04em] font-mono leading-none">
+          <span style="color: oklch(0.746 0.16 233)">tw</span><span class="text-white">-</span><span style="color: oklch(0.718 0.202 350)">ok</span>
+        </h1>
+      </div>
+    </div>
     <p class="text-[1.1rem] mb-12 max-w-[680px] leading-[1.6] text-mid-mlo-primary">
-      A color utility system for Tailwind v4 that decomposes every color into
-      three independent axes — luminance, chroma, and hue — and lets them cascade
-      through the DOM. Set a color on a parent, override one axis on a child.
-      No opacity hacks. Re-theme your entire app by changing one variable.
-    </p>
+		Bringing the Tailwind CSS philosophy of <em>atomic utility classes</em> to the color variables that power OKLCH.
+		Tailwind OKLCH lets you set full color values or change one parameter at a time – no more opacity hacks
+		required! Re-theme your whole app with just a variable or a class.
+	 </p>
 
     <!-- Theme Controls -->
     <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-mhi-mlo-primary">

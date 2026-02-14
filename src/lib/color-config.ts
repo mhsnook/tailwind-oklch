@@ -1,6 +1,6 @@
 export const HUES = [
-	{ name: 'primary', default: 260 },
-	{ name: 'accent', default: 30 },
+	{ name: 'primary', default: 233 },
+	{ name: 'accent', default: 350 },
 	{ name: 'success', default: 145 },
 	{ name: 'warning', default: 55 },
 	{ name: 'danger', default: 15 },
