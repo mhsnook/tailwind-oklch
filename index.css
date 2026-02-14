@@ -4,6 +4,11 @@
  *   @import "tailwindcss";
  *   @import "tailwind-oklch";
  *   @plugin "tailwind-oklch/plugin";
+ *
+ * Every setter utility (bg-l-*, bg-c-*, bg-h-*) both updates its
+ * axis variable AND applies the resolved oklch() color. Defaults
+ * cascade from :root, so a single class like `bg-l-mid` immediately
+ * produces a visible color — no helper class needed.
  */
 
 @theme {
@@ -58,150 +63,183 @@
   --c-95: 0.30;
 }
 
-/* ── Composed Color Resolvers ──────────────────────────────────────────
-   These read the --bg-l/c/h (etc.) custom properties set by the
-   decomposed utilities below and resolve them into an oklch() color. */
+/* ── Cascade Defaults ────────────────────────────────────────────────────
+   Sensible fallbacks so any single-axis setter immediately resolves.
+   These inherit down the DOM tree, so a parent's bg-h-accent
+   naturally flows to children that only set bg-l-* or bg-c-*. */
 
-@utility bg-composed {
-  background-color: oklch(var(--bg-l) var(--bg-c) var(--bg-h));
+:root {
+  --bg-l: var(--l-mid);
+  --bg-c: var(--c-lo);
+  --bg-h: var(--hue-primary);
+
+  --tx-l: var(--l-hi);
+  --tx-c: var(--c-lo);
+  --tx-h: var(--hue-primary);
+
+  --bd-l: var(--l-mlo);
+  --bd-c: var(--c-lo);
+  --bd-h: var(--hue-primary);
+
+  --ac-l: var(--l-mid);
+  --ac-c: var(--c-mid);
+  --ac-h: var(--hue-primary);
+
+  --gf-l: var(--l-mid);
+  --gf-c: var(--c-mid);
+  --gf-h: var(--hue-primary);
+
+  --gt-l: var(--l-mid);
+  --gt-c: var(--c-mid);
+  --gt-h: var(--hue-primary);
+
+  --sh-l: var(--l-mid);
+  --sh-c: var(--c-lo);
+  --sh-h: var(--hue-primary);
+
+  --bdb-l: var(--l-mlo);
+  --bdb-c: var(--c-lo);
+  --bdb-h: var(--hue-primary);
 }
 
-@utility text-composed {
-  color: oklch(var(--tx-l) var(--tx-c) var(--tx-h));
-}
-
-@utility border-composed {
-  border-color: oklch(var(--bd-l) var(--bd-c) var(--bd-h));
-}
-
-/* ── Background Decomposed Setters ─────────────────────────────────── */
+/* ── Background ──────────────────────────────────────────────────────── */
 
 @utility bg-l-* {
   --bg-l: --value(--l-*);
+  background-color: oklch(var(--bg-l) var(--bg-c) var(--bg-h));
 }
 
 @utility bg-c-* {
   --bg-c: --value(--c-*);
+  background-color: oklch(var(--bg-l) var(--bg-c) var(--bg-h));
 }
 
 @utility bg-h-* {
   --bg-h: --value(--hue-*);
+  background-color: oklch(var(--bg-l) var(--bg-c) var(--bg-h));
 }
 
-/* ── Text Decomposed Setters ───────────────────────────────────────── */
+/* ── Text ────────────────────────────────────────────────────────────── */
 
 @utility text-l-* {
   --tx-l: --value(--l-*);
+  color: oklch(var(--tx-l) var(--tx-c) var(--tx-h));
 }
 
 @utility text-c-* {
   --tx-c: --value(--c-*);
+  color: oklch(var(--tx-l) var(--tx-c) var(--tx-h));
 }
 
 @utility text-h-* {
   --tx-h: --value(--hue-*);
+  color: oklch(var(--tx-l) var(--tx-c) var(--tx-h));
 }
 
-/* ── Border Decomposed Setters ─────────────────────────────────────── */
+/* ── Border ──────────────────────────────────────────────────────────── */
 
 @utility border-l-* {
   --bd-l: --value(--l-*);
+  border-color: oklch(var(--bd-l) var(--bd-c) var(--bd-h));
 }
 
 @utility border-c-* {
   --bd-c: --value(--c-*);
+  border-color: oklch(var(--bd-l) var(--bd-c) var(--bd-h));
 }
 
 @utility border-h-* {
   --bd-h: --value(--hue-*);
+  border-color: oklch(var(--bd-l) var(--bd-c) var(--bd-h));
 }
 
-/* ── Accent Color ─────────────────────────────────────────────────── */
-
-@utility accent-composed {
-  accent-color: oklch(var(--ac-l) var(--ac-c) var(--ac-h));
-}
+/* ── Accent Color ────────────────────────────────────────────────────── */
 
 @utility accent-l-* {
   --ac-l: --value(--l-*);
+  accent-color: oklch(var(--ac-l) var(--ac-c) var(--ac-h));
 }
 
 @utility accent-c-* {
   --ac-c: --value(--c-*);
+  accent-color: oklch(var(--ac-l) var(--ac-c) var(--ac-h));
 }
 
 @utility accent-h-* {
   --ac-h: --value(--hue-*);
+  accent-color: oklch(var(--ac-l) var(--ac-c) var(--ac-h));
 }
 
-/* ── Gradient Color Stops ─────────────────────────────────────────── */
+/* ── Gradient From ───────────────────────────────────────────────────── */
 
-@utility from-composed {
+@utility from-l-* {
+  --gf-l: --value(--l-*);
   --tw-gradient-from: oklch(var(--gf-l) var(--gf-c) var(--gf-h));
   --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
 
-@utility from-l-* {
-  --gf-l: --value(--l-*);
-}
-
 @utility from-c-* {
   --gf-c: --value(--c-*);
+  --tw-gradient-from: oklch(var(--gf-l) var(--gf-c) var(--gf-h));
+  --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
 
 @utility from-h-* {
   --gf-h: --value(--hue-*);
+  --tw-gradient-from: oklch(var(--gf-l) var(--gf-c) var(--gf-h));
+  --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
 
-@utility to-composed {
+/* ── Gradient To ─────────────────────────────────────────────────────── */
+
+@utility to-l-* {
+  --gt-l: --value(--l-*);
   --tw-gradient-to: oklch(var(--gt-l) var(--gt-c) var(--gt-h));
   --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
 
-@utility to-l-* {
-  --gt-l: --value(--l-*);
-}
-
 @utility to-c-* {
   --gt-c: --value(--c-*);
+  --tw-gradient-to: oklch(var(--gt-l) var(--gt-c) var(--gt-h));
+  --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
 
 @utility to-h-* {
   --gt-h: --value(--hue-*);
+  --tw-gradient-to: oklch(var(--gt-l) var(--gt-c) var(--gt-h));
+  --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
 
-/* ── Shadow Color ─────────────────────────────────────────────────── */
-
-@utility shadow-color-composed {
-  --tw-shadow-color: oklch(var(--sh-l) var(--sh-c) var(--sh-h));
-}
+/* ── Shadow Color ────────────────────────────────────────────────────── */
 
 @utility shadow-l-* {
   --sh-l: --value(--l-*);
+  --tw-shadow-color: oklch(var(--sh-l) var(--sh-c) var(--sh-h));
 }
 
 @utility shadow-c-* {
   --sh-c: --value(--c-*);
+  --tw-shadow-color: oklch(var(--sh-l) var(--sh-c) var(--sh-h));
 }
 
 @utility shadow-h-* {
   --sh-h: --value(--hue-*);
+  --tw-shadow-color: oklch(var(--sh-l) var(--sh-c) var(--sh-h));
 }
 
-/* ── Directional Border Color ─────────────────────────────────────── */
-
-@utility border-b-composed {
-  border-bottom-color: oklch(var(--bdb-l) var(--bdb-c) var(--bdb-h));
-}
+/* ── Border Bottom ───────────────────────────────────────────────────── */
 
 @utility border-b-l-* {
   --bdb-l: --value(--l-*);
+  border-bottom-color: oklch(var(--bdb-l) var(--bdb-c) var(--bdb-h));
 }
 
 @utility border-b-c-* {
   --bdb-c: --value(--c-*);
+  border-bottom-color: oklch(var(--bdb-l) var(--bdb-c) var(--bdb-h));
 }
 
 @utility border-b-h-* {
   --bdb-h: --value(--hue-*);
+  border-bottom-color: oklch(var(--bdb-l) var(--bdb-c) var(--bdb-h));
 }

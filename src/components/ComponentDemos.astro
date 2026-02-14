@@ -10,23 +10,23 @@
       text. Portable anywhere.
     </p>
     <div
-      class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-mid-mhi-primary text-hi-lo-primary"
+      class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-mid-mhi-primary text-hi-lo-primary hover:bg-l-60"
     >
       bg-mid-mhi-primary
     </div>
   </div>
 
-  <!-- Dark Card + Accent CTA -->
-  <div class="rounded-xl p-6 border border-lo-lo-primary bg-lo-mlo-primary text-hi-lo-primary">
-    <h4 class="text-[0.85rem] mb-3 font-semibold">Dark Card + Accent CTA</h4>
-    <p class="text-mid-lo-primary text-[0.85rem] leading-normal mb-4">
-      bg-lo-mlo-primary with an accent button. The hues stay independent — no
-      washout.
+  <!-- Cascade Demo -->
+  <div class="rounded-xl p-6 border border-lo-lo-primary bg-mid-hi-accent text-hi-lo-accent">
+    <h4 class="text-[0.85rem] mb-3 font-semibold">Cascade Override</h4>
+    <p class="text-[0.85rem] leading-normal mb-4">
+      Parent sets bg-mid-hi-accent. Children inherit chroma + hue, override only
+      luminance — no need to redeclare the full color.
     </p>
-    <div
-      class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-mhi-mhi-accent text-lo-mlo-accent"
-    >
-      bg-mhi-mhi-accent
+    <div class="flex gap-2">
+      <div class="bg-l-lo px-4 py-2 rounded-lg text-[0.75rem] font-mono font-semibold text-hi-lo-accent">bg-l-lo</div>
+      <div class="bg-l-mhi px-4 py-2 rounded-lg text-[0.75rem] font-mono font-semibold text-lo-mlo-accent">bg-l-mhi</div>
+      <div class="bg-l-hi px-4 py-2 rounded-lg text-[0.75rem] font-mono font-semibold text-lo-mid-accent">bg-l-hi</div>
     </div>
   </div>
 
@@ -38,7 +38,7 @@
       instant semantic color.
     </p>
     <div
-      class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-mid-mhi-success text-hi-lo-success"
+      class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-mid-mhi-success text-hi-lo-success hover:bg-l-60"
     >
       bg-mid-mhi-success
     </div>
@@ -71,17 +71,17 @@
     </div>
   </div>
 
-  <!-- Vibrant Surface -->
-  <div class="rounded-xl p-6 border border-lo-lo-primary bg-mhi-mhi-primary text-lo-mlo-primary">
-    <h4 class="text-[0.85rem] mb-3 font-semibold">Vibrant Surface</h4>
-    <p class="text-[0.85rem] leading-normal mb-4">
-      bg-mhi-mhi-primary. Saturated mid-high surface with dark text. Swap
-      --hue-primary to re-theme instantly.
+  <!-- Axis Inheritance -->
+  <div class="rounded-xl p-6 border border-lo-lo-primary bg-lo-mlo-primary text-hi-lo-primary">
+    <h4 class="text-[0.85rem] mb-3 font-semibold">Axis Inheritance</h4>
+    <p class="text-mid-lo-primary text-[0.85rem] leading-normal mb-4">
+      Parent sets hue to primary. Children swap only the hue axis — luminance
+      and chroma stay inherited.
     </p>
-    <div
-      class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-lo-mid-primary text-hi-lo-primary"
-    >
-      bg-lo-mid-primary
+    <div class="flex gap-2 mt-2">
+      <span class="text-center bg-h-success bg-l-mlo bg-c-mid px-3 py-1.5 rounded-full text-xs font-semibold text-hi-lo-success">bg-h-success</span>
+      <span class="text-center bg-h-warning bg-l-mlo bg-c-mid px-3 py-1.5 rounded-full text-xs font-semibold text-hi-lo-warning">bg-h-warning</span>
+      <span class="text-center bg-h-danger bg-l-mlo bg-c-mid px-3 py-1.5 rounded-full text-xs font-semibold text-hi-lo-danger">bg-h-danger</span>
     </div>
   </div>
 </div>

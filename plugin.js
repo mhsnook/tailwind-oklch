@@ -4,6 +4,10 @@
  * Generates .{prop}-{L}-{C}-{H} utilities for all combinations of
  * named luminance × chroma × hue stops across bg/text/border.
  *
+ * Each shorthand sets the three axis variables AND applies the
+ * resolved color, so children can inherit and override single axes
+ * via decomposed utilities (e.g. hover:bg-l-mhi).
+ *
  * Load via: @plugin "tailwind-oklch/plugin";
  */
 
@@ -11,12 +15,14 @@ module.exports = function ({ addUtilities }) {
   const luminances = ['lo', 'mlo', 'mid', 'mhi', 'hi'];
   const chromas = ['lo', 'mlo', 'mid', 'mhi', 'hi'];
   const hues = ['primary', 'accent', 'success', 'warning', 'danger', 'info', 'neutral'];
+
+  // Map each prefix to its CSS property and internal variable names
   const properties = [
-    { prefix: 'bg', css: 'background-color' },
-    { prefix: 'text', css: 'color' },
-    { prefix: 'border', css: 'border-color' },
-    { prefix: 'accent', css: 'accent-color' },
-    { prefix: 'border-b', css: 'border-bottom-color' },
+    { prefix: 'bg',       css: 'background-color',   vars: ['--bg-l',  '--bg-c',  '--bg-h']  },
+    { prefix: 'text',     css: 'color',              vars: ['--tx-l',  '--tx-c',  '--tx-h']  },
+    { prefix: 'border',   css: 'border-color',       vars: ['--bd-l',  '--bd-c',  '--bd-h']  },
+    { prefix: 'accent',   css: 'accent-color',       vars: ['--ac-l',  '--ac-c',  '--ac-h']  },
+    { prefix: 'border-b', css: 'border-bottom-color', vars: ['--bdb-l', '--bdb-c', '--bdb-h'] },
   ];
 
   const utilities = {};
@@ -26,7 +32,10 @@ module.exports = function ({ addUtilities }) {
       for (const c of chromas) {
         for (const h of hues) {
           utilities[`.${prop.prefix}-${l}-${c}-${h}`] = {
-            [prop.css]: `oklch(var(--l-${l}) var(--c-${c}) var(--hue-${h}))`,
+            [prop.vars[0]]: `var(--l-${l})`,
+            [prop.vars[1]]: `var(--c-${c})`,
+            [prop.vars[2]]: `var(--hue-${h})`,
+            [prop.css]: `oklch(var(${prop.vars[0]}) var(${prop.vars[1]}) var(${prop.vars[2]}))`,
           };
         }
       }
@@ -40,13 +49,18 @@ module.exports = function ({ addUtilities }) {
   for (const l of luminances) {
     for (const c of chromas) {
       for (const h of hues) {
-        const color = `oklch(var(--l-${l}) var(--c-${c}) var(--hue-${h}))`;
         utilities[`.from-${l}-${c}-${h}`] = {
-          '--tw-gradient-from': color,
+          '--gf-l': `var(--l-${l})`,
+          '--gf-c': `var(--c-${c})`,
+          '--gf-h': `var(--hue-${h})`,
+          '--tw-gradient-from': `oklch(var(--gf-l) var(--gf-c) var(--gf-h))`,
           '--tw-gradient-stops': stopsExpr,
         };
         utilities[`.to-${l}-${c}-${h}`] = {
-          '--tw-gradient-to': color,
+          '--gt-l': `var(--l-${l})`,
+          '--gt-c': `var(--c-${c})`,
+          '--gt-h': `var(--hue-${h})`,
+          '--tw-gradient-to': `oklch(var(--gt-l) var(--gt-c) var(--gt-h))`,
           '--tw-gradient-stops': stopsExpr,
         };
       }
