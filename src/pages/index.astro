@@ -1,0 +1,56 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import HueControls from "@/components/HueControls";
+import ColorMatrix from "@/components/ColorMatrix";
+import ComponentDemos from "@/components/ComponentDemos.astro";
+import CodeExamples from "@/components/CodeExamples";
+---
+
+<Layout title="OKLCH Composer — Tailwind Color System">
+  <div class="max-w-[1200px] mx-auto px-8 py-12">
+    <h1 class="text-[2.5rem] font-bold tracking-[-0.03em] mb-2">
+      <span class="bg-gradient-to-br from-mhi-mhi-primary to-mhi-mhi-accent bg-clip-text">
+        OKLCH Composer
+      </span>
+    </h1>
+    <p class="text-[1.1rem] mb-12 max-w-[680px] leading-[1.6] text-mid-mlo-primary">
+      A color utility system for Tailwind v4 that exposes luminance, chroma, and
+      hue as independent, composable axes in your class names. No more opacity
+      hacks. Re-theme your entire app by changing one hue variable.
+    </p>
+
+    <!-- Theme Controls -->
+    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-mhi-mlo-primary">
+      Theme Hues
+    </h2>
+    <div class="mb-12">
+      <HueControls client:load />
+    </div>
+
+    <!-- Color Matrix -->
+    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-mhi-mlo-primary">
+      5×5 Luminance × Chroma Grid
+    </h2>
+    <p class="text-mid-lo-primary text-[0.9rem] mb-6 -mt-3">
+      Each matrix shows all combinations of luminance (rows) and chroma
+      (columns) for a given hue. Hover to see the class name.
+    </p>
+    <div class="mb-12">
+      <ColorMatrix client:load />
+    </div>
+
+    <!-- Live Component Demos -->
+    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-mhi-mlo-primary">
+      Live Component Examples
+    </h2>
+    <div class="mb-12">
+      <ComponentDemos />
+    </div>
+
+    <!-- Code Examples -->
+    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-mhi-mlo-primary">
+      Implementation
+    </h2>
+    <CodeExamples client:visible />
+  </div>
+</Layout>

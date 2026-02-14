@@ -1,0 +1,127 @@
+@import "tailwindcss";
+@import "../../index.css";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+@plugin "../../plugin.js";
+
+@theme {
+  --font-sans: "DM Sans", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+/* Force theme variables into the build that aren't auto-detected from source.
+   The matrix explorer reads these CSS custom properties via JS inline styles. */
+@source inline("bg-composed text-composed border-composed bg-h-warning bg-h-info bg-h-neutral bg-l-10 bg-l-20 bg-l-30 bg-l-40 bg-l-50 bg-l-60 bg-l-70 bg-l-80 bg-l-90 bg-l-95 bg-c-10 bg-c-20 bg-c-30 bg-c-40 bg-c-50 bg-c-60 bg-c-70 bg-c-80 bg-c-90 bg-c-95");
+
+/* ── shadcn theme tokens ──────────────────────────────────────────── */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.606 0.25 292.717);
+  --primary-foreground: oklch(0.969 0.016 293.756);
+  --secondary: oklch(0.274 0.006 286.033);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.606 0.25 292.717);
+  --accent-foreground: oklch(0.969 0.016 293.756);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+/* ── Demo-specific styles ─────────────────────────────────────────── */
+
+/* -webkit-text-fill-color has no Tailwind utility */
+h1 span {
+  -webkit-text-fill-color: transparent;
+}
+
+/* Matrix cells — generated in tight JS loops, CSS more efficient */
+.matrix-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  color: oklch(var(--l-50) var(--c-lo) var(--hue-primary));
+  padding: 0.25rem;
+  min-height: 2rem;
+}
+
+.matrix-label.col-label {
+  min-width: 3rem;
+}
+
+.matrix-cell:hover {
+  transform: scale(1.15);
+  z-index: 10;
+  box-shadow: 0 4px 20px oklch(0 0 0 / 0.4);
+}
+
+/* Preview toast — visibility toggled by JS */
+.class-preview {
+  background: oklch(var(--l-10) var(--c-lo) var(--hue-primary));
+  border: 1px solid oklch(var(--l-30) var(--c-mlo) var(--hue-primary));
+  box-shadow: 0 8px 32px oklch(0 0 0 / 0.5);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.class-preview.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.class-preview .swatch {
+  border: 1px solid oklch(var(--l-40) var(--c-lo) var(--hue-primary));
+}
+
+/* Code blocks — OKLCH themed */
+.code-block {
+  background: oklch(var(--l-10) var(--c-lo) var(--hue-primary));
+  border: 1px solid oklch(var(--l-lo) var(--c-lo) var(--hue-primary));
+}
