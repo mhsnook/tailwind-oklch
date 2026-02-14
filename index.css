@@ -1,0 +1,117 @@
+/* tailwind-oklch — OKLCH color composition system for Tailwind v4
+ *
+ * Usage:
+ *   @import "tailwindcss";
+ *   @import "tailwind-oklch";
+ *   @plugin "tailwind-oklch/plugin";
+ */
+
+@theme {
+  /* ── Hue Definitions ─────────────────────────────────────────────────
+     Change these to re-theme your entire app. */
+  --hue-primary: 260;
+  --hue-accent: 30;
+  --hue-success: 145;
+  --hue-warning: 55;
+  --hue-danger: 15;
+  --hue-info: 220;
+  --hue-neutral: 260;
+
+  /* ── Named Luminance Stops ───────────────────────────────────────────
+     OKLCH lightness: 0 = black, 1 = white */
+  --l-lo: 0.25;
+  --l-mlo: 0.40;
+  --l-mid: 0.55;
+  --l-mhi: 0.72;
+  --l-hi: 0.90;
+
+  /* ── Named Chroma Stops ──────────────────────────────────────────────
+     OKLCH chroma: practical range 0–0.25 */
+  --c-lo: 0.02;
+  --c-mlo: 0.06;
+  --c-mid: 0.12;
+  --c-mhi: 0.18;
+  --c-hi: 0.25;
+
+  /* ── Numeric Luminance Scale ─────────────────────────────────────── */
+  --l-10: 0.10;
+  --l-20: 0.20;
+  --l-30: 0.30;
+  --l-40: 0.40;
+  --l-50: 0.50;
+  --l-60: 0.60;
+  --l-70: 0.70;
+  --l-80: 0.80;
+  --l-90: 0.90;
+  --l-95: 0.95;
+
+  /* ── Numeric Chroma Scale ────────────────────────────────────────── */
+  --c-10: 0.03;
+  --c-20: 0.06;
+  --c-30: 0.09;
+  --c-40: 0.12;
+  --c-50: 0.15;
+  --c-60: 0.18;
+  --c-70: 0.21;
+  --c-80: 0.24;
+  --c-90: 0.27;
+  --c-95: 0.30;
+}
+
+/* ── Composed Color Resolvers ──────────────────────────────────────────
+   These read the --bg-l/c/h (etc.) custom properties set by the
+   decomposed utilities below and resolve them into an oklch() color. */
+
+@utility bg-composed {
+  background-color: oklch(var(--bg-l) var(--bg-c) var(--bg-h));
+}
+
+@utility text-composed {
+  color: oklch(var(--tx-l) var(--tx-c) var(--tx-h));
+}
+
+@utility border-composed {
+  border-color: oklch(var(--bd-l) var(--bd-c) var(--bd-h));
+}
+
+/* ── Background Decomposed Setters ─────────────────────────────────── */
+
+@utility bg-l-* {
+  --bg-l: --value(--l-*);
+}
+
+@utility bg-c-* {
+  --bg-c: --value(--c-*);
+}
+
+@utility bg-h-* {
+  --bg-h: --value(--hue-*);
+}
+
+/* ── Text Decomposed Setters ───────────────────────────────────────── */
+
+@utility text-l-* {
+  --tx-l: --value(--l-*);
+}
+
+@utility text-c-* {
+  --tx-c: --value(--c-*);
+}
+
+@utility text-h-* {
+  --tx-h: --value(--hue-*);
+}
+
+/* ── Border Decomposed Setters ─────────────────────────────────────── */
+
+@utility border-l-* {
+  --bd-l: --value(--l-*);
+}
+
+@utility border-c-* {
+  --bd-c: --value(--c-*);
+}
+
+@utility border-h-* {
+  --bd-h: --value(--hue-*);
+}
