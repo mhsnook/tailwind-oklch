@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { Fragment, useState, useEffect, useCallback } from 'react'
 import { HUES, L_STOPS, C_STOPS } from '@/lib/color-config'
 
 export default function ColorMatrix() {
@@ -51,8 +51,8 @@ export default function ColorMatrix() {
 
 								{/* Rows */}
 								{L_STOPS.map((l) => (
-									<>
-										<div key={`label-${l.name}`} className="matrix-label">
+									<Fragment key={l.name}>
+										<div className="matrix-label">
 											L:{l.name}
 										</div>
 										{C_STOPS.map((c) => {
@@ -69,7 +69,7 @@ export default function ColorMatrix() {
 												/>
 											)
 										})}
-									</>
+									</Fragment>
 								))}
 							</div>
 						</div>

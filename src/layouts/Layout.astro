@@ -1,4 +1,6 @@
 ---
+import ThemeToggle from "@/components/ThemeToggle";
+
 interface Props {
   title: string;
 }
@@ -7,17 +9,26 @@ const { title } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
+    <script is:inline>
+      (function () {
+        var saved = localStorage.getItem('theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var dark = saved ? saved === 'dark' : prefersDark;
+        document.documentElement.classList.toggle('dark', dark);
+      })();
+    </script>
     <link
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
   </head>
-  <body class="bg-l-10 bg-c-lo bg-h-primary min-h-screen overflow-x-hidden">
+  <body class="bg-lu-95 dark:bg-lu-10 bg-c-lo bg-h-primary min-h-screen overflow-x-hidden">
+    <ThemeToggle client:load />
     <slot />
   </body>
 </html>

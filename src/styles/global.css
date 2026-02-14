@@ -12,7 +12,7 @@
 
 /* Force theme variables into the build that aren't auto-detected from source.
    The matrix explorer reads these CSS custom properties via JS inline styles. */
-@source inline("bg-h-warning bg-h-info bg-h-neutral bg-l-10 bg-l-20 bg-l-30 bg-l-40 bg-l-50 bg-l-60 bg-l-70 bg-l-80 bg-l-90 bg-l-95 bg-c-10 bg-c-20 bg-c-30 bg-c-40 bg-c-50 bg-c-60 bg-c-70 bg-c-80 bg-c-90 bg-c-95");
+@source inline("bg-h-warning bg-h-info bg-h-neutral bg-lu-10 bg-lu-20 bg-lu-30 bg-lu-40 bg-lu-50 bg-lu-60 bg-lu-70 bg-lu-80 bg-lu-90 bg-lu-95 bg-c-10 bg-c-20 bg-c-30 bg-c-40 bg-c-50 bg-c-60 bg-c-70 bg-c-80 bg-c-90 bg-c-95 dark:bg-lu-10 bg-lu-95");
 
 /* ── shadcn theme tokens ──────────────────────────────────────────── */
 
@@ -64,6 +64,27 @@
   --ring: oklch(0.556 0 0);
 }
 
+:root:not(.dark) {
+  --background: oklch(0.965 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(0.985 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(0.985 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.606 0.25 292.717);
+  --primary-foreground: oklch(0.969 0.016 293.756);
+  --secondary: oklch(0.9 0.006 286.033);
+  --secondary-foreground: oklch(0.145 0 0);
+  --muted: oklch(0.92 0 0);
+  --muted-foreground: oklch(0.4 0 0);
+  --accent: oklch(0.606 0.25 292.717);
+  --accent-foreground: oklch(0.969 0.016 293.756);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(0 0 0 / 10%);
+  --input: oklch(0 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -71,6 +92,16 @@
   body {
     @apply bg-background text-foreground font-sans;
   }
+}
+
+/* ── Light-mode luminance overrides ───────────────────────────────── */
+
+:root:not(.dark) {
+  --l-base: 0.90;
+  --l-subtle: 0.72;
+  /* --l-mid stays 0.55 */
+  --l-strong: 0.40;
+  --l-full: 0.25;
 }
 
 /* ── Demo-specific styles ─────────────────────────────────────────── */
@@ -115,8 +146,18 @@
   border: 1px solid oklch(var(--l-40) var(--c-lo) var(--hue-primary));
 }
 
-/* Code blocks — OKLCH themed */
+/* Code blocks — always dark, even in light mode */
 .code-block {
-  background: oklch(var(--l-10) var(--c-lo) var(--hue-primary));
-  border: 1px solid oklch(var(--l-base) var(--c-lo) var(--hue-primary));
+  background: oklch(0.10 var(--c-lo) var(--hue-primary));
+  border: 1px solid oklch(0.25 var(--c-lo) var(--hue-primary));
+}
+
+:root:not(.dark) .class-preview {
+  background: oklch(var(--l-95) var(--c-lo) var(--hue-primary));
+  border-color: oklch(var(--l-80) var(--c-mlo) var(--hue-primary));
+  box-shadow: 0 8px 32px oklch(0 0 0 / 0.12);
+}
+
+:root:not(.dark) .class-preview .swatch {
+  border-color: oklch(var(--l-70) var(--c-lo) var(--hue-primary));
 }

@@ -15,7 +15,7 @@ const CODE_EXAMPLES = {
 /* That's it. You now have:
 
    SHORTHAND    bg-mid-hi-primary        one class, full color
-   DECOMPOSED   bg-l-mid bg-c-hi bg-h-primary   per-axis control
+   DECOMPOSED   bg-lu-mid bg-c-hi bg-h-primary   per-axis control
    CASCADING    parent sets color, child overrides one axis
 
    To customize hues, override in your own @theme block: */
@@ -42,12 +42,12 @@ const CODE_EXAMPLES = {
 <div class="bg-mid-hi-accent p-6 rounded-xl">
 
   <!-- Child overrides ONLY luminance — inherits chroma + hue -->
-  <button class="hover:bg-l-strong px-4 py-2 rounded">
+  <button class="hover:bg-lu-strong px-4 py-2 rounded">
     Lighter on hover
   </button>
 
   <!-- Another child shifts to low luminance -->
-  <footer class="bg-l-base p-4 rounded">
+  <footer class="bg-lu-base p-4 rounded">
     Dark footer, same chroma + hue as parent
   </footer>
 </div>
@@ -55,7 +55,7 @@ const CODE_EXAMPLES = {
 <!-- Works across nesting levels too -->
 <div class="bg-base-mlo-primary">           <!-- L:base C:mlo H:primary -->
   <div class="bg-h-success">              <!-- swap hue, keep L+C -->
-    <div class="bg-l-full">                 <!-- swap luminance, keep C+H -->
+    <div class="bg-lu-full">                 <!-- swap luminance, keep C+H -->
       Three levels deep, each overriding one axis.
     </div>
   </div>
@@ -64,8 +64,8 @@ const CODE_EXAMPLES = {
 <!-- Hover/focus only changes what matters -->
 <button class="
   bg-mid-hi-primary text-full-lo-primary
-  hover:bg-l-strong              only luminance shifts
-  active:bg-l-subtle             darker on press
+  hover:bg-lu-strong              only luminance shifts
+  active:bg-lu-subtle             darker on press
   focus:bg-c-mhi              more saturated on focus
 ">Interactive</button>
 
@@ -90,27 +90,27 @@ const CODE_EXAMPLES = {
 </div>
 
 <!-- ── DECOMPOSED ──────────────────────────────────────────
-   Pattern: bg-l-{L} bg-c-{C} bg-h-{H}
+   Pattern: bg-lu-{L} bg-c-{C} bg-h-{H}
    Best for: overriding a single axis on hover, or when a
    parent already set the other two axes. -->
 
 <button class="
-  bg-l-mid bg-c-hi bg-h-primary
-  hover:bg-l-strong
+  bg-lu-mid bg-c-hi bg-h-primary
+  hover:bg-lu-strong
 ">Only luminance changes on hover</button>
 
 <!-- ── NUMERIC VALUES ──────────────────────────────────────
    Use the 10–95 scale for fine-grained steps between
    the named stops (base/subtle/mid/strong/full). -->
 
-<div class="bg-l-70 bg-c-30 bg-h-primary">
+<div class="bg-lu-70 bg-c-30 bg-h-primary">
   Luminance 70, Chroma 30
 </div>
 
 <!-- ── SINGLE AXIS ─────────────────────────────────────────
    Defaults cascade from :root. A single class is enough. -->
 
-<div class="bg-l-90">
+<div class="bg-lu-90">
   Just luminance — chroma + hue come from :root defaults.
 </div>
 
@@ -127,11 +127,11 @@ const CODE_EXAMPLES = {
 		code: `/* ── WHAT THE UTILITIES ACTUALLY DO ──────────────────────────
 
    Every setter both updates its axis AND applies the resolved
-   color. This is why a single bg-l-mid works — the other two
+   color. This is why a single bg-lu-mid works — the other two
    axes are already defined at :root. */
 
 /* Decomposed utility (from index.css) */
-.bg-l-mid {
+.bg-lu-mid {
   --bg-l: var(--l-mid);                   /* set the axis     */
   background-color: oklch(                 /* apply the color  */
     var(--bg-l) var(--bg-c) var(--bg-h)
@@ -161,7 +161,7 @@ const CODE_EXAMPLES = {
    Parent:  bg-mid-hi-accent
      └─ sets --bg-l: mid, --bg-c: hi, --bg-h: accent
 
-   Child:   bg-l-strong
+   Child:   bg-lu-strong
      └─ overrides --bg-l: strong
      └─ --bg-c and --bg-h INHERIT from parent
      └─ result: oklch(0.72 0.25 30) — lighter accent
@@ -177,7 +177,7 @@ const CODE_EXAMPLES = {
 
    OKLCH composed (new):
      bg-full-lo-primary         absolute color, portable
-     hover:bg-l-strong           single-axis shift, no blending
+     hover:bg-lu-strong           single-axis shift, no blending
 
    The color is the SAME regardless of what sits behind it.
    No stacking-context surprises. No blending artifacts. */`,

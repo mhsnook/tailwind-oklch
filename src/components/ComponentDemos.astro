@@ -3,30 +3,30 @@
 
 <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
   <!-- Subtle Card -->
-  <div class="rounded-xl p-6 border border-base-lo-primary bg-full-lo-primary text-base-mid-primary">
+  <div class="rounded-xl p-6 border border-mid-mhi-primary bg-full-lo-primary text-base-mid-primary">
     <h4 class="text-[0.85rem] mb-3 font-semibold">Subtle Card</h4>
     <p class="text-subtle-mlo-primary text-[0.85rem] leading-normal mb-4">
       bg-full-lo-primary + text-base-mid-primary. Low chroma background, strong
       text. Portable anywhere.
     </p>
     <div
-      class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-mid-mhi-primary text-full-lo-primary hover:bg-l-60"
+      class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-mid-mhi-primary text-full-lo-primary hover:bg-lu-60"
     >
       bg-mid-mhi-primary
     </div>
   </div>
 
   <!-- Cascade Demo -->
-  <div class="rounded-xl p-6 border border-base-lo-primary bg-mid-hi-accent text-full-lo-accent">
+  <div class="rounded-xl p-6 border border-strong-lo-primary bg-mid-hi-accent text-full-lo-accent">
     <h4 class="text-[0.85rem] mb-3 font-semibold">Cascade Override</h4>
     <p class="text-[0.85rem] leading-normal mb-4">
       Parent sets bg-mid-hi-accent. Children inherit chroma + hue, override only
       luminance — no need to redeclare the full color.
     </p>
     <div class="flex gap-2">
-      <div class="bg-l-base px-4 py-2 rounded-lg text-[0.75rem] font-mono font-semibold text-full-lo-accent">bg-l-base</div>
-      <div class="bg-l-strong px-4 py-2 rounded-lg text-[0.75rem] font-mono font-semibold text-base-mlo-accent">bg-l-strong</div>
-      <div class="bg-l-full px-4 py-2 rounded-lg text-[0.75rem] font-mono font-semibold text-base-mid-accent">bg-l-full</div>
+      <div class="bg-lu-base px-4 py-2 rounded-lg text-[0.75rem] font-mono font-semibold text-full-lo-accent">bg-lu-base</div>
+      <div class="bg-lu-strong px-4 py-2 rounded-lg text-[0.75rem] font-mono font-semibold text-base-mlo-accent">bg-lu-strong</div>
+      <div class="bg-lu-full px-4 py-2 rounded-lg text-[0.75rem] font-mono font-semibold text-base-mid-accent">bg-lu-full</div>
     </div>
   </div>
 
@@ -38,7 +38,7 @@
       instant semantic color.
     </p>
     <div
-      class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-mid-mhi-success text-full-lo-success hover:bg-l-60"
+      class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-mid-mhi-success text-full-lo-success hover:bg-lu-60"
     >
       bg-mid-mhi-success
     </div>
@@ -79,9 +79,9 @@
       and chroma stay inherited.
     </p>
     <div class="flex gap-2 mt-2">
-      <span class="text-center bg-h-success bg-l-subtle bg-c-mid px-3 py-1.5 rounded-full text-xs font-semibold text-full-lo-success">bg-h-success</span>
-      <span class="text-center bg-h-warning bg-l-subtle bg-c-mid px-3 py-1.5 rounded-full text-xs font-semibold text-full-lo-warning">bg-h-warning</span>
-      <span class="text-center bg-h-danger bg-l-subtle bg-c-mid px-3 py-1.5 rounded-full text-xs font-semibold text-full-lo-danger">bg-h-danger</span>
+      <span class="text-center bg-h-success bg-lu-subtle bg-c-mid px-3 py-1.5 rounded-full text-xs font-semibold text-full-lo-success">bg-h-success</span>
+      <span class="text-center bg-h-warning bg-lu-subtle bg-c-mid px-3 py-1.5 rounded-full text-xs font-semibold text-full-lo-warning">bg-h-warning</span>
+      <span class="text-center bg-h-danger bg-lu-subtle bg-c-mid px-3 py-1.5 rounded-full text-xs font-semibold text-full-lo-danger">bg-h-danger</span>
     </div>
   </div>
 </div>
