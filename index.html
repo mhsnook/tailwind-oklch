@@ -5,277 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OKLCH Composer — Tailwind Color System</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dist/demo.css">
 <style>
-/* ========================================================================
-   OKLCH COMPOSER — THE ACTUAL SYSTEM
-
-   This is the CSS that would go in your Tailwind v4 project.
-   In Tailwind v4, you'd put this in your main CSS file and reference
-   these variables in your @theme block.
-   ======================================================================== */
-
-:root {
-  /* ── Hue Definitions ─────────────────────────────────────────────────
-     These are the only things you change to re-theme your entire app.
-     Just swap these values and every composed color updates. */
-  --hue-primary: 260;
-  --hue-accent: 30;
-  --hue-success: 145;
-  --hue-warning: 55;
-  --hue-danger: 15;
-  --hue-info: 220;
-  --hue-neutral: 260;  /* even neutrals get a hue tint */
-
-  /* ── Luminance Stops ─────────────────────────────────────────────────
-     5 named stops + support for arbitrary values.
-     These map to OKLCH lightness (0 = black, 1 = white). */
-  --l-lo:  0.25;
-  --l-mlo: 0.40;
-  --l-mid: 0.55;
-  --l-mhi: 0.72;
-  --l-hi:  0.90;
-
-  /* ── Chroma Stops ────────────────────────────────────────────────────
-     5 named stops. OKLCH chroma typically ranges 0–0.4
-     but most usable colors are 0–0.25. */
-  --c-lo:  0.02;
-  --c-mlo: 0.06;
-  --c-mid: 0.12;
-  --c-mhi: 0.18;
-  --c-hi:  0.25;
-
-  /* ── Numeric Scale (for arbitrary-ish values like /20 /30 /40) ─────
-     Luminance */
-  --l-10: 0.10; --l-20: 0.20; --l-30: 0.30; --l-40: 0.40; --l-50: 0.50;
-  --l-60: 0.60; --l-70: 0.70; --l-80: 0.80; --l-90: 0.90; --l-95: 0.95;
-  /* Chroma */
-  --c-10: 0.03; --c-20: 0.06; --c-30: 0.09; --c-40: 0.12; --c-50: 0.15;
-  --c-60: 0.18; --c-70: 0.21; --c-80: 0.24; --c-90: 0.27; --c-95: 0.30;
-}
-
-/* ========================================================================
-   GENERATED UTILITY CLASSES
-
-   Pattern: bg-{luminance}-{chroma}-{hue}
-            text-{luminance}-{chroma}-{hue}
-            border-{luminance}-{chroma}-{hue}
-
-   In Tailwind v4, you'd generate these with a plugin. Below is what
-   the plugin output looks like as plain CSS.
-   ======================================================================== */
-
-/* ── Background Utilities ────────────────────────────────────────────── */
-
-/* For each combination of [lo,mlo,mid,mhi,hi] × [lo,mlo,mid,mhi,hi] × [primary,accent,...] */
-/* I'll generate all combos for the named stops. */
-
-/* This CSS custom property approach lets us compose at runtime: */
-.bg-composed {
-  background-color: oklch(var(--bg-l) var(--bg-c) var(--bg-h));
-}
-.text-composed {
-  color: oklch(var(--tx-l) var(--tx-c) var(--tx-h));
-}
-.border-composed {
-  border-color: oklch(var(--bd-l) var(--bd-c) var(--bd-h));
-}
-
-/* Luminance setters (bg) */
-.bg-l-lo  { --bg-l: var(--l-lo); }
-.bg-l-mlo { --bg-l: var(--l-mlo); }
-.bg-l-mid { --bg-l: var(--l-mid); }
-.bg-l-mhi { --bg-l: var(--l-mhi); }
-.bg-l-hi  { --bg-l: var(--l-hi); }
-
-/* Chroma setters (bg) */
-.bg-c-lo  { --bg-c: var(--c-lo); }
-.bg-c-mlo { --bg-c: var(--c-mlo); }
-.bg-c-mid { --bg-c: var(--c-mid); }
-.bg-c-mhi { --bg-c: var(--c-mhi); }
-.bg-c-hi  { --bg-c: var(--c-hi); }
-
-/* Hue setters (bg) */
-.bg-h-primary { --bg-h: var(--hue-primary); }
-.bg-h-accent  { --bg-h: var(--hue-accent); }
-.bg-h-success { --bg-h: var(--hue-success); }
-.bg-h-warning { --bg-h: var(--hue-warning); }
-.bg-h-danger  { --bg-h: var(--hue-danger); }
-.bg-h-info    { --bg-h: var(--hue-info); }
-.bg-h-neutral { --bg-h: var(--hue-neutral); }
-
-/* Numeric luminance (bg) */
-.bg-l-10 { --bg-l: var(--l-10); } .bg-l-20 { --bg-l: var(--l-20); }
-.bg-l-30 { --bg-l: var(--l-30); } .bg-l-40 { --bg-l: var(--l-40); }
-.bg-l-50 { --bg-l: var(--l-50); } .bg-l-60 { --bg-l: var(--l-60); }
-.bg-l-70 { --bg-l: var(--l-70); } .bg-l-80 { --bg-l: var(--l-80); }
-.bg-l-90 { --bg-l: var(--l-90); } .bg-l-95 { --bg-l: var(--l-95); }
-
-/* Numeric chroma (bg) */
-.bg-c-10 { --bg-c: var(--c-10); } .bg-c-20 { --bg-c: var(--c-20); }
-.bg-c-30 { --bg-c: var(--c-30); } .bg-c-40 { --bg-c: var(--c-40); }
-.bg-c-50 { --bg-c: var(--c-50); } .bg-c-60 { --bg-c: var(--c-60); }
-.bg-c-70 { --bg-c: var(--c-70); } .bg-c-80 { --bg-c: var(--c-80); }
-.bg-c-90 { --bg-c: var(--c-90); } .bg-c-95 { --bg-c: var(--c-95); }
-
-/* ── Text Utilities ──────────────────────────────────────────────────── */
-.text-l-lo  { --tx-l: var(--l-lo); }
-.text-l-mlo { --tx-l: var(--l-mlo); }
-.text-l-mid { --tx-l: var(--l-mid); }
-.text-l-mhi { --tx-l: var(--l-mhi); }
-.text-l-hi  { --tx-l: var(--l-hi); }
-
-.text-c-lo  { --tx-c: var(--c-lo); }
-.text-c-mlo { --tx-c: var(--c-mlo); }
-.text-c-mid { --tx-c: var(--c-mid); }
-.text-c-mhi { --tx-c: var(--c-mhi); }
-.text-c-hi  { --tx-c: var(--c-hi); }
-
-.text-h-primary { --tx-h: var(--hue-primary); }
-.text-h-accent  { --tx-h: var(--hue-accent); }
-.text-h-success { --tx-h: var(--hue-success); }
-.text-h-warning { --tx-h: var(--hue-warning); }
-.text-h-danger  { --tx-h: var(--hue-danger); }
-.text-h-info    { --tx-h: var(--hue-info); }
-.text-h-neutral { --tx-h: var(--hue-neutral); }
-
-/* ── Border Utilities ────────────────────────────────────────────────── */
-.border-l-lo  { --bd-l: var(--l-lo); }
-.border-l-mlo { --bd-l: var(--l-mlo); }
-.border-l-mid { --bd-l: var(--l-mid); }
-.border-l-mhi { --bd-l: var(--l-mhi); }
-.border-l-hi  { --bd-l: var(--l-hi); }
-
-.border-c-lo  { --bd-c: var(--c-lo); }
-.border-c-mlo { --bd-c: var(--c-mlo); }
-.border-c-mid { --bd-c: var(--c-mid); }
-.border-c-mhi { --bd-c: var(--c-mhi); }
-.border-c-hi  { --bd-c: var(--c-hi); }
-
-.border-h-primary { --bd-h: var(--hue-primary); }
-.border-h-accent  { --bd-h: var(--hue-accent); }
-.border-h-success { --bd-h: var(--hue-success); }
-.border-h-warning { --bd-h: var(--hue-warning); }
-.border-h-danger  { --bd-h: var(--hue-danger); }
-.border-h-info    { --bd-h: var(--hue-info); }
-.border-h-neutral { --bd-h: var(--hue-neutral); }
-
-/* ========================================================================
-   SHORTHAND CLASSES (the compact syntax you described)
-
-   Pattern: bg-{L}-{C}-{H}  where L and C are named stops
-   e.g.  bg-hi-mid-primary  →  high luminance, mid chroma, primary hue
-         bg-lo-lo-accent    →  low luminance, low chroma, accent hue
-
-   This is the "nice" API. The decomposed version above gives fine control.
-   ======================================================================== */
-
-/* Primary */
-.bg-lo-lo-primary   { background-color: oklch(var(--l-lo) var(--c-lo) var(--hue-primary)); }
-.bg-lo-mlo-primary  { background-color: oklch(var(--l-lo) var(--c-mlo) var(--hue-primary)); }
-.bg-lo-mid-primary  { background-color: oklch(var(--l-lo) var(--c-mid) var(--hue-primary)); }
-.bg-lo-mhi-primary  { background-color: oklch(var(--l-lo) var(--c-mhi) var(--hue-primary)); }
-.bg-lo-hi-primary   { background-color: oklch(var(--l-lo) var(--c-hi) var(--hue-primary)); }
-
-.bg-mlo-lo-primary  { background-color: oklch(var(--l-mlo) var(--c-lo) var(--hue-primary)); }
-.bg-mlo-mlo-primary { background-color: oklch(var(--l-mlo) var(--c-mlo) var(--hue-primary)); }
-.bg-mlo-mid-primary { background-color: oklch(var(--l-mlo) var(--c-mid) var(--hue-primary)); }
-.bg-mlo-mhi-primary { background-color: oklch(var(--l-mlo) var(--c-mhi) var(--hue-primary)); }
-.bg-mlo-hi-primary  { background-color: oklch(var(--l-mlo) var(--c-hi) var(--hue-primary)); }
-
-.bg-mid-lo-primary  { background-color: oklch(var(--l-mid) var(--c-lo) var(--hue-primary)); }
-.bg-mid-mlo-primary { background-color: oklch(var(--l-mid) var(--c-mlo) var(--hue-primary)); }
-.bg-mid-mid-primary { background-color: oklch(var(--l-mid) var(--c-mid) var(--hue-primary)); }
-.bg-mid-mhi-primary { background-color: oklch(var(--l-mid) var(--c-mhi) var(--hue-primary)); }
-.bg-mid-hi-primary  { background-color: oklch(var(--l-mid) var(--c-hi) var(--hue-primary)); }
-
-.bg-mhi-lo-primary  { background-color: oklch(var(--l-mhi) var(--c-lo) var(--hue-primary)); }
-.bg-mhi-mlo-primary { background-color: oklch(var(--l-mhi) var(--c-mlo) var(--hue-primary)); }
-.bg-mhi-mid-primary { background-color: oklch(var(--l-mhi) var(--c-mid) var(--hue-primary)); }
-.bg-mhi-mhi-primary { background-color: oklch(var(--l-mhi) var(--c-mhi) var(--hue-primary)); }
-.bg-mhi-hi-primary  { background-color: oklch(var(--l-mhi) var(--c-hi) var(--hue-primary)); }
-
-.bg-hi-lo-primary   { background-color: oklch(var(--l-hi) var(--c-lo) var(--hue-primary)); }
-.bg-hi-mlo-primary  { background-color: oklch(var(--l-hi) var(--c-mlo) var(--hue-primary)); }
-.bg-hi-mid-primary  { background-color: oklch(var(--l-hi) var(--c-mid) var(--hue-primary)); }
-.bg-hi-mhi-primary  { background-color: oklch(var(--l-hi) var(--c-mhi) var(--hue-primary)); }
-.bg-hi-hi-primary   { background-color: oklch(var(--l-hi) var(--c-hi) var(--hue-primary)); }
-
-/* Accent */
-.bg-lo-lo-accent   { background-color: oklch(var(--l-lo) var(--c-lo) var(--hue-accent)); }
-.bg-lo-mlo-accent  { background-color: oklch(var(--l-lo) var(--c-mlo) var(--hue-accent)); }
-.bg-lo-mid-accent  { background-color: oklch(var(--l-lo) var(--c-mid) var(--hue-accent)); }
-.bg-lo-mhi-accent  { background-color: oklch(var(--l-lo) var(--c-mhi) var(--hue-accent)); }
-.bg-lo-hi-accent   { background-color: oklch(var(--l-lo) var(--c-hi) var(--hue-accent)); }
-
-.bg-mlo-lo-accent  { background-color: oklch(var(--l-mlo) var(--c-lo) var(--hue-accent)); }
-.bg-mlo-mlo-accent { background-color: oklch(var(--l-mlo) var(--c-mlo) var(--hue-accent)); }
-.bg-mlo-mid-accent { background-color: oklch(var(--l-mlo) var(--c-mid) var(--hue-accent)); }
-.bg-mlo-mhi-accent { background-color: oklch(var(--l-mlo) var(--c-mhi) var(--hue-accent)); }
-.bg-mlo-hi-accent  { background-color: oklch(var(--l-mlo) var(--c-hi) var(--hue-accent)); }
-
-.bg-mid-lo-accent  { background-color: oklch(var(--l-mid) var(--c-lo) var(--hue-accent)); }
-.bg-mid-mlo-accent { background-color: oklch(var(--l-mid) var(--c-mlo) var(--hue-accent)); }
-.bg-mid-mid-accent { background-color: oklch(var(--l-mid) var(--c-mid) var(--hue-accent)); }
-.bg-mid-mhi-accent { background-color: oklch(var(--l-mid) var(--c-mhi) var(--hue-accent)); }
-.bg-mid-hi-accent  { background-color: oklch(var(--l-mid) var(--c-hi) var(--hue-accent)); }
-
-.bg-mhi-lo-accent  { background-color: oklch(var(--l-mhi) var(--c-lo) var(--hue-accent)); }
-.bg-mhi-mlo-accent { background-color: oklch(var(--l-mhi) var(--c-mlo) var(--hue-accent)); }
-.bg-mhi-mid-accent { background-color: oklch(var(--l-mhi) var(--c-mid) var(--hue-accent)); }
-.bg-mhi-mhi-accent { background-color: oklch(var(--l-mhi) var(--c-mhi) var(--hue-accent)); }
-.bg-mhi-hi-accent  { background-color: oklch(var(--l-mhi) var(--c-hi) var(--hue-accent)); }
-
-.bg-hi-lo-accent   { background-color: oklch(var(--l-hi) var(--c-lo) var(--hue-accent)); }
-.bg-hi-mlo-accent  { background-color: oklch(var(--l-hi) var(--c-mlo) var(--hue-accent)); }
-.bg-hi-mid-accent  { background-color: oklch(var(--l-hi) var(--c-mid) var(--hue-accent)); }
-.bg-hi-mhi-accent  { background-color: oklch(var(--l-hi) var(--c-mhi) var(--hue-accent)); }
-.bg-hi-hi-accent   { background-color: oklch(var(--l-hi) var(--c-hi) var(--hue-accent)); }
-
-/* Success */
-.bg-lo-lo-success   { background-color: oklch(var(--l-lo) var(--c-lo) var(--hue-success)); }
-.bg-lo-mid-success  { background-color: oklch(var(--l-lo) var(--c-mid) var(--hue-success)); }
-.bg-lo-hi-success   { background-color: oklch(var(--l-lo) var(--c-hi) var(--hue-success)); }
-.bg-mid-lo-success  { background-color: oklch(var(--l-mid) var(--c-lo) var(--hue-success)); }
-.bg-mid-mid-success { background-color: oklch(var(--l-mid) var(--c-mid) var(--hue-success)); }
-.bg-mid-hi-success  { background-color: oklch(var(--l-mid) var(--c-hi) var(--hue-success)); }
-.bg-hi-lo-success   { background-color: oklch(var(--l-hi) var(--c-lo) var(--hue-success)); }
-.bg-hi-mid-success  { background-color: oklch(var(--l-hi) var(--c-mid) var(--hue-success)); }
-.bg-hi-hi-success   { background-color: oklch(var(--l-hi) var(--c-hi) var(--hue-success)); }
-
-/* Danger */
-.bg-lo-lo-danger   { background-color: oklch(var(--l-lo) var(--c-lo) var(--hue-danger)); }
-.bg-lo-mid-danger  { background-color: oklch(var(--l-lo) var(--c-mid) var(--hue-danger)); }
-.bg-lo-hi-danger   { background-color: oklch(var(--l-lo) var(--c-hi) var(--hue-danger)); }
-.bg-mid-lo-danger  { background-color: oklch(var(--l-mid) var(--c-lo) var(--hue-danger)); }
-.bg-mid-mid-danger { background-color: oklch(var(--l-mid) var(--c-mid) var(--hue-danger)); }
-.bg-mid-hi-danger  { background-color: oklch(var(--l-mid) var(--c-hi) var(--hue-danger)); }
-.bg-hi-lo-danger   { background-color: oklch(var(--l-hi) var(--c-lo) var(--hue-danger)); }
-.bg-hi-mid-danger  { background-color: oklch(var(--l-hi) var(--c-mid) var(--hue-danger)); }
-.bg-hi-hi-danger   { background-color: oklch(var(--l-hi) var(--c-hi) var(--hue-danger)); }
-
-/* Warning */
-.bg-lo-lo-warning   { background-color: oklch(var(--l-lo) var(--c-lo) var(--hue-warning)); }
-.bg-lo-mid-warning  { background-color: oklch(var(--l-lo) var(--c-mid) var(--hue-warning)); }
-.bg-lo-hi-warning   { background-color: oklch(var(--l-lo) var(--c-hi) var(--hue-warning)); }
-.bg-mid-lo-warning  { background-color: oklch(var(--l-mid) var(--c-lo) var(--hue-warning)); }
-.bg-mid-mid-warning { background-color: oklch(var(--l-mid) var(--c-mid) var(--hue-warning)); }
-.bg-mid-hi-warning  { background-color: oklch(var(--l-mid) var(--c-hi) var(--hue-warning)); }
-.bg-hi-lo-warning   { background-color: oklch(var(--l-hi) var(--c-lo) var(--hue-warning)); }
-.bg-hi-mid-warning  { background-color: oklch(var(--l-hi) var(--c-mid) var(--hue-warning)); }
-.bg-hi-hi-warning   { background-color: oklch(var(--l-hi) var(--c-hi) var(--hue-warning)); }
-
-/* Info */
-.bg-lo-lo-info   { background-color: oklch(var(--l-lo) var(--c-lo) var(--hue-info)); }
-.bg-lo-mid-info  { background-color: oklch(var(--l-lo) var(--c-mid) var(--hue-info)); }
-.bg-lo-hi-info   { background-color: oklch(var(--l-lo) var(--c-hi) var(--hue-info)); }
-.bg-mid-lo-info  { background-color: oklch(var(--l-mid) var(--c-lo) var(--hue-info)); }
-.bg-mid-mid-info { background-color: oklch(var(--l-mid) var(--c-mid) var(--hue-info)); }
-.bg-mid-hi-info  { background-color: oklch(var(--l-mid) var(--c-hi) var(--hue-info)); }
-.bg-hi-lo-info   { background-color: oklch(var(--l-hi) var(--c-lo) var(--hue-info)); }
-.bg-hi-mid-info  { background-color: oklch(var(--l-hi) var(--c-mid) var(--hue-info)); }
-.bg-hi-hi-info   { background-color: oklch(var(--l-hi) var(--c-hi) var(--hue-info)); }
-
-
 /* ========================================================================
    DEMO PAGE STYLES (not part of the system)
    ======================================================================== */
@@ -864,101 +595,57 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 
 // ── Code Content ─────────────────────────────────────────────────────
-document.getElementById('css-code').innerHTML = `<span class="cm">/* ── oklch-composer.css ──────────────────────────────────────
-   Drop this into your Tailwind v4 project's main CSS file.
-   The @theme block makes these available as Tailwind utilities. */</span>
+document.getElementById('css-code').innerHTML = `<span class="cm">/* ── your-project.css ────────────────────────────────────────
+   Import tailwind-oklch into your Tailwind v4 project's main CSS. */</span>
+
+<span class="kw">@import</span> <span class="str">"tailwindcss"</span>;
+<span class="kw">@import</span> <span class="str">"tailwind-oklch"</span>;
+<span class="kw">@plugin</span> <span class="str">"tailwind-oklch/plugin"</span>;
+
+<span class="cm">/* That's it! You now have:
+   - CSS theme variables (--hue-primary, --l-lo, --c-mid, etc.)
+   - Decomposed utilities (bg-l-*, bg-c-*, bg-h-*, text-*, border-*)
+   - Shorthand utilities (bg-{L}-{C}-{H}, text-{L}-{C}-{H}, border-{L}-{C}-{H})
+
+   To customize hues, override in your own @theme block: */</span>
 
 <span class="kw">@theme</span> {
-  <span class="cm">/* Hue definitions — change these to re-theme everything */</span>
-  --hue-primary: <span class="num">260</span>;
-  --hue-accent:  <span class="num">30</span>;
-  --hue-success: <span class="num">145</span>;
-  --hue-warning: <span class="num">55</span>;
-  --hue-danger:  <span class="num">15</span>;
-  --hue-info:    <span class="num">220</span>;
-  --hue-neutral: <span class="num">260</span>;
-
-  <span class="cm">/* Luminance stops (OKLCH lightness: 0–1) */</span>
-  --l-lo:  <span class="num">0.25</span>;
-  --l-mlo: <span class="num">0.40</span>;
-  --l-mid: <span class="num">0.55</span>;
-  --l-mhi: <span class="num">0.72</span>;
-  --l-hi:  <span class="num">0.90</span>;
-
-  <span class="cm">/* Chroma stops (OKLCH chroma: ~0–0.4, practical range 0–0.25) */</span>
-  --c-lo:  <span class="num">0.02</span>;
-  --c-mlo: <span class="num">0.06</span>;
-  --c-mid: <span class="num">0.12</span>;
-  --c-mhi: <span class="num">0.18</span>;
-  --c-hi:  <span class="num">0.25</span>;
-
-  <span class="cm">/* Numeric scale for arbitrary values */</span>
-  --l-10: <span class="num">0.10</span>; --l-20: <span class="num">0.20</span>; --l-30: <span class="num">0.30</span>; <span class="cm">/* ... etc */</span>
-  --c-10: <span class="num">0.03</span>; --c-20: <span class="num">0.06</span>; --c-30: <span class="num">0.09</span>; <span class="cm">/* ... etc */</span>
+  --hue-primary: <span class="num">180</span>;  <span class="cm">/* teal instead of purple */</span>
+  --hue-accent:  <span class="num">320</span>;  <span class="cm">/* pink instead of orange */</span>
 }`;
 
-document.getElementById('plugin-code').innerHTML = `<span class="cm">// ── oklch-composer-plugin.ts ────────────────────────────────
-// Tailwind v4 plugin that generates all the utility classes.
-// Install: drop in your tailwind config.</span>
+document.getElementById('plugin-code').innerHTML = `<span class="cm">// ── plugin.js ──────────────────────────────────────────────
+// Shorthand generator: creates .{prop}-{L}-{C}-{H} utilities
+// for all named luminance × chroma × hue combinations.
+//
+// Load via: @plugin "tailwind-oklch/plugin";</span>
 
-<span class="kw">import</span> plugin <span class="kw">from</span> <span class="str">'tailwindcss/plugin'</span>;
+module.<span class="fn">exports</span> <span class="op">=</span> <span class="kw">function</span> ({ addUtilities }) {
+  <span class="kw">const</span> luminances  <span class="op">=</span> [<span class="str">'lo'</span>, <span class="str">'mlo'</span>, <span class="str">'mid'</span>, <span class="str">'mhi'</span>, <span class="str">'hi'</span>];
+  <span class="kw">const</span> chromas     <span class="op">=</span> [<span class="str">'lo'</span>, <span class="str">'mlo'</span>, <span class="str">'mid'</span>, <span class="str">'mhi'</span>, <span class="str">'hi'</span>];
+  <span class="kw">const</span> hues        <span class="op">=</span> [<span class="str">'primary'</span>, <span class="str">'accent'</span>, <span class="str">'success'</span>, <span class="str">'warning'</span>, <span class="str">'danger'</span>, <span class="str">'info'</span>, <span class="str">'neutral'</span>];
+<span class="kw">const</span> properties  <span class="op">=</span> [
+    { prefix: <span class="str">'bg'</span>,     css: <span class="str">'background-color'</span> },
+    { prefix: <span class="str">'text'</span>,   css: <span class="str">'color'</span> },
+    { prefix: <span class="str">'border'</span>, css: <span class="str">'border-color'</span> },
+  ];
 
-<span class="kw">const</span> hues <span class="op">=</span> [<span class="str">'primary'</span>, <span class="str">'accent'</span>, <span class="str">'success'</span>, <span class="str">'warning'</span>, <span class="str">'danger'</span>, <span class="str">'info'</span>, <span class="str">'neutral'</span>];
-<span class="kw">const</span> namedStops <span class="op">=</span> [<span class="str">'lo'</span>, <span class="str">'mlo'</span>, <span class="str">'mid'</span>, <span class="str">'mhi'</span>, <span class="str">'hi'</span>];
-<span class="kw">const</span> numericStops <span class="op">=</span> [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span>, <span class="num">60</span>, <span class="num">70</span>, <span class="num">80</span>, <span class="num">90</span>, <span class="num">95</span>];
-<span class="kw">const</span> properties <span class="op">=</span> [
-  { prefix: <span class="str">'bg'</span>,     css: <span class="str">'background-color'</span> },
-  { prefix: <span class="str">'text'</span>,   css: <span class="str">'color'</span> },
-  { prefix: <span class="str">'border'</span>, css: <span class="str">'border-color'</span> },
-];
+  <span class="kw">const</span> utilities <span class="op">=</span> {};
 
-<span class="kw">export const</span> <span class="fn">oklchComposer</span> <span class="op">=</span> <span class="fn">plugin</span>(({ addUtilities }) <span class="op">=></span> {
-  <span class="kw">const</span> utilities: Record&lt;string, any&gt; <span class="op">=</span> {};
-
-  <span class="cm">// ── Shorthand classes: bg-{L}-{C}-{H} ──</span>
   <span class="kw">for</span> (<span class="kw">const</span> prop <span class="kw">of</span> properties) {
-    <span class="kw">for</span> (<span class="kw">const</span> l <span class="kw">of</span> namedStops) {
-      <span class="kw">for</span> (<span class="kw">const</span> c <span class="kw">of</span> namedStops) {
+    <span class="kw">for</span> (<span class="kw">const</span> l <span class="kw">of</span> luminances) {
+      <span class="kw">for</span> (<span class="kw">const</span> c <span class="kw">of</span> chromas) {
         <span class="kw">for</span> (<span class="kw">const</span> h <span class="kw">of</span> hues) {
-          utilities[<span class="str">\`.\${prop.prefix}-\${l}-\${c}-\${h}\`</span>] <span class="op">=</span> {
-            [prop.css]: <span class="str">\`oklch(var(--l-\${l}) var(--c-\${c}) var(--hue-\${h}))\`</span>,
+          utilities[\`.\${prop.prefix}-\${l}-\${c}-\${h}\`] <span class="op">=</span> {
+            [prop.css]: \`oklch(var(--l-\${l}) var(--c-\${c}) var(--hue-\${h}))\`,
           };
         }
       }
     }
   }
 
-  <span class="cm">// ── Decomposed setters for fine control ──</span>
-  <span class="kw">const</span> axes <span class="op">=</span> [
-    { axis: <span class="str">'l'</span>, stops: namedStops, varPrefix: <span class="str">'l'</span> },
-    { axis: <span class="str">'c'</span>, stops: namedStops, varPrefix: <span class="str">'c'</span> },
-    { axis: <span class="str">'h'</span>, stops: hues,       varPrefix: <span class="str">'hue'</span> },
-  ];
-
-  <span class="kw">for</span> (<span class="kw">const</span> prop <span class="kw">of</span> properties) {
-    <span class="kw">for</span> (<span class="kw">const</span> { axis, stops, varPrefix } <span class="kw">of</span> axes) {
-      <span class="kw">for</span> (<span class="kw">const</span> stop <span class="kw">of</span> stops) {
-        <span class="kw">const</span> varName <span class="op">=</span> axis <span class="op">===</span> <span class="str">'h'</span>
-          ? <span class="str">\`--\${prop.prefix.slice(0,2)}-h\`</span>
-          : <span class="str">\`--\${prop.prefix.slice(0,2)}-\${axis}\`</span>;
-        utilities[<span class="str">\`.\${prop.prefix}-\${axis}-\${stop}\`</span>] <span class="op">=</span> {
-          [varName]: <span class="str">\`var(--\${varPrefix}-\${stop})\`</span>,
-        };
-      }
-    }
-  }
-
-  <span class="cm">// ── Numeric stops ──</span>
-  <span class="kw">for</span> (<span class="kw">const</span> prop <span class="kw">of</span> properties) {
-    <span class="kw">for</span> (<span class="kw">const</span> n <span class="kw">of</span> numericStops) {
-      <span class="kw">const</span> p <span class="op">=</span> prop.prefix.slice(<span class="num">0</span>,<span class="num">2</span>);
-      utilities[<span class="str">\`.\${prop.prefix}-l-\${n}\`</span>] <span class="op">=</span> { [<span class="str">\`--\${p}-l\`</span>]: <span class="str">\`var(--l-\${n})\`</span> };
-      utilities[<span class="str">\`.\${prop.prefix}-c-\${n}\`</span>] <span class="op">=</span> { [<span class="str">\`--\${p}-c\`</span>]: <span class="str">\`var(--c-\${n})\`</span> };
-    }
-  }
-
   <span class="fn">addUtilities</span>(utilities);
-});`;
+};`;
 
 document.getElementById('usage-code').innerHTML = `<span class="cm">&lt;!-- ── SHORTHAND SYNTAX ──────────────────────────────────────
      Pattern: {property}-{luminance}-{chroma}-{hue}

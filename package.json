@@ -8,9 +8,22 @@
     ".": "./index.css",
     "./plugin": "./plugin.js"
   },
+  "scripts": {
+    "build": "npx @tailwindcss/cli -i demo.css -o dist/demo.css",
+    "dev": "npx @tailwindcss/cli -i demo.css -o dist/demo.css --watch"
+  },
   "peerDependencies": {
     "tailwindcss": ">=4.0.0"
   },
-  "keywords": ["tailwindcss", "oklch", "color", "plugin"],
-  "license": "MIT"
+  "keywords": [
+    "tailwindcss",
+    "oklch",
+    "color",
+    "plugin"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.18",
+    "tailwindcss": "^4.1.18"
+  }
 }

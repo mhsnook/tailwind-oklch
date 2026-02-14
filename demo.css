@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@import "./index.css";
+@plugin "./plugin.js";
+
+/* Force all theme variables into the build by referencing utilities that use them.
+   The demo reads these CSS custom properties via JS inline styles. */
+@source inline("bg-h-warning bg-h-info bg-h-neutral bg-l-10 bg-l-20 bg-l-30 bg-l-40 bg-l-50 bg-l-60 bg-l-70 bg-l-80 bg-l-90 bg-l-95 bg-c-10 bg-c-20 bg-c-30 bg-c-40 bg-c-50 bg-c-60 bg-c-70 bg-c-80 bg-c-90 bg-c-95");
