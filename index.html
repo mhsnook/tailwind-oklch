@@ -8,17 +8,8 @@
 <style>
 /* ── Minimal demo styles: only what Tailwind classes can't cover ── */
 
-/* FLAG: gradient needs from-/to- oklch utilities */
-h1 span {
-  background: linear-gradient(135deg,
-    oklch(var(--l-mhi) var(--c-mhi) var(--hue-primary)),
-    oklch(var(--l-80) var(--c-mhi) var(--hue-accent)));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* FLAG: needs accent-color utility */
-input[type="range"] { accent-color: oklch(0.65 0.2 260); }
+/* -webkit-text-fill-color has no Tailwind utility */
+h1 span { -webkit-text-fill-color: transparent; }
 
 /* Matrix — generated in tight JS loops, CSS classes more efficient */
 .matrix-block h3 { color: oklch(var(--l-60) var(--c-mlo) var(--hue-primary)); }
@@ -30,7 +21,7 @@ input[type="range"] { accent-color: oklch(0.65 0.2 260); }
 }
 .matrix-label.col-label { min-width: 3rem; }
 
-/* FLAG: needs box-shadow oklch utility */
+/* Box-shadow with oklch — shadow uses black, not part of hue system */
 .matrix-cell:hover {
   transform: scale(1.15); z-index: 10;
   box-shadow: 0 4px 20px oklch(0 0 0 / 0.4);
@@ -66,7 +57,7 @@ input[type="range"] { accent-color: oklch(0.65 0.2 260); }
 .plugin-code .tag { color: oklch(var(--l-70) var(--c-50) var(--hue-accent)); }
 .plugin-code .attr { color: oklch(var(--l-mhi) var(--c-mid) var(--hue-success)); }
 
-/* FLAG: active tab border-bottom-color needs directional border-color utility */
+/* Tab active state — toggled via JS classList */
 .tab-btn.active {
   color: oklch(var(--l-mhi) var(--c-mhi) var(--hue-primary));
   border-bottom-color: oklch(var(--l-mid) var(--c-hi) var(--hue-primary));
@@ -79,7 +70,7 @@ input[type="range"] { accent-color: oklch(0.65 0.2 260); }
 <body class="bg-composed bg-l-10 bg-c-lo bg-h-primary text-hi-lo-primary font-sans min-h-screen overflow-x-hidden">
 
 <div class="max-w-[1200px] mx-auto px-8 py-12">
-  <h1 class="text-[2.5rem] font-bold tracking-[-0.03em] mb-2"><span>OKLCH Composer</span></h1>
+  <h1 class="text-[2.5rem] font-bold tracking-[-0.03em] mb-2"><span class="bg-gradient-to-br from-mhi-mhi-primary to-mhi-mhi-accent bg-clip-text">OKLCH Composer</span></h1>
   <p class="text-[1.1rem] mb-12 max-w-[680px] leading-[1.6] text-mid-mlo-primary">
     A color utility system for Tailwind v4 that exposes luminance, chroma, and hue
     as independent, composable axes in your class names. No more opacity hacks.
@@ -178,7 +169,7 @@ HUES.forEach(hue => {
   group.innerHTML = `
     <label class="text-xs uppercase tracking-[0.08em] text-mid-lo-primary font-semibold">${hue.name}</label>
     <input type="range" min="0" max="360" value="${hue.default}"
-           class="w-[180px]"
+           class="w-[180px] accent-mid-hi-primary"
            data-hue="${hue.name}" oninput="updateHue(this)">
     <div class="font-mono text-[0.8rem] text-mhi-mid-primary" id="val-${hue.name}">${hue.default}°</div>
   `;
