@@ -6,386 +6,136 @@
 <title>OKLCH Composer — Tailwind Color System</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ========================================================================
-   DEMO PAGE STYLES (not part of the system)
-   ======================================================================== */
+/* ── Minimal demo styles: only what Tailwind classes can't cover ── */
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-  font-family: 'DM Sans', sans-serif;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-code, .mono {
-  font-family: 'JetBrains Mono', monospace;
-}
-
-.page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 3rem 2rem;
-}
-
-h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  margin-bottom: 0.5rem;
-}
+/* FLAG: gradient needs from-/to- oklch utilities */
 h1 span {
-  background: linear-gradient(135deg, oklch(0.75 0.2 260), oklch(0.80 0.22 30));
+  background: linear-gradient(135deg,
+    oklch(var(--l-mhi) var(--c-mhi) var(--hue-primary)),
+    oklch(var(--l-80) var(--c-mhi) var(--hue-accent)));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-.subtitle {
-  font-size: 1.1rem;
-  margin-bottom: 3rem;
-  max-width: 680px;
-  line-height: 1.6;
-}
 
-h2 {
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-  letter-spacing: -0.01em;
-}
+/* FLAG: needs accent-color utility */
+input[type="range"] { accent-color: oklch(0.65 0.2 260); }
 
-/* ── Theme Controls ─── */
-.controls {
-  display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  margin-bottom: 3rem;
-  padding: 1.5rem;
-  background: oklch(var(--l-20) var(--c-lo) var(--hue-primary));
-  border-radius: 12px;
-  border: 1px solid oklch(var(--l-lo) var(--c-lo) var(--hue-primary));
-}
-.control-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-.control-group label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: oklch(var(--l-mid) var(--c-lo) var(--hue-primary));
-  font-weight: 600;
-}
-.control-group input[type="range"] {
-  width: 180px;
-  accent-color: oklch(0.65 0.2 260);
-}
-.control-group .value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8rem;
-  color: oklch(var(--l-mhi) var(--c-mid) var(--hue-primary));
-}
-
-/* ── Grid Explorer ─── */
-.grid-section {
-  margin-bottom: 3rem;
-}
-
-.color-matrix {
-  display: grid;
-  gap: 2px;
-}
-
-.matrix-wrapper {
-  display: flex;
-  gap: 2.5rem;
-  flex-wrap: wrap;
-  margin-bottom: 3rem;
-}
-
-.matrix-block {
-  flex: 1;
-  min-width: 280px;
-}
-
-.matrix-block h3 {
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-  color: oklch(var(--l-60) var(--c-mlo) var(--hue-primary));
-  font-family: 'JetBrains Mono', monospace;
-  letter-spacing: -0.01em;
-}
-
-.matrix-grid {
-  display: grid;
-  grid-template-columns: auto repeat(5, 1fr);
-  grid-template-rows: auto repeat(5, 1fr);
-  gap: 2px;
-}
-
+/* Matrix — generated in tight JS loops, CSS classes more efficient */
+.matrix-block h3 { color: oklch(var(--l-60) var(--c-mlo) var(--hue-primary)); }
 .matrix-label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.65rem;
-  font-family: 'JetBrains Mono', monospace;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-family: var(--font-mono);
   color: oklch(var(--l-50) var(--c-lo) var(--hue-primary));
-  padding: 0.25rem;
-  min-height: 2rem;
+  padding: 0.25rem; min-height: 2rem;
 }
-.matrix-label.col-label {
-  min-width: 3rem;
-}
+.matrix-label.col-label { min-width: 3rem; }
 
-.matrix-cell {
-  aspect-ratio: 1;
-  border-radius: 6px;
-  min-width: 3rem;
-  min-height: 3rem;
-  cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
-  position: relative;
-}
+/* FLAG: needs box-shadow oklch utility */
 .matrix-cell:hover {
-  transform: scale(1.15);
-  z-index: 10;
+  transform: scale(1.15); z-index: 10;
   box-shadow: 0 4px 20px oklch(0 0 0 / 0.4);
 }
 
-/* ── Class Preview ─── */
+/* Preview toast — colors use numeric L stops; visibility toggled by JS */
 .class-preview {
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
   background: oklch(var(--l-10) var(--c-lo) var(--hue-primary));
   border: 1px solid oklch(var(--l-30) var(--c-mlo) var(--hue-primary));
-  border-radius: 10px;
-  padding: 1rem 1.5rem;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  backdrop-filter: blur(12px);
   box-shadow: 0 8px 32px oklch(0 0 0 / 0.5);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s;
-  z-index: 100;
+  opacity: 0; pointer-events: none;
 }
-.class-preview.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
+.class-preview.visible { opacity: 1; pointer-events: auto; }
 .class-preview .swatch {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
   border: 1px solid oklch(var(--l-40) var(--c-lo) var(--hue-primary));
 }
-.class-preview .class-name {
-  color: oklch(var(--l-hi) var(--c-mhi) var(--hue-primary));
-}
-.class-preview .oklch-val {
-  color: oklch(var(--l-mid) var(--c-lo) var(--hue-primary));
-  font-size: 0.75rem;
-}
 
-/* ── Usage Examples ─── */
-.examples {
-  margin-bottom: 3rem;
-}
-
-.example-card {
-  background: oklch(var(--l-20) var(--c-lo) var(--hue-primary));
-  border: 1px solid oklch(var(--l-lo) var(--c-lo) var(--hue-primary));
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.example-card .label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: oklch(var(--l-50) var(--c-lo) var(--hue-primary));
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-}
-
-.example-card pre {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8rem;
-  line-height: 1.7;
-  color: oklch(var(--l-80) var(--c-lo) var(--hue-primary));
-  white-space: pre-wrap;
-  word-break: break-all;
-}
-.example-card pre .cls {
-  color: oklch(0.80 0.18 260);
-}
-.example-card pre .cmt {
-  color: oklch(0.45 0.03 260);
-  font-style: italic;
-}
-.example-card pre .tag {
-  color: oklch(0.70 0.15 30);
-}
-.example-card pre .attr {
-  color: oklch(0.72 0.12 145);
-}
-
-/* ── Component Demo ─── */
-.component-demos {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 3rem;
-}
-
-.demo-component {
-  border-radius: 12px;
-  padding: 1.5rem;
-  border: 1px solid oklch(var(--l-lo) var(--c-lo) var(--hue-primary));
-}
-
-.demo-component h4 {
-  font-size: 0.85rem;
-  margin-bottom: 0.75rem;
-  font-weight: 600;
-}
-.demo-component p {
-  font-size: 0.85rem;
-  line-height: 1.5;
-  margin-bottom: 1rem;
-}
-.demo-component .demo-btn {
-  display: inline-block;
-  padding: 0.5rem 1.25rem;
-  border-radius: 8px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-/* ── Plugin Code ─── */
-.plugin-section {
-  margin-bottom: 3rem;
-}
+/* Code blocks — colors use numeric L stops */
 .plugin-code {
   background: oklch(var(--l-10) var(--c-lo) var(--hue-primary));
   border: 1px solid oklch(var(--l-lo) var(--c-lo) var(--hue-primary));
-  border-radius: 12px;
-  padding: 1.5rem;
-  overflow-x: auto;
 }
-.plugin-code pre {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.78rem;
-  line-height: 1.7;
-  color: oklch(var(--l-80) var(--c-lo) var(--hue-primary));
-}
-.plugin-code .kw { color: oklch(0.75 0.18 280); }
-.plugin-code .str { color: oklch(0.75 0.15 145); }
-.plugin-code .num { color: oklch(0.78 0.15 60); }
-.plugin-code .fn { color: oklch(0.78 0.14 220); }
-.plugin-code .cm { color: oklch(0.45 0.03 260); font-style: italic; }
-.plugin-code .op { color: oklch(0.65 0.06 260); }
+.plugin-code pre { color: oklch(var(--l-80) var(--c-lo) var(--hue-primary)); }
 
-/* ── Tabs ─── */
-.tab-bar {
-  display: flex;
-  gap: 0;
-  margin-bottom: 0;
-  border-bottom: 1px solid oklch(var(--l-lo) var(--c-lo) var(--hue-primary));
-}
-.tab-btn {
-  background: none;
-  border: none;
-  padding: 0.75rem 1.25rem;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8rem;
-  color: oklch(var(--l-50) var(--c-lo) var(--hue-primary));
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  transition: all 0.15s;
-}
-.tab-btn:hover { color: oklch(var(--l-mhi) var(--c-mlo) var(--hue-primary)); }
+/* Syntax highlighting — innerHTML spans, must stay in CSS */
+.plugin-code .kw  { color: oklch(var(--l-mhi) var(--c-mhi) var(--hue-primary)); }
+.plugin-code .str { color: oklch(var(--l-mhi) var(--c-50) var(--hue-success)); }
+.plugin-code .num { color: oklch(var(--l-80) var(--c-50) var(--hue-warning)); }
+.plugin-code .fn  { color: oklch(var(--l-80) var(--c-mid) var(--hue-info)); }
+.plugin-code .cm  { color: oklch(var(--l-mlo) var(--c-lo) var(--hue-primary)); font-style: italic; }
+.plugin-code .op  { color: oklch(var(--l-60) var(--c-mlo) var(--hue-primary)); }
+.plugin-code .cls { color: oklch(var(--l-80) var(--c-mhi) var(--hue-primary)); }
+.plugin-code .tag { color: oklch(var(--l-70) var(--c-50) var(--hue-accent)); }
+.plugin-code .attr { color: oklch(var(--l-mhi) var(--c-mid) var(--hue-success)); }
+
+/* FLAG: active tab border-bottom-color needs directional border-color utility */
 .tab-btn.active {
   color: oklch(var(--l-mhi) var(--c-mhi) var(--hue-primary));
   border-bottom-color: oklch(var(--l-mid) var(--c-hi) var(--hue-primary));
 }
-.tab-content { display: none; }
 .tab-content.active { display: block; }
 
 </style>
 <link rel="stylesheet" href="dist/demo.css">
 </head>
-<body class="bg-composed bg-l-10 bg-c-lo bg-h-primary text-hi-lo-primary">
+<body class="bg-composed bg-l-10 bg-c-lo bg-h-primary text-hi-lo-primary font-sans min-h-screen overflow-x-hidden">
 
-<div class="page">
-  <h1><span>OKLCH Composer</span></h1>
-  <p class="subtitle text-mid-mlo-primary">
+<div class="max-w-[1200px] mx-auto px-8 py-12">
+  <h1 class="text-[2.5rem] font-bold tracking-[-0.03em] mb-2"><span>OKLCH Composer</span></h1>
+  <p class="text-[1.1rem] mb-12 max-w-[680px] leading-[1.6] text-mid-mlo-primary">
     A color utility system for Tailwind v4 that exposes luminance, chroma, and hue
     as independent, composable axes in your class names. No more opacity hacks.
     Re-theme your entire app by changing one hue variable.
   </p>
 
   <!-- ── Theme Controls ────────────────────────────────────────────── -->
-  <h2 class="text-mhi-mlo-primary">Theme Hues</h2>
-  <div class="controls" id="controls"></div>
+  <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-mhi-mlo-primary">Theme Hues</h2>
+  <div class="flex gap-6 flex-wrap mb-12 p-6 bg-composed bg-l-20 bg-c-lo bg-h-primary rounded-xl border border-lo-lo-primary" id="controls"></div>
 
   <!-- ── Color Matrix ──────────────────────────────────────────────── -->
-  <h2 class="text-mhi-mlo-primary">5×5 Luminance × Chroma Grid</h2>
-  <p class="text-mid-lo-primary" style="font-size: 0.9rem; margin-bottom: 1.5rem; margin-top: -0.75rem;">
+  <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-mhi-mlo-primary">5×5 Luminance × Chroma Grid</h2>
+  <p class="text-mid-lo-primary text-[0.9rem] mb-6 -mt-3">
     Each matrix shows all combinations of luminance (rows) and chroma (columns) for a given hue.
     Hover to see the class name.
   </p>
 
-  <div class="matrix-wrapper" id="matrices"></div>
+  <div class="flex gap-10 flex-wrap mb-12" id="matrices"></div>
 
   <!-- ── Class Preview Toast ───────────────────────────────────────── -->
-  <div class="class-preview" id="preview">
-    <div class="swatch" id="preview-swatch"></div>
+  <div class="class-preview fixed bottom-8 left-1/2 -translate-x-1/2 rounded-[10px] px-6 py-4 font-mono text-[0.85rem] flex items-center gap-4 backdrop-blur-md transition-opacity duration-200 z-[100]" id="preview">
+    <div class="swatch w-8 h-8 rounded-md" id="preview-swatch"></div>
     <div>
-      <div class="class-name" id="preview-class"></div>
-      <div class="oklch-val" id="preview-oklch"></div>
+      <div class="text-hi-mhi-primary" id="preview-class"></div>
+      <div class="text-mid-lo-primary text-xs" id="preview-oklch"></div>
     </div>
   </div>
 
   <!-- ── Live Component Demos ──────────────────────────────────────── -->
-  <h2 class="text-mhi-mlo-primary">Live Component Examples</h2>
-  <div class="component-demos" id="component-demos"></div>
+  <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-mhi-mlo-primary">Live Component Examples</h2>
+  <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6 mb-12" id="component-demos"></div>
 
   <!-- ── Code ──────────────────────────────────────────────────────── -->
-  <h2 class="text-mhi-mlo-primary">Implementation</h2>
+  <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-mhi-mlo-primary">Implementation</h2>
 
-  <div class="tab-bar">
-    <button class="tab-btn active" data-tab="css">CSS Variables</button>
-    <button class="tab-btn" data-tab="plugin">Tailwind v4 Plugin</button>
-    <button class="tab-btn" data-tab="usage">Usage Examples</button>
-    <button class="tab-btn" data-tab="shorthand">Shorthand vs Decomposed</button>
+  <div class="flex border-b border-lo-lo-primary">
+    <button class="tab-btn bg-transparent border-0 px-5 py-3 font-mono text-[0.8rem] text-composed text-l-50 text-c-lo text-h-primary cursor-pointer border-b-2 border-b-transparent -mb-px transition-all duration-150 hover:text-mhi-mlo-primary active" data-tab="css">CSS Variables</button>
+    <button class="tab-btn bg-transparent border-0 px-5 py-3 font-mono text-[0.8rem] text-composed text-l-50 text-c-lo text-h-primary cursor-pointer border-b-2 border-b-transparent -mb-px transition-all duration-150 hover:text-mhi-mlo-primary" data-tab="plugin">Tailwind v4 Plugin</button>
+    <button class="tab-btn bg-transparent border-0 px-5 py-3 font-mono text-[0.8rem] text-composed text-l-50 text-c-lo text-h-primary cursor-pointer border-b-2 border-b-transparent -mb-px transition-all duration-150 hover:text-mhi-mlo-primary" data-tab="usage">Usage Examples</button>
+    <button class="tab-btn bg-transparent border-0 px-5 py-3 font-mono text-[0.8rem] text-composed text-l-50 text-c-lo text-h-primary cursor-pointer border-b-2 border-b-transparent -mb-px transition-all duration-150 hover:text-mhi-mlo-primary" data-tab="shorthand">Shorthand vs Decomposed</button>
   </div>
 
-  <div class="tab-content active" id="tab-css">
-    <div class="plugin-code"><pre id="css-code"></pre></div>
+  <div class="hidden tab-content active" id="tab-css">
+    <div class="plugin-code rounded-xl p-6 overflow-x-auto"><pre class="font-mono text-[0.78rem] leading-[1.7]" id="css-code"></pre></div>
   </div>
 
-  <div class="tab-content" id="tab-plugin">
-    <div class="plugin-code"><pre id="plugin-code"></pre></div>
+  <div class="hidden tab-content" id="tab-plugin">
+    <div class="plugin-code rounded-xl p-6 overflow-x-auto"><pre class="font-mono text-[0.78rem] leading-[1.7]" id="plugin-code"></pre></div>
   </div>
 
-  <div class="tab-content" id="tab-usage">
-    <div class="plugin-code"><pre id="usage-code"></pre></div>
+  <div class="hidden tab-content" id="tab-usage">
+    <div class="plugin-code rounded-xl p-6 overflow-x-auto"><pre class="font-mono text-[0.78rem] leading-[1.7]" id="usage-code"></pre></div>
   </div>
 
-  <div class="tab-content" id="tab-shorthand">
-    <div class="plugin-code"><pre id="shorthand-code"></pre></div>
+  <div class="hidden tab-content" id="tab-shorthand">
+    <div class="plugin-code rounded-xl p-6 overflow-x-auto"><pre class="font-mono text-[0.78rem] leading-[1.7]" id="shorthand-code"></pre></div>
   </div>
 
 </div>
@@ -424,12 +174,13 @@ const C_STOPS = [
 const controlsEl = document.getElementById('controls');
 HUES.forEach(hue => {
   const group = document.createElement('div');
-  group.className = 'control-group';
+  group.className = 'flex flex-col gap-[0.4rem]';
   group.innerHTML = `
-    <label>${hue.name}</label>
+    <label class="text-xs uppercase tracking-[0.08em] text-mid-lo-primary font-semibold">${hue.name}</label>
     <input type="range" min="0" max="360" value="${hue.default}"
+           class="w-[180px]"
            data-hue="${hue.name}" oninput="updateHue(this)">
-    <div class="value" id="val-${hue.name}">${hue.default}°</div>
+    <div class="font-mono text-[0.8rem] text-mhi-mid-primary" id="val-${hue.name}">${hue.default}°</div>
   `;
   controlsEl.appendChild(group);
 });
@@ -457,11 +208,11 @@ function renderMatrices() {
       .getPropertyValue(`--hue-${hue.name}`).trim() || hue.default;
 
     const block = document.createElement('div');
-    block.className = 'matrix-block';
-    block.innerHTML = `<h3>${hue.name} (${hueVal}°)</h3>`;
+    block.className = 'matrix-block flex-1 min-w-[280px]';
+    block.innerHTML = `<h3 class="text-[0.85rem] font-semibold mb-3 font-mono tracking-[-0.01em]">${hue.name} (${hueVal}°)</h3>`;
 
     const grid = document.createElement('div');
-    grid.className = 'matrix-grid';
+    grid.className = 'grid grid-cols-[auto_repeat(5,1fr)] grid-rows-[auto_repeat(5,1fr)] gap-[2px]';
 
     // Top-left corner (empty)
     grid.innerHTML = '<div class="matrix-label"></div>';
@@ -480,7 +231,7 @@ function renderMatrices() {
         const color = `oklch(${l.val} ${c.val} ${hueVal})`;
         const className = `bg-${l.name}-${c.name}-${hue.name}`;
         const cell = document.createElement('div');
-        cell.className = 'matrix-cell';
+        cell.className = 'matrix-cell aspect-square rounded-md min-w-12 min-h-12 cursor-pointer transition-[transform,box-shadow] duration-150 relative';
         cell.style.backgroundColor = color;
         cell.dataset.className = className;
         cell.dataset.oklch = `oklch(${l.val} ${c.val} ${hueVal})`;
@@ -515,57 +266,57 @@ function renderComponents() {
 
   demosEl.innerHTML = `
     <!-- Subtle Card -->
-    <div class="demo-component bg-hi-lo-primary text-lo-mid-primary">
-      <h4>Subtle Card</h4>
-      <p class="text-mlo-mlo-primary">bg-hi-lo-primary + text-lo-mid-primary. Low chroma background, strong text. Portable anywhere.</p>
-      <div class="demo-btn bg-mid-mhi-primary text-hi-lo-primary">
+    <div class="rounded-xl p-6 border border-lo-lo-primary bg-hi-lo-primary text-lo-mid-primary">
+      <h4 class="text-[0.85rem] mb-3 font-semibold">Subtle Card</h4>
+      <p class="text-mlo-mlo-primary text-[0.85rem] leading-normal mb-4">bg-hi-lo-primary + text-lo-mid-primary. Low chroma background, strong text. Portable anywhere.</p>
+      <div class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-mid-mhi-primary text-hi-lo-primary">
         bg-mid-mhi-primary
       </div>
     </div>
 
     <!-- Dark Card + Accent CTA -->
-    <div class="demo-component bg-lo-mlo-primary text-hi-lo-primary">
-      <h4>Dark Card + Accent CTA</h4>
-      <p class="text-mid-lo-primary">bg-lo-mlo-primary with an accent button. The hues stay independent — no washout.</p>
-      <div class="demo-btn bg-mhi-mhi-accent text-lo-mlo-accent">
+    <div class="rounded-xl p-6 border border-lo-lo-primary bg-lo-mlo-primary text-hi-lo-primary">
+      <h4 class="text-[0.85rem] mb-3 font-semibold">Dark Card + Accent CTA</h4>
+      <p class="text-mid-lo-primary text-[0.85rem] leading-normal mb-4">bg-lo-mlo-primary with an accent button. The hues stay independent — no washout.</p>
+      <div class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-mhi-mhi-accent text-lo-mlo-accent">
         bg-mhi-mhi-accent
       </div>
     </div>
 
     <!-- Success State -->
-    <div class="demo-component bg-hi-lo-success border-mhi-mid-success text-lo-mid-success">
-      <h4>Success State</h4>
-      <p class="text-mlo-mlo-success">bg-hi-lo-success with mid-chroma border. Same pattern, different hue — instant semantic color.</p>
-      <div class="demo-btn bg-mid-mhi-success text-hi-lo-success">
+    <div class="rounded-xl p-6 border border-mhi-mid-success bg-hi-lo-success text-lo-mid-success">
+      <h4 class="text-[0.85rem] mb-3 font-semibold">Success State</h4>
+      <p class="text-mlo-mlo-success text-[0.85rem] leading-normal mb-4">bg-hi-lo-success with mid-chroma border. Same pattern, different hue — instant semantic color.</p>
+      <div class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-mid-mhi-success text-hi-lo-success">
         bg-mid-mhi-success
       </div>
     </div>
 
     <!-- Danger Alert -->
-    <div class="demo-component bg-lo-mid-danger border-mlo-mhi-danger text-hi-lo-danger">
-      <h4>Danger Alert</h4>
-      <p class="text-mhi-mlo-danger">bg-lo-mid-danger. Deep, saturated backgrounds that read correctly regardless of context.</p>
-      <div class="demo-btn bg-mid-mhi-danger text-hi-lo-danger">
+    <div class="rounded-xl p-6 border border-mlo-mhi-danger bg-lo-mid-danger text-hi-lo-danger">
+      <h4 class="text-[0.85rem] mb-3 font-semibold">Danger Alert</h4>
+      <p class="text-mhi-mlo-danger text-[0.85rem] leading-normal mb-4">bg-lo-mid-danger. Deep, saturated backgrounds that read correctly regardless of context.</p>
+      <div class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-mid-mhi-danger text-hi-lo-danger">
         Acknowledge
       </div>
     </div>
 
     <!-- Multi-Hue Composition -->
-    <div class="demo-component bg-lo-lo-primary text-hi-lo-primary">
-      <h4>Multi-Hue Composition</h4>
-      <p class="text-mid-lo-primary">Primary container with accent and warning badges, no transparency needed:</p>
-      <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
-        <span class="bg-mlo-mid-accent text-hi-lo-accent" style="padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600;">accent</span>
-        <span class="bg-mlo-mid-warning text-hi-lo-warning" style="padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600;">warning</span>
-        <span class="bg-mlo-mid-success text-hi-lo-success" style="padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600;">success</span>
+    <div class="rounded-xl p-6 border border-lo-lo-primary bg-lo-lo-primary text-hi-lo-primary">
+      <h4 class="text-[0.85rem] mb-3 font-semibold">Multi-Hue Composition</h4>
+      <p class="text-mid-lo-primary text-[0.85rem] leading-normal mb-4">Primary container with accent and warning badges, no transparency needed:</p>
+      <div class="flex gap-2 mt-2">
+        <span class="bg-mlo-mid-accent text-hi-lo-accent px-3 py-1 rounded-full text-xs font-semibold">accent</span>
+        <span class="bg-mlo-mid-warning text-hi-lo-warning px-3 py-1 rounded-full text-xs font-semibold">warning</span>
+        <span class="bg-mlo-mid-success text-hi-lo-success px-3 py-1 rounded-full text-xs font-semibold">success</span>
       </div>
     </div>
 
     <!-- Vibrant Surface -->
-    <div class="demo-component bg-mhi-mhi-primary text-lo-mlo-primary">
-      <h4>Vibrant Surface</h4>
-      <p>bg-mhi-mhi-primary. Saturated mid-high surface with dark text. Swap --hue-primary to re-theme instantly.</p>
-      <div class="demo-btn bg-lo-mid-primary text-hi-lo-primary">
+    <div class="rounded-xl p-6 border border-lo-lo-primary bg-mhi-mhi-primary text-lo-mlo-primary">
+      <h4 class="text-[0.85rem] mb-3 font-semibold">Vibrant Surface</h4>
+      <p class="text-[0.85rem] leading-normal mb-4">bg-mhi-mhi-primary. Saturated mid-high surface with dark text. Swap --hue-primary to re-theme instantly.</p>
+      <div class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold border-0 cursor-pointer transition-all duration-150 bg-lo-mid-primary text-hi-lo-primary">
         bg-lo-mid-primary
       </div>
     </div>
