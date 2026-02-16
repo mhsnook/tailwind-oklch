@@ -10,12 +10,12 @@
  * cascade from :root, so a single class like `bg-lc-5` immediately
  * produces a visible color — no helper class needed.
  *
- * Luminance scale: 0–10, anchored to the page surface.
- *   0 / base  = page surface (light in light mode, dark in dark mode)
- *   10 / fore = maximum contrast with the surface
+ * Luminance contrast scale: 0–10.
+ *   0 / base  = close to the page color (blends in)
+ *   10 / fore = high contrast with the page (stands out, like text)
  *   1–9       = evenly distributed between those endpoints
- *   none      = absolute surface extreme (pure white / pure black)
- *   full      = absolute contrast extreme (pure black / pure white)
+ *   none      = absolute minimum (pure white or pure black, per mode)
+ *   full      = absolute maximum (pure black or pure white, per mode)
  */
 
 @theme {
@@ -29,14 +29,15 @@
   --hue-info: 220;
   --hue-neutral: 260;
 
-  /* ── Luminance Range ───────────────────────────────────────────────
-     Defines the OKLCH lightness endpoints for the 0–10 scale.
-     Dark-mode defaults: base/0 is near black, fore/10 is near white.
+  /* ── Luminance Contrast Range ─────────────────────────────────────
+     Defines the OKLCH lightness values at 0 (base) and 10 (fore).
+     Dark mode: base is near black, fore is near white.
+     Light mode flips them (see :root:not(.dark) below).
      Override --lc-range-start and --lc-range-end to shift the range. */
   --lc-range-start: 0.12;
   --lc-range-end: 0.92;
 
-  /* ── 0–10 Luminance Scale ──────────────────────────────────────────
+  /* ── 0–10 Luminance Contrast Scale ────────────────────────────────
      Computed: step N = start + (end - start) × (N / 10)
      Dark mode (default): 0→0.12, 5→0.52, 10→0.92
      Light mode (override): 0→0.95, 5→0.55, 10→0.15 */
@@ -57,9 +58,8 @@
   --l-fore: 0.92;
 
   /* Absolute extremes — escape the configured range entirely.
-     none = beyond 0 (surface side), full = beyond 10 (contrast side).
-     Dark: none → pure black, full → pure white.
-     Light: none → pure white, full → pure black. */
+     none = beyond base (pure white in light, pure black in dark).
+     full = beyond fore (pure black in light, pure white in dark). */
   --l-none: 0;
   --l-full: 1;
 
@@ -84,9 +84,9 @@
   --c-95: 0.30;
 }
 
-/* ── Light-mode luminance range ────────────────────────────────────────
-   Flipping the range makes 0/base = near white, 10/fore = near black.
-   All 0–10 stops are recalculated accordingly. */
+/* ── Light-mode luminance contrast range ──────────────────────────────
+   In light mode the scale flips: 0/base is near white (blends with
+   the page), 10/fore is near black (high contrast, like text). */
 
 :root:not(.dark) {
   --lc-range-start: 0.95;
