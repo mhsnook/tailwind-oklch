@@ -24,9 +24,16 @@ import RelativeLuminanceDemo from "@/components/RelativeLuminanceDemo.astro";
 	 </p>
 
     <!-- Theme Controls -->
-    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-8-mlo-primary">
-      Theme Hues
+    <h2 class="text-[1.3rem] font-semibold mb-4 tracking-[-0.01em] text-8-mlo-primary">
+      Theme Controls
     </h2>
+    <p class="text-5-lo-primary text-[0.9rem] mb-6 -mt-1 max-w-[680px] leading-[1.6]">
+      Tailwind OKLCH gives you Tailwind-style, fine-grained control over your
+      colors. Every color is built from three independent dimensions &mdash;
+      <strong>hue</strong>, <strong>luminance</strong>, and
+      <strong>chroma</strong> &mdash; each adjustable with utility classes or
+      CSS variables.
+    </p>
     <div class="mb-12">
       <HueControls client:load />
     </div>
