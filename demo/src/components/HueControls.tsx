@@ -135,7 +135,7 @@ export default function HueControls() {
 
 					{/* L stops strip */}
 					<div className="text-[0.65rem] font-mono text-5-lo-primary mb-1">
-						hue: {selectedHue} &middot; chroma: {selectedChroma.name} ({selectedChroma.val})
+						bg-h-{selectedHue} &middot; bg-c-{selectedChroma.name} ({selectedChroma.val})
 					</div>
 					<div className="flex gap-[2px]">
 						{lStopValues.map((l) => (
@@ -150,7 +150,7 @@ export default function HueControls() {
 									style={{ backgroundColor: `oklch(${l.value.toFixed(3)} ${selectedChroma.val} var(--hue-${selectedHue}))` }}
 								/>
 								<div className="text-[0.6rem] font-mono text-5-lo-primary leading-none">
-									L:{l.name}
+									bg-lc-{l.name}
 								</div>
 								<div className="text-[0.55rem] font-mono text-5-lo-primary opacity-60 leading-none">
 									{l.value.toFixed(2)}
@@ -166,7 +166,7 @@ export default function HueControls() {
 						Chroma Stops
 					</h3>
 					<div className="text-[0.65rem] font-mono text-5-lo-primary mb-1">
-						hue: {selectedHue} &middot; luminance: L:{selectedLStep.name} ({selectedLValue.toFixed(2)})
+						bg-h-{selectedHue} &middot; bg-lc-{selectedLStep.name} ({selectedLValue.toFixed(2)})
 					</div>
 					<div className="flex gap-[2px] mb-3">
 						{C_STOPS.map((c) => (
@@ -181,7 +181,7 @@ export default function HueControls() {
 									style={{ backgroundColor: `oklch(${selectedLValue.toFixed(3)} ${c.val} var(--hue-${selectedHue}))` }}
 								/>
 								<div className="text-[0.6rem] font-mono text-5-lo-primary leading-none">
-									C:{c.name}
+									bg-c-{c.name}
 								</div>
 								<div className="text-[0.55rem] font-mono text-5-lo-primary opacity-60 leading-none">
 									{c.val}
@@ -210,32 +210,17 @@ export default function HueControls() {
 				</div>
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
 					{[
-						{
-							label: 'Full LCH',
-							cls: `bg-${selectedLStep.name}-${selectedChroma.name}-${selectedHue}`,
-						},
-						{
-							label: 'LC',
-							cls: `bg-lc-${selectedLStep.name}`,
-						},
-						{
-							label: 'C only',
-							cls: `bg-c-${selectedChroma.name}`,
-						},
-						{
-							label: 'H only',
-							cls: `bg-h-${selectedHue}`,
-						},
-					].map((item) => (
+						`bg-${selectedLStep.name}-${selectedChroma.name}-${selectedHue}`,
+						`bg-lc-${selectedLStep.name}`,
+						`bg-c-${selectedChroma.name}`,
+						`bg-h-${selectedHue}`,
+					].map((cls) => (
 						<div
-							key={item.label}
-							className="flex flex-col gap-1 rounded-lg bg-white/5 px-3 py-2"
+							key={cls}
+							className="flex items-center rounded-lg bg-white/5 px-3 py-2"
 						>
-							<span className="text-[0.65rem] uppercase tracking-[0.06em] text-5-lo-primary opacity-60">
-								{item.label}
-							</span>
 							<code className="text-[0.75rem] font-mono text-8-mid-primary break-all">
-								{item.cls}
+								{cls}
 							</code>
 						</div>
 					))}
