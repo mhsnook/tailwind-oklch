@@ -48,7 +48,7 @@ export default function ColorMatrix() {
 							>
 								{hue.name} ({hueVal}°)
 							</h3>
-							<div className="grid grid-cols-[auto_repeat(5,1fr)] grid-rows-[auto_repeat(11,1fr)] gap-[2px]">
+							<div className="grid grid-cols-[auto_repeat(5,1fr)] grid-rows-[auto_repeat(5,1fr)] gap-[2px]">
 								{/* Top-left empty corner */}
 								<div className="matrix-label" />
 
