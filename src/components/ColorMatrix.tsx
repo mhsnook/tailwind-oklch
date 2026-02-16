@@ -37,7 +37,6 @@ export default function ColorMatrix() {
 			<div className="flex gap-10 flex-wrap">
 				{HUES.map((hue) => {
 					const hueVal = getHueVal(hue.name)
-					const range = getLuRange()
 					return (
 						<div key={hue.name} className="flex-1 min-w-[280px]">
 							<h3
@@ -66,16 +65,23 @@ export default function ColorMatrix() {
 											C:{c.name}
 										</div>
 										{L_STOPS.map((l) => {
-											const lVal = luValue(l.step, range)
-											const color = `oklch(${lVal.toFixed(3)} ${c.val} ${hueVal})`
+											// Use CSS vars for the cell color so it adapts to light/dark mode natively
+											const color = `oklch(var(--l-${l.name}) ${c.val} var(--hue-${hue.name}))`
 											const className = `bg-${l.name}-${c.name}-${hue.name}`
-											const oklch = `oklch(${lVal.toFixed(2)} ${c.val} ${hueVal})`
 											return (
 												<div
 													key={`${l.name}-${c.name}`}
 													className="matrix-cell aspect-square rounded-md min-w-8 min-h-8 cursor-pointer transition-[transform,box-shadow] duration-150 relative"
 													style={{ backgroundColor: color }}
-													onMouseEnter={() => setPreview({ color, className, oklch })}
+													onMouseEnter={() => {
+														const range = getLuRange()
+														const lVal = luValue(l.step, range)
+														setPreview({
+															color,
+															className,
+															oklch: `oklch(${lVal.toFixed(2)} ${c.val} ${hueVal})`,
+														})
+													}}
 													onMouseLeave={() => setPreview(null)}
 												/>
 											)
