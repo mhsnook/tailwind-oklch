@@ -54,7 +54,7 @@ export default function ColorMatrix() {
 								{/* Column headers — luminance (left=base, right=fore) */}
 								{L_STOPS.map((l) => (
 									<div key={l.name} className="matrix-label col-label">
-										L:{l.name}
+										LC:{l.name}
 									</div>
 								))}
 
