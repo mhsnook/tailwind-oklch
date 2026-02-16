@@ -68,9 +68,9 @@ export default function HueControls() {
 				<h3 className="text-xs uppercase tracking-[0.08em] text-5-lo-primary font-semibold mb-3">
 					Hues
 				</h3>
-				<div className="flex gap-6 flex-wrap p-5 bg-lc-1 bg-c-lo bg-h-primary rounded-xl border border-lc-2 border-c-lo border-h-primary">
+				<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 p-5 bg-lc-1 bg-c-lo bg-h-primary rounded-xl border border-lc-2 border-c-lo border-h-primary">
 					{HUES.map((hue) => (
-						<div key={hue.name} className="flex flex-col gap-1.5 min-w-[160px] flex-1">
+						<div key={hue.name} className="flex flex-col gap-1.5">
 							<label className="text-xs uppercase tracking-[0.08em] text-5-lo-primary font-semibold">
 								{hue.name}
 							</label>
