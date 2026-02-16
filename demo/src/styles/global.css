@@ -1,9 +1,9 @@
 @import "tailwindcss";
-@import "../../index.css";
+@import "tailwind-oklch";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
-@plugin "../../plugin.js";
+@plugin "tailwind-oklch/plugin";
 
 @theme {
   --font-sans: "DM Sans", sans-serif;
