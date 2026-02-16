@@ -30,7 +30,10 @@ const { title } = Astro.props;
   <body class="bg-lu-base bg-c-lo bg-h-primary min-h-screen overflow-x-hidden">
     <ThemeToggle client:load />
     <slot />
-  </body>
+	<footer class="text-center mx-auto text-lu-6 p-4 pb-16">
+		&copy; by m snook ❤️ – <a class="hover:text-lu-8 hover:bg-lu-1" href="https://github.com/mhsnook/tailwind-oklch">github</a> – <a class="hover:text-lu-8 hover:bg-lu-1" href="https://bsky.app/profile/msnook.xyz">bluesky</a>
+	</footer>
+	</body>
 </html>
 
 <style is:global>
