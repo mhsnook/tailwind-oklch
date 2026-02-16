@@ -52,20 +52,20 @@ export default function ColorMatrix() {
 								{/* Top-left empty corner */}
 								<div className="matrix-label" />
 
-								{/* Column headers */}
-								{C_STOPS.map((c) => (
-									<div key={c.name} className="matrix-label col-label">
-										C:{c.name}
+								{/* Column headers — luminance (left=base, right=fore) */}
+								{L_STOPS.map((l) => (
+									<div key={l.name} className="matrix-label col-label">
+										L:{l.name}
 									</div>
 								))}
 
-								{/* Rows */}
-								{L_STOPS.map((l) => (
-									<Fragment key={l.name}>
+								{/* Rows — chroma (top=hi, bottom=lo) */}
+								{[...C_STOPS].reverse().map((c) => (
+									<Fragment key={c.name}>
 										<div className="matrix-label">
-											L:{l.name}
+											C:{c.name}
 										</div>
-										{C_STOPS.map((c) => {
+										{L_STOPS.map((l) => {
 											const lVal = luValue(l.step, range)
 											const color = `oklch(${lVal.toFixed(3)} ${c.val} ${hueVal})`
 											const className = `bg-${l.name}-${c.name}-${hue.name}`
