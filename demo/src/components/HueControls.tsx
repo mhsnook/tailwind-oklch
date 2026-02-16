@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { SliderControl } from '@/components/ui/slider'
+import { SliderControl, RangeSliderControl } from '@/components/ui/slider'
 import { HUES, L_STOPS, C_STOPS, LU_RANGE_DARK, LU_RANGE_LIGHT, luValue } from '@/lib/color-config'
 
 export default function HueControls() {
@@ -18,39 +18,43 @@ export default function HueControls() {
 	const [isDark, setIsDark] = useState(true)
 	const [luRange, setLuRange] = useState(LU_RANGE_DARK)
 
+	const applyLuRange = useCallback((range: { start: number; end: number }) => {
+		document.documentElement.style.setProperty('--lc-range-start', String(range.start))
+		document.documentElement.style.setProperty('--lc-range-end', String(range.end))
+		for (let i = 0; i <= 10; i++) {
+			const lVal = range.start + (range.end - range.start) * (i / 10)
+			document.documentElement.style.setProperty(`--l-${i}`, String(lVal.toFixed(4)))
+		}
+		window.dispatchEvent(new CustomEvent('hue-change'))
+	}, [])
+
 	useEffect(() => {
 		const sync = () => {
 			const dark = document.documentElement.classList.contains('dark')
 			setIsDark(dark)
 			const defaults = dark ? LU_RANGE_DARK : LU_RANGE_LIGHT
 			setLuRange(defaults)
-			document.documentElement.style.setProperty('--lc-range-start', String(defaults.start))
-			document.documentElement.style.setProperty('--lc-range-end', String(defaults.end))
-			for (let i = 0; i <= 10; i++) {
-				const lVal = defaults.start + (defaults.end - defaults.start) * (i / 10)
-				document.documentElement.style.setProperty(`--l-${i}`, String(lVal.toFixed(4)))
-			}
-			window.dispatchEvent(new CustomEvent('hue-change'))
+			applyLuRange(defaults)
 		}
 		sync()
 		const observer = new MutationObserver(sync)
 		observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
 		return () => observer.disconnect()
-	}, [])
+	}, [applyLuRange])
 
-	const updateLuRange = useCallback((key: 'start' | 'end', val: number) => {
-		setLuRange((prev) => {
-			const next = { ...prev, [key]: val }
-			document.documentElement.style.setProperty('--lc-range-start', String(next.start))
-			document.documentElement.style.setProperty('--lc-range-end', String(next.end))
-			for (let i = 0; i <= 10; i++) {
-				const lVal = next.start + (next.end - next.start) * (i / 10)
-				document.documentElement.style.setProperty(`--l-${i}`, String(lVal.toFixed(4)))
-			}
-			window.dispatchEvent(new CustomEvent('hue-change'))
-			return next
-		})
-	}, [])
+	// Range slider always works in [low, high] order; we map back to start/end based on mode
+	const rangeValue: [number, number] = isDark
+		? [luRange.start, luRange.end]
+		: [luRange.end, luRange.start]
+
+	const updateLuRangeFromSlider = useCallback(
+		([low, high]: [number, number]) => {
+			const next = isDark ? { start: low, end: high } : { start: high, end: low }
+			setLuRange(next)
+			applyLuRange(next)
+		},
+		[isDark, applyLuRange],
+	)
 
 	const lStopValues = L_STOPS.map((l) => ({
 		...l,
@@ -94,33 +98,20 @@ export default function HueControls() {
 							({isDark ? 'dark' : 'light'} mode)
 						</span>
 					</h3>
-					<div className="flex gap-6 mb-5">
-						<div className="flex-1">
-							<label className="text-[0.75rem] font-mono text-5-lo-primary mb-1 block">
-								base (0): {luRange.start.toFixed(2)}
-							</label>
-							<SliderControl
-								value={luRange.start}
-								onValueChange={(val) => updateLuRange('start', val)}
-								min={0}
-								max={1}
-								step={0.01}
-								label="Luminance range start"
-							/>
-						</div>
-						<div className="flex-1">
-							<label className="text-[0.75rem] font-mono text-5-lo-primary mb-1 block">
-								fore (10): {luRange.end.toFixed(2)}
-							</label>
-							<SliderControl
-								value={luRange.end}
-								onValueChange={(val) => updateLuRange('end', val)}
-								min={0}
-								max={1}
-								step={0.01}
-								label="Luminance range end"
-							/>
-						</div>
+					<div className="mb-1">
+						<RangeSliderControl
+							value={rangeValue}
+							onValueChange={updateLuRangeFromSlider}
+							min={0}
+							max={1}
+							step={0.01}
+							labelStart="Luminance base (0)"
+							labelEnd="Luminance fore (10)"
+						/>
+					</div>
+					<div className="flex justify-between text-[0.75rem] font-mono text-5-lo-primary mb-5">
+						<span>base (0): {luRange.start.toFixed(2)}</span>
+						<span>fore (10): {luRange.end.toFixed(2)}</span>
 					</div>
 
 					{/* L stops strip */}
