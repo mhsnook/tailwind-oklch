@@ -61,9 +61,7 @@ export default function ColorMatrix() {
 								{/* Rows — chroma (top=hi, bottom=lo) */}
 								{[...C_STOPS].reverse().map((c) => (
 									<Fragment key={c.name}>
-										<div className="matrix-label">
-											C:{c.name}
-										</div>
+										<div className="matrix-label">C:{c.name}</div>
 										{L_STOPS.map((l) => {
 											// Use CSS vars for the cell color so it adapts to light/dark mode natively
 											const color = `oklch(var(--l-${l.name}) ${c.val} var(--hue-${hue.name}))`
