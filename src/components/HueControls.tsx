@@ -14,10 +14,10 @@ export default function HueControls() {
 	}, [])
 
 	return (
-		<div className="flex gap-6 flex-wrap p-6 bg-lu-90 dark:bg-lu-20 bg-c-lo bg-h-primary rounded-xl border border-lu-80 dark:border-lu-30 border-c-lo border-h-primary">
+		<div className="flex gap-6 flex-wrap p-6 bg-lu-1 bg-c-lo bg-h-primary rounded-xl border border-lu-2 border-c-lo border-h-primary">
 			{HUES.map((hue) => (
 				<div key={hue.name} className="flex flex-col gap-1.5 min-w-[180px]">
-					<label className="text-xs uppercase tracking-[0.08em] text-mid-lo-primary font-semibold">
+					<label className="text-xs uppercase tracking-[0.08em] text-5-lo-primary font-semibold">
 						{hue.name}
 					</label>
 					<SliderControl
@@ -28,7 +28,7 @@ export default function HueControls() {
 						step={1}
 						label={`${hue.name} hue`}
 					/>
-					<div className="font-mono text-[0.8rem] text-strong-mid-primary">{values[hue.name]}°</div>
+					<div className="font-mono text-[0.8rem] text-8-mid-primary">{values[hue.name]}°</div>
 				</div>
 			))}
 		</div>

@@ -7,13 +7,29 @@ export const HUES = [
 	{ name: 'info', default: 220 },
 ] as const
 
+/** 0–10 luminance scale. step = index into the scale (0 = surface, 10 = max contrast). */
 export const L_STOPS = [
-	{ name: 'base', val: 0.25 },
-	{ name: 'subtle', val: 0.4 },
-	{ name: 'mid', val: 0.55 },
-	{ name: 'strong', val: 0.72 },
-	{ name: 'full', val: 0.9 },
+	{ name: '0', step: 0 },
+	{ name: '1', step: 1 },
+	{ name: '2', step: 2 },
+	{ name: '3', step: 3 },
+	{ name: '4', step: 4 },
+	{ name: '5', step: 5 },
+	{ name: '6', step: 6 },
+	{ name: '7', step: 7 },
+	{ name: '8', step: 8 },
+	{ name: '9', step: 9 },
+	{ name: '10', step: 10 },
 ] as const
+
+/** Default luminance range endpoints (dark mode). */
+export const LU_RANGE_DARK = { start: 0.12, end: 0.92 }
+export const LU_RANGE_LIGHT = { start: 0.95, end: 0.15 }
+
+/** Compute the OKLCH lightness for a given step and range. */
+export function luValue(step: number, range: { start: number; end: number }) {
+	return range.start + (range.end - range.start) * (step / 10)
+}
 
 export const C_STOPS = [
 	{ name: 'lo', val: 0.02 },

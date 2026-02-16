@@ -2,17 +2,17 @@
  * tailwind-oklch shorthand generator
  *
  * Generates .{prop}-{L}-{C}-{H} utilities for all combinations of
- * named luminance × chroma × hue stops across bg/text/border.
+ * the 0–10 luminance scale × chroma × hue stops across bg/text/border.
  *
  * Each shorthand sets the three axis variables AND applies the
  * resolved color, so children can inherit and override single axes
- * via decomposed utilities (e.g. hover:bg-l-strong).
+ * via decomposed utilities (e.g. hover:bg-lu-8).
  *
  * Load via: @plugin "tailwind-oklch/plugin";
  */
 
 module.exports = function ({ addUtilities }) {
-  const luminances = ['base', 'subtle', 'mid', 'strong', 'full'];
+  const luminances = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'base', 'fore'];
   const chromas = ['lo', 'mlo', 'mid', 'mhi', 'hi'];
   const hues = ['primary', 'accent', 'success', 'warning', 'danger', 'info', 'neutral'];
 
