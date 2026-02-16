@@ -60,26 +60,6 @@ const sources = {
     <div class="bg-5-mhi-danger text-10-lo-danger">Cancel</div>
   </div>
 </div>`,
-  lcAdjust: `<div class="bg-2-mid-info text-10-lo-info rounded-xl p-6 border border-4-lo-info">
-  <h4 class="text-[0.85rem] mb-3 font-semibold">LC Adjustments</h4>
-  <p class="text-7-lo-info text-[0.85rem] leading-normal mb-4">
-    Nudge luminance up (more contrast) or down (less contrast)
-    from a base. Works in both light and dark mode automatically.
-  </p>
-  <div class="flex flex-col gap-2 font-mono font-semibold text-[0.7rem]">
-    <div class="flex gap-2 items-center">
-      <div class="bg-lc-down-2 px-3 py-1.5 rounded-lg text-0-lo-info">down-2</div>
-      <div class="bg-lc-down-1 px-3 py-1.5 rounded-lg text-0-lo-info">down-1</div>
-      <div class="px-3 py-1.5 rounded-lg text-0-lo-info border border-8-lo-info">base</div>
-      <div class="bg-lc-up-1 px-3 py-1.5 rounded-lg">up-1</div>
-      <div class="bg-lc-up-2 px-3 py-1.5 rounded-lg">up-2</div>
-    </div>
-    <div class="flex gap-2 mt-2 *:px-4 *:py-2 *:rounded-lg *:text-[0.8rem] *:cursor-pointer *:transition-all *:duration-150">
-      <div class="bg-lc-5 text-lc-0 hover:bg-lc-up-1">hover me</div>
-      <div class="border border-lc-5 hover:bg-lc-up-1 hover:border-lc-7">hover me</div>
-    </div>
-  </div>
-</div>`,
   axis: `<div class="bg-1-mlo-primary text-10-lo-primary border-1-lo-primary rounded-xl p-6 border">
   <h4 class="text-[0.85rem] mb-3 font-semibold">Axis Inheritance</h4>
   <p class="text-5-lo-primary text-[0.85rem] leading-normal mb-4">
@@ -179,29 +159,6 @@ const sources = {
       </div>
     </div>
 
-  </div>
-
-  <!-- LC Adjustments -->
-  <div class="relative bg-2-mid-info text-10-lo-info rounded-xl p-6 border border-4-lo-info">
-    <CodeViewerButton client:load code={sources.lcAdjust} />
-    <h4 class="text-[0.85rem] mb-3 font-semibold">LC Adjustments</h4>
-    <p class="text-7-lo-info text-[0.85rem] leading-normal mb-4">
-      Nudge luminance up (more contrast) or down (less contrast)
-      from a base. Works in both light and dark mode automatically.
-    </p>
-    <div class="flex flex-col gap-2 font-mono font-semibold text-[0.7rem]">
-      <div class="flex gap-2 items-center">
-        <div class="bg-lc-down-2 px-3 py-1.5 rounded-lg text-0-lo-info">down-2</div>
-        <div class="bg-lc-down-1 px-3 py-1.5 rounded-lg text-0-lo-info">down-1</div>
-        <div class="px-3 py-1.5 rounded-lg text-0-lo-info border border-8-lo-info">base</div>
-        <div class="bg-lc-up-1 px-3 py-1.5 rounded-lg">up-1</div>
-        <div class="bg-lc-up-2 px-3 py-1.5 rounded-lg">up-2</div>
-      </div>
-      <div class="flex gap-2 mt-2 *:px-4 *:py-2 *:rounded-lg *:text-[0.8rem] *:cursor-pointer *:transition-all *:duration-150">
-        <div class="bg-lc-5 text-lc-0 hover:bg-lc-up-1">hover me</div>
-        <div class="border border-lc-5 hover:bg-lc-up-1 hover:border-lc-7">hover me</div>
-      </div>
-    </div>
   </div>
 
   <!-- Axis Inheritance -->
