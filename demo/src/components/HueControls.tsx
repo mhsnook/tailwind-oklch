@@ -215,8 +215,8 @@ export default function HueControls() {
 							cls: `bg-${selectedLStep.name}-${selectedChroma.name}-${selectedHue}`,
 						},
 						{
-							label: 'L + C',
-							cls: `bg-lc-${selectedLStep.name} bg-c-${selectedChroma.name}`,
+							label: 'LC',
+							cls: `bg-lc-${selectedLStep.name}`,
 						},
 						{
 							label: 'C only',
