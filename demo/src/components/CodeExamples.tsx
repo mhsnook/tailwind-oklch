@@ -18,9 +18,9 @@ const CODE_EXAMPLES = {
    DECOMPOSED   bg-lc-5 bg-c-hi bg-h-primary   per-axis control
    CASCADING    parent sets color, child overrides one axis
 
-   Luminance 0–10 scale:
-     0 / base  = page surface (adapts to light/dark mode)
-     10 / fore = maximum contrast with the surface
+   Luminance contrast 0–10 scale:
+     0 / base  = close to the page color (blends in)
+     10 / fore = high contrast with the page (stands out)
      1–9       = evenly distributed increments
 
    To customize hues, override in your own @theme block: */
@@ -30,7 +30,7 @@ const CODE_EXAMPLES = {
   --hue-accent:  320;  /* pink instead of orange */
 }
 
-/* To shift the luminance range: */
+/* To shift the luminance contrast range: */
 :root {
   --lc-range-start: 0.95;  /* light-mode base/0 */
   --lc-range-end:   0.15;  /* light-mode fore/10 */
@@ -61,9 +61,9 @@ const CODE_EXAMPLES = {
     Lighter on hover
   </button>
 
-  <!-- Another child shifts to surface luminance -->
+  <!-- Another child drops to page-level luminance -->
   <footer class="bg-lc-base p-4 rounded">
-    Surface footer, same chroma + hue as parent
+    Page-level footer, same chroma + hue as parent
   </footer>
 </div>
 
@@ -94,7 +94,7 @@ const CODE_EXAMPLES = {
 		lang: 'html',
 		code: `<!-- ── SHORTHAND ────────────────────────────────────────────
    Pattern: {property}-{luminance}-{chroma}-{hue}
-   Luminance: 0–10 (or base/fore aliases)
+   Luminance contrast: 0–10 (or base/fore aliases)
    Best for: setting a complete color in one class. -->
 
 <div class="bg-fore-lo-primary rounded-xl p-6">
@@ -116,7 +116,7 @@ const CODE_EXAMPLES = {
 ">Only luminance changes on hover</button>
 
 <!-- ── SEMANTIC ALIASES ──────────────────────────────────────
-   base = 0 (page surface), fore = 10 (max contrast).
+   base = 0 (blends with page), fore = 10 (high contrast).
    The same class works in both light and dark mode. -->
 
 <div class="bg-lc-base bg-c-lo bg-h-primary">
@@ -176,18 +176,18 @@ const CODE_EXAMPLES = {
   /* ...same for text, border, gradient, etc. */
 }
 
-/* ── THE 0–10 SCALE ───────────────────────────────────────
+/* ── THE 0–10 CONTRAST SCALE ──────────────────────────────
 
-   0 / base = page surface luminance
-   10 / fore = maximum contrast with the surface
+   0 / base = close to the page color (blends in)
+   10 / fore = high contrast with the page (stands out)
 
    The range flips between modes:
 
    Light mode: 0→0.95, 5→0.55, 10→0.15
    Dark mode:  0→0.12, 5→0.52, 10→0.92
 
-   So "lc-3" always means "3 stops from the surface" —
-   a subtle, readable contrast in either mode. */
+   So "lc-3" always means "3 stops from the page" —
+   a subtle, low-contrast element in either mode. */
 
 /* ── THE CASCADE IN ACTION ──────────────────────────────────
 

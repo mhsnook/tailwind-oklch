@@ -36,19 +36,19 @@ Every color is built from three independent pieces:
 
 | Axis | What it controls | Example values |
 |---|---|---|
-| **Luminance (L)** | Lightness, on a 0–10 scale | `0`–`10`, `base`, `fore` |
+| **Luminance Contrast (LC)** | How far from the page color, on a 0–10 scale | `0`–`10`, `base`, `fore` |
 | **Chroma (C)** | Colorfulness / saturation | `lo`, `mlo`, `mid`, `mhi`, `hi` |
 | **Hue (H)** | Color identity | `primary`, `accent`, `success`, `warning`, `danger`, `info`, `neutral` |
 
-### Surface-Anchored Luminance
+### Luminance Contrast Scale
 
-The 0–10 scale is anchored to your page surface, not to absolute black/white:
+The 0–10 scale measures contrast with the page — not absolute lightness:
 
-- **0 / `base`** = page surface (dark in dark mode, light in light mode)
-- **10 / `fore`** = maximum contrast with the surface
+- **0 / `base`** = close to the page color (blends in)
+- **10 / `fore`** = high contrast with the page (stands out, like text)
 - **1–9** = evenly distributed between those endpoints
 
-This means `bg-lc-3` always means "3 steps away from the surface" regardless of light or dark mode.
+This means `bg-lc-3` is always "3 steps from the page" — a subtle, low-contrast element in either light or dark mode.
 
 ### CSS Cascade Inheritance
 
@@ -62,13 +62,13 @@ Set one axis at a time. The other two axes inherit from the parent or the root d
 
 | Pattern | Sets | Example |
 |---|---|---|
-| `bg-lc-{L}` | background luminance | `bg-lc-5`, `bg-lc-base`, `bg-lc-fore` |
+| `bg-lc-{L}` | background luminance contrast | `bg-lc-5`, `bg-lc-base`, `bg-lc-fore` |
 | `bg-c-{C}` | background chroma | `bg-c-lo`, `bg-c-mid`, `bg-c-hi` |
 | `bg-h-{H}` | background hue | `bg-h-primary`, `bg-h-accent`, `bg-h-danger` |
-| `text-lc-{L}` | text luminance | `text-lc-fore`, `text-lc-8` |
+| `text-lc-{L}` | text luminance contrast | `text-lc-fore`, `text-lc-8` |
 | `text-c-{C}` | text chroma | `text-c-mid` |
 | `text-h-{H}` | text hue | `text-h-accent` |
-| `border-lc-{L}` | border luminance | `border-lc-3` |
+| `border-lc-{L}` | border luminance contrast | `border-lc-3` |
 | `border-c-{C}` | border chroma | `border-c-mlo` |
 | `border-h-{H}` | border hue | `border-h-neutral` |
 
@@ -103,8 +103,8 @@ The real power comes from combining both. Set a full color on a parent, then ove
   <!-- Child lightens only the background on hover -->
   <button class="hover:bg-lc-6">Lighter on hover</button>
 
-  <!-- Child uses surface luminance, inherits chroma + hue -->
-  <footer class="bg-lc-base">Same accent hue, surface brightness</footer>
+  <!-- Child drops to page-level luminance, inherits chroma + hue -->
+  <footer class="bg-lc-base">Same accent hue, page-level brightness</footer>
 
   <!-- Child switches to a different hue, keeps luminance + chroma -->
   <aside class="bg-h-success">Success-colored sidebar</aside>
@@ -167,14 +167,14 @@ Default hue values:
 | `info` | 220 | blue |
 | `neutral` | 260 | purple-gray |
 
-### Custom Luminance Range
+### Custom Luminance Contrast Range
 
-Shift the overall luminance endpoints:
+Shift the overall luminance contrast endpoints:
 
 ```css
 @theme {
-  --lc-range-start: 0.15;   /* darker surface in dark mode */
-  --lc-range-end: 0.95;     /* brighter foreground in dark mode */
+  --lc-range-start: 0.15;   /* base (0) is darker in dark mode */
+  --lc-range-end: 0.95;     /* fore (10) is brighter in dark mode */
 }
 ```
 
@@ -189,7 +189,7 @@ document.documentElement.style.setProperty('--hue-primary', '180');
 
 ## Reference
 
-### Luminance Scale
+### Luminance Contrast Scale
 
 | Stop | Dark Mode | Light Mode |
 |---|---|---|
@@ -232,7 +232,7 @@ A numeric chroma scale (`c-10` through `c-95`) is also available for finer contr
 
 ### Light / Dark Mode
 
-Dark mode is the default. Light mode activates when the root element does **not** have the `.dark` class (`:root:not(.dark)`). The luminance scale flips automatically — no additional classes needed.
+Dark mode is the default. Light mode activates when the root element does **not** have the `.dark` class (`:root:not(.dark)`). The luminance contrast scale flips automatically — `lc-0` is always near the page, `lc-10` is always high contrast — no additional classes needed.
 
 ## License
 

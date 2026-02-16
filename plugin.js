@@ -2,7 +2,7 @@
  * tailwind-oklch shorthand generator
  *
  * Generates .{prop}-{L}-{C}-{H} utilities for all combinations of
- * the 0–10 luminance scale × chroma × hue stops across bg/text/border.
+ * the 0–10 luminance contrast scale × chroma × hue stops across bg/text/border.
  *
  * Each shorthand sets the three axis variables AND applies the
  * resolved color, so children can inherit and override single axes
