@@ -15,7 +15,7 @@ const CODE_EXAMPLES = {
 /* That's it. You now have:
 
    SHORTHAND    bg-5-hi-primary          one class, full color
-   DECOMPOSED   bg-lu-5 bg-c-hi bg-h-primary   per-axis control
+   DECOMPOSED   bg-lc-5 bg-c-hi bg-h-primary   per-axis control
    CASCADING    parent sets color, child overrides one axis
 
    Luminance 0–10 scale:
@@ -32,12 +32,12 @@ const CODE_EXAMPLES = {
 
 /* To shift the luminance range: */
 :root {
-  --lu-range-start: 0.95;  /* light-mode base/0 */
-  --lu-range-end:   0.15;  /* light-mode fore/10 */
+  --lc-range-start: 0.95;  /* light-mode base/0 */
+  --lc-range-end:   0.15;  /* light-mode fore/10 */
 }
 .dark {
-  --lu-range-start: 0.12;  /* dark-mode base/0 */
-  --lu-range-end:   0.92;  /* dark-mode fore/10 */
+  --lc-range-start: 0.12;  /* dark-mode base/0 */
+  --lc-range-end:   0.92;  /* dark-mode fore/10 */
 }`,
 	},
 	cascade: {
@@ -57,12 +57,12 @@ const CODE_EXAMPLES = {
 <div class="bg-5-hi-accent p-6 rounded-xl">
 
   <!-- Child overrides ONLY luminance — inherits chroma + hue -->
-  <button class="hover:bg-lu-8 px-4 py-2 rounded">
+  <button class="hover:bg-lc-8 px-4 py-2 rounded">
     Lighter on hover
   </button>
 
   <!-- Another child shifts to surface luminance -->
-  <footer class="bg-lu-base p-4 rounded">
+  <footer class="bg-lc-base p-4 rounded">
     Surface footer, same chroma + hue as parent
   </footer>
 </div>
@@ -70,7 +70,7 @@ const CODE_EXAMPLES = {
 <!-- Works across nesting levels too -->
 <div class="bg-1-mlo-primary">              <!-- L:1 C:mlo H:primary -->
   <div class="bg-h-success">              <!-- swap hue, keep L+C -->
-    <div class="bg-lu-fore">                <!-- swap luminance, keep C+H -->
+    <div class="bg-lc-fore">                <!-- swap luminance, keep C+H -->
       Three levels deep, each overriding one axis.
     </div>
   </div>
@@ -79,8 +79,8 @@ const CODE_EXAMPLES = {
 <!-- Hover/focus only changes what matters -->
 <button class="
   bg-5-hi-primary text-fore-lo-primary
-  hover:bg-lu-8                only luminance shifts
-  active:bg-lu-3               darker on press
+  hover:bg-lc-8                only luminance shifts
+  active:bg-lc-3               darker on press
   focus:bg-c-mhi               more saturated on focus
 ">Interactive</button>
 
@@ -106,28 +106,28 @@ const CODE_EXAMPLES = {
 </div>
 
 <!-- ── DECOMPOSED ──────────────────────────────────────────
-   Pattern: bg-lu-{L} bg-c-{C} bg-h-{H}
+   Pattern: bg-lc-{L} bg-c-{C} bg-h-{H}
    Best for: overriding a single axis on hover, or when a
    parent already set the other two axes. -->
 
 <button class="
-  bg-lu-5 bg-c-hi bg-h-primary
-  hover:bg-lu-8
+  bg-lc-5 bg-c-hi bg-h-primary
+  hover:bg-lc-8
 ">Only luminance changes on hover</button>
 
 <!-- ── SEMANTIC ALIASES ──────────────────────────────────────
    base = 0 (page surface), fore = 10 (max contrast).
    The same class works in both light and dark mode. -->
 
-<div class="bg-lu-base bg-c-lo bg-h-primary">
+<div class="bg-lc-base bg-c-lo bg-h-primary">
   Blends with the page in any mode.
 </div>
-<div class="bg-lu-fore bg-c-lo bg-h-primary">
+<div class="bg-lc-fore bg-c-lo bg-h-primary">
   Maximum contrast in any mode.
 </div>
 
 <!-- ── MENTAL MODEL ───────────────────────────────────────
-   "My card bg is lu-1, my border is lu-3"
+   "My card bg is lc-1, my border is lc-3"
    = 2 stops of visible difference, in both modes. -->
 
 <div class="bg-1-lo-primary border border-3-lo-primary rounded-lg p-4">
@@ -147,11 +147,11 @@ const CODE_EXAMPLES = {
 		code: `/* ── WHAT THE UTILITIES ACTUALLY DO ──────────────────────────
 
    Every setter both updates its axis AND applies the resolved
-   color. This is why a single bg-lu-5 works — the other two
+   color. This is why a single bg-lc-5 works — the other two
    axes are already defined at :root. */
 
 /* Decomposed utility (from index.css) */
-.bg-lu-5 {
+.bg-lc-5 {
   --bg-l: var(--l-5);                    /* set the axis     */
   background-color: oklch(                /* apply the color  */
     var(--bg-l) var(--bg-c) var(--bg-h)
@@ -186,7 +186,7 @@ const CODE_EXAMPLES = {
    Light mode: 0→0.95, 5→0.55, 10→0.15
    Dark mode:  0→0.12, 5→0.52, 10→0.92
 
-   So "lu-3" always means "3 stops from the surface" —
+   So "lc-3" always means "3 stops from the surface" —
    a subtle, readable contrast in either mode. */
 
 /* ── THE CASCADE IN ACTION ──────────────────────────────────
@@ -194,7 +194,7 @@ const CODE_EXAMPLES = {
    Parent:  bg-5-hi-accent
      └─ sets --bg-l: var(--l-5), --bg-c: hi, --bg-h: accent
 
-   Child:   bg-lu-8
+   Child:   bg-lc-8
      └─ overrides --bg-l: var(--l-8)
      └─ --bg-c and --bg-h INHERIT from parent
      └─ result: brighter accent at same chroma
@@ -210,7 +210,7 @@ const CODE_EXAMPLES = {
 
    OKLCH composed (new):
      bg-fore-lo-primary         absolute color, portable
-     hover:bg-lu-8               single-axis shift, no blending
+     hover:bg-lc-8               single-axis shift, no blending
 
    The color is the SAME regardless of what sits behind it.
    No stacking-context surprises. No blending artifacts. */`,

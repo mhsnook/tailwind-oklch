@@ -48,11 +48,11 @@ The 0–10 scale is anchored to your page surface, not to absolute black/white:
 - **10 / `fore`** = maximum contrast with the surface
 - **1–9** = evenly distributed between those endpoints
 
-This means `bg-lu-3` always means "3 steps away from the surface" regardless of light or dark mode.
+This means `bg-lc-3` always means "3 steps away from the surface" regardless of light or dark mode.
 
 ### CSS Cascade Inheritance
 
-Every utility both **sets its axis variable** and **applies the resolved `oklch()` color**. Sensible defaults are provided at `:root`, so a single class like `bg-lu-5` immediately produces a visible color. Variables inherit down the DOM, so a parent's hue automatically flows to children.
+Every utility both **sets its axis variable** and **applies the resolved `oklch()` color**. Sensible defaults are provided at `:root`, so a single class like `bg-lc-5` immediately produces a visible color. Variables inherit down the DOM, so a parent's hue automatically flows to children.
 
 ## Usage
 
@@ -62,13 +62,13 @@ Set one axis at a time. The other two axes inherit from the parent or the root d
 
 | Pattern | Sets | Example |
 |---|---|---|
-| `bg-lu-{L}` | background luminance | `bg-lu-5`, `bg-lu-base`, `bg-lu-fore` |
+| `bg-lc-{L}` | background luminance | `bg-lc-5`, `bg-lc-base`, `bg-lc-fore` |
 | `bg-c-{C}` | background chroma | `bg-c-lo`, `bg-c-mid`, `bg-c-hi` |
 | `bg-h-{H}` | background hue | `bg-h-primary`, `bg-h-accent`, `bg-h-danger` |
-| `text-lu-{L}` | text luminance | `text-lu-fore`, `text-lu-8` |
+| `text-lc-{L}` | text luminance | `text-lc-fore`, `text-lc-8` |
 | `text-c-{C}` | text chroma | `text-c-mid` |
 | `text-h-{H}` | text hue | `text-h-accent` |
-| `border-lu-{L}` | border luminance | `border-lu-3` |
+| `border-lc-{L}` | border luminance | `border-lc-3` |
 | `border-c-{C}` | border chroma | `border-c-mlo` |
 | `border-h-{H}` | border hue | `border-h-neutral` |
 
@@ -101,10 +101,10 @@ The real power comes from combining both. Set a full color on a parent, then ove
 <div class="bg-3-mhi-accent text-fore-lo-accent">
 
   <!-- Child lightens only the background on hover -->
-  <button class="hover:bg-lu-6">Lighter on hover</button>
+  <button class="hover:bg-lc-6">Lighter on hover</button>
 
   <!-- Child uses surface luminance, inherits chroma + hue -->
-  <footer class="bg-lu-base">Same accent hue, surface brightness</footer>
+  <footer class="bg-lc-base">Same accent hue, surface brightness</footer>
 
   <!-- Child switches to a different hue, keeps luminance + chroma -->
   <aside class="bg-h-success">Success-colored sidebar</aside>
@@ -116,15 +116,15 @@ The real power comes from combining both. Set a full color on a parent, then ove
 All utilities work with standard Tailwind modifiers:
 
 ```html
-<button class="bg-3-mid-primary hover:bg-lu-5 focus:bg-lu-6">
+<button class="bg-3-mid-primary hover:bg-lc-5 focus:bg-lc-6">
   Hover and focus states
 </button>
 
-<div class="bg-lu-base dark:bg-lu-1">
+<div class="bg-lc-base dark:bg-lc-1">
   Responsive to color scheme
 </div>
 
-<input class="border-lu-3 focus:border-c-mid focus:border-h-primary">
+<input class="border-lc-3 focus:border-c-mid focus:border-h-primary">
   Border chroma increases on focus
 </input>
 ```
@@ -173,8 +173,8 @@ Shift the overall luminance endpoints:
 
 ```css
 @theme {
-  --lu-range-start: 0.15;   /* darker surface in dark mode */
-  --lu-range-end: 0.95;     /* brighter foreground in dark mode */
+  --lc-range-start: 0.15;   /* darker surface in dark mode */
+  --lc-range-end: 0.95;     /* brighter foreground in dark mode */
 }
 ```
 
@@ -221,14 +221,14 @@ A numeric chroma scale (`c-10` through `c-95`) is also available for finer contr
 
 | Prefix | CSS Property | Decomposed | Shorthand |
 |---|---|---|---|
-| `bg` | `background-color` | `bg-lu-*`, `bg-c-*`, `bg-h-*` | `bg-{L}-{C}-{H}` |
-| `text` | `color` | `text-lu-*`, `text-c-*`, `text-h-*` | `text-{L}-{C}-{H}` |
-| `border` | `border-color` | `border-lu-*`, `border-c-*`, `border-h-*` | `border-{L}-{C}-{H}` |
-| `border-b` | `border-bottom-color` | `border-b-lu-*`, `border-b-c-*`, `border-b-h-*` | `border-b-{L}-{C}-{H}` |
-| `accent` | `accent-color` | `accent-lu-*`, `accent-c-*`, `accent-h-*` | `accent-{L}-{C}-{H}` |
-| `from` | gradient from | `from-lu-*`, `from-c-*`, `from-h-*` | `from-{L}-{C}-{H}` |
-| `to` | gradient to | `to-lu-*`, `to-c-*`, `to-h-*` | `to-{L}-{C}-{H}` |
-| `shadow` | shadow color | `shadow-lu-*`, `shadow-c-*`, `shadow-h-*` | — |
+| `bg` | `background-color` | `bg-lc-*`, `bg-c-*`, `bg-h-*` | `bg-{L}-{C}-{H}` |
+| `text` | `color` | `text-lc-*`, `text-c-*`, `text-h-*` | `text-{L}-{C}-{H}` |
+| `border` | `border-color` | `border-lc-*`, `border-c-*`, `border-h-*` | `border-{L}-{C}-{H}` |
+| `border-b` | `border-bottom-color` | `border-b-lc-*`, `border-b-c-*`, `border-b-h-*` | `border-b-{L}-{C}-{H}` |
+| `accent` | `accent-color` | `accent-lc-*`, `accent-c-*`, `accent-h-*` | `accent-{L}-{C}-{H}` |
+| `from` | gradient from | `from-lc-*`, `from-c-*`, `from-h-*` | `from-{L}-{C}-{H}` |
+| `to` | gradient to | `to-lc-*`, `to-c-*`, `to-h-*` | `to-{L}-{C}-{H}` |
+| `shadow` | shadow color | `shadow-lc-*`, `shadow-c-*`, `shadow-h-*` | — |
 
 ### Light / Dark Mode
 

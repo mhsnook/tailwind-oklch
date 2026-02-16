@@ -14,7 +14,7 @@ export default function HueControls() {
 	}, [])
 
 	return (
-		<div className="flex gap-6 flex-wrap p-6 bg-lu-1 bg-c-lo bg-h-primary rounded-xl border border-lu-2 border-c-lo border-h-primary">
+		<div className="flex gap-6 flex-wrap p-6 bg-lc-1 bg-c-lo bg-h-primary rounded-xl border border-lc-2 border-c-lo border-h-primary">
 			{HUES.map((hue) => (
 				<div key={hue.name} className="flex flex-col gap-1.5 min-w-[180px]">
 					<label className="text-xs uppercase tracking-[0.08em] text-5-lo-primary font-semibold">
