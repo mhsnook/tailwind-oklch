@@ -56,10 +56,15 @@ export default function HueControls() {
 		[isDark, applyLuRange],
 	)
 
+	// ── Cross-reference state between L and C strips ───────────────────
+	const [selectedChroma, setSelectedChroma] = useState(C_STOPS[2]) // mid
+	const [selectedLStep, setSelectedLStep] = useState(L_STOPS[2]) // 5
+
 	const lStopValues = L_STOPS.map((l) => ({
 		...l,
 		value: luValue(l.step, luRange),
 	}))
+	const selectedLValue = luValue(selectedLStep.step, luRange)
 
 	return (
 		<div className="space-y-6">
@@ -115,12 +120,20 @@ export default function HueControls() {
 					</div>
 
 					{/* L stops strip */}
+					<div className="text-[0.65rem] font-mono text-5-lo-primary mb-1">
+						chroma: {selectedChroma.name} ({selectedChroma.val})
+					</div>
 					<div className="flex gap-[2px]">
 						{lStopValues.map((l) => (
-							<div key={l.name} className="flex-1 flex flex-col items-center gap-1">
+							<button
+								key={l.name}
+								type="button"
+								onClick={() => setSelectedLStep(L_STOPS.find((s) => s.name === l.name)!)}
+								className={`flex-1 flex flex-col items-center gap-1 cursor-pointer rounded-lg p-1 transition-colors ${selectedLStep.name === l.name ? 'bg-white/10' : 'hover:bg-white/5'}`}
+							>
 								<div
 									className="w-full aspect-[2/1] rounded-md border border-white/10"
-									style={{ backgroundColor: `oklch(${l.value.toFixed(3)} 0 0)` }}
+									style={{ backgroundColor: `oklch(${l.value.toFixed(3)} ${selectedChroma.val} var(--hue-primary))` }}
 								/>
 								<div className="text-[0.6rem] font-mono text-5-lo-primary leading-none">
 									L:{l.name}
@@ -128,7 +141,7 @@ export default function HueControls() {
 								<div className="text-[0.55rem] font-mono text-5-lo-primary opacity-60 leading-none">
 									{l.value.toFixed(2)}
 								</div>
-							</div>
+							</button>
 						))}
 					</div>
 				</div>
@@ -138,12 +151,20 @@ export default function HueControls() {
 					<h3 className="text-xs uppercase tracking-[0.08em] text-5-lo-primary font-semibold mb-4">
 						Chroma Stops
 					</h3>
+					<div className="text-[0.65rem] font-mono text-5-lo-primary mb-1">
+						luminance: L:{selectedLStep.name} ({selectedLValue.toFixed(2)})
+					</div>
 					<div className="flex gap-[2px] mb-3">
 						{C_STOPS.map((c) => (
-							<div key={c.name} className="flex-1 flex flex-col items-center gap-1">
+							<button
+								key={c.name}
+								type="button"
+								onClick={() => setSelectedChroma(c)}
+								className={`flex-1 flex flex-col items-center gap-1 cursor-pointer rounded-lg p-1 transition-colors ${selectedChroma.name === c.name ? 'bg-white/10' : 'hover:bg-white/5'}`}
+							>
 								<div
 									className="w-full aspect-[2/1] rounded-md border border-white/10"
-									style={{ backgroundColor: `oklch(0.65 ${c.val} var(--hue-primary))` }}
+									style={{ backgroundColor: `oklch(${selectedLValue.toFixed(3)} ${c.val} var(--hue-primary))` }}
 								/>
 								<div className="text-[0.6rem] font-mono text-5-lo-primary leading-none">
 									C:{c.name}
@@ -151,7 +172,7 @@ export default function HueControls() {
 								<div className="text-[0.55rem] font-mono text-5-lo-primary opacity-60 leading-none">
 									{c.val}
 								</div>
-							</div>
+							</button>
 						))}
 					</div>
 					<p className="text-[0.75rem] text-5-lo-primary leading-relaxed">
