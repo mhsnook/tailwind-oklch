@@ -32,8 +32,12 @@ const CODE_EXAMPLES = {
 
 /* To shift the luminance range: */
 :root {
-  --lu-range-start: 0.95;  /* base/0 lightness */
-  --lu-range-end:   0.15;  /* fore/10 lightness */
+  --lu-range-start: 0.95;  /* light-mode base/0 */
+  --lu-range-end:   0.15;  /* light-mode fore/10 */
+}
+.dark {
+  --lu-range-start: 0.12;  /* dark-mode base/0 */
+  --lu-range-end:   0.92;  /* dark-mode fore/10 */
 }`,
 	},
 	cascade: {
