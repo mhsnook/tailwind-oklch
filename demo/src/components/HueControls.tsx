@@ -199,18 +199,32 @@ export default function HueControls() {
 
 			{/* ── Selected Color Classes ─────────────────────────── */}
 			<div className="p-5 rounded-xl border border-lc-2 border-c-lo border-h-primary bg-lc-1 bg-c-lo bg-h-primary">
-				<div className="flex items-center gap-3 mb-3">
+				{/* Hero: full LCH class */}
+				<div className="flex items-center gap-4 mb-4">
 					<div
-						className="w-10 h-10 rounded-lg border border-white/10 shrink-0"
+						className="w-14 h-14 rounded-xl border border-white/10 shrink-0"
 						style={{ backgroundColor: `oklch(${selectedLValue.toFixed(3)} ${selectedChroma.val} var(--hue-${selectedHue}))` }}
 					/>
-					<h3 className="text-xs uppercase tracking-[0.08em] text-5-lo-primary font-semibold">
-						Selected Color Classes
-					</h3>
+					<div className="flex flex-col gap-1">
+						<code className="text-lg sm:text-xl font-mono font-semibold text-8-mid-primary">
+							bg-{selectedLStep.name}-{selectedChroma.name}-{selectedHue}
+						</code>
+						<div className="text-[0.75rem] font-mono text-5-lo-primary flex items-center gap-1 flex-wrap">
+							<span>bg-</span>
+							<span className="rounded bg-white/10 px-1.5 py-0.5">{selectedLStep.name}</span>
+							<span>-</span>
+							<span className="rounded bg-white/10 px-1.5 py-0.5">{selectedChroma.name}</span>
+							<span>-</span>
+							<span className="rounded bg-white/10 px-1.5 py-0.5">{selectedHue}</span>
+							<span className="opacity-50 ml-1">=</span>
+							<span className="opacity-50 ml-1">L - C - H</span>
+						</div>
+					</div>
 				</div>
-				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+
+				{/* Individual property classes */}
+				<div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
 					{[
-						`bg-${selectedLStep.name}-${selectedChroma.name}-${selectedHue}`,
 						`bg-lc-${selectedLStep.name}`,
 						`bg-c-${selectedChroma.name}`,
 						`bg-h-${selectedHue}`,
