@@ -12,7 +12,7 @@
 
 /* Force theme variables into the build that aren't auto-detected from source.
    The matrix explorer reads these CSS custom properties via JS inline styles. */
-@source inline("bg-h-warning bg-h-info bg-h-neutral bg-lu-0 bg-lu-1 bg-lu-2 bg-lu-3 bg-lu-4 bg-lu-5 bg-lu-6 bg-lu-7 bg-lu-8 bg-lu-9 bg-lu-10 bg-lu-base bg-lu-fore bg-c-10 bg-c-20 bg-c-30 bg-c-40 bg-c-50 bg-c-60 bg-c-70 bg-c-80 bg-c-90 bg-c-95");
+@source inline("bg-h-warning bg-h-info bg-h-neutral bg-lc-0 bg-lc-1 bg-lc-2 bg-lc-3 bg-lc-4 bg-lc-5 bg-lc-6 bg-lc-7 bg-lc-8 bg-lc-9 bg-lc-10 bg-lc-base bg-lc-fore bg-c-10 bg-c-20 bg-c-30 bg-c-40 bg-c-50 bg-c-60 bg-c-70 bg-c-80 bg-c-90 bg-c-95");
 
 /* ── shadcn theme tokens ──────────────────────────────────────────── */
 

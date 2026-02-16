@@ -5,9 +5,9 @@
  *   @import "tailwind-oklch";
  *   @plugin "tailwind-oklch/plugin";
  *
- * Every setter utility (bg-lu-*, bg-c-*, bg-h-*) both updates its
+ * Every setter utility (bg-lc-*, bg-c-*, bg-h-*) both updates its
  * axis variable AND applies the resolved oklch() color. Defaults
- * cascade from :root, so a single class like `bg-lu-5` immediately
+ * cascade from :root, so a single class like `bg-lc-5` immediately
  * produces a visible color — no helper class needed.
  *
  * Luminance scale: 0–10, anchored to the page surface.
@@ -32,9 +32,9 @@
   /* ── Luminance Range ───────────────────────────────────────────────
      Defines the OKLCH lightness endpoints for the 0–10 scale.
      Dark-mode defaults: base/0 is near black, fore/10 is near white.
-     Override --lu-range-start and --lu-range-end to shift the range. */
-  --lu-range-start: 0.12;
-  --lu-range-end: 0.92;
+     Override --lc-range-start and --lc-range-end to shift the range. */
+  --lc-range-start: 0.12;
+  --lc-range-end: 0.92;
 
   /* ── 0–10 Luminance Scale ──────────────────────────────────────────
      Computed: step N = start + (end - start) × (N / 10)
@@ -89,8 +89,8 @@
    All 0–10 stops are recalculated accordingly. */
 
 :root:not(.dark) {
-  --lu-range-start: 0.95;
-  --lu-range-end: 0.15;
+  --lc-range-start: 0.95;
+  --lc-range-end: 0.15;
 
   --l-0: 0.95;
   --l-1: 0.87;
@@ -114,7 +114,7 @@
 /* ── Cascade Defaults ────────────────────────────────────────────────────
    Sensible fallbacks so any single-axis setter immediately resolves.
    These inherit down the DOM tree, so a parent's bg-h-accent
-   naturally flows to children that only set bg-lu-* or bg-c-*. */
+   naturally flows to children that only set bg-lc-* or bg-c-*. */
 
 :root {
   --bg-l: var(--l-5);
@@ -152,7 +152,7 @@
 
 /* ── Background ──────────────────────────────────────────────────────── */
 
-@utility bg-lu-* {
+@utility bg-lc-* {
   --bg-l: --value(--l-*);
   background-color: oklch(var(--bg-l) var(--bg-c) var(--bg-h));
 }
@@ -169,7 +169,7 @@
 
 /* ── Text ────────────────────────────────────────────────────────────── */
 
-@utility text-lu-* {
+@utility text-lc-* {
   --tx-l: --value(--l-*);
   color: oklch(var(--tx-l) var(--tx-c) var(--tx-h));
 }
@@ -186,7 +186,7 @@
 
 /* ── Border ──────────────────────────────────────────────────────────── */
 
-@utility border-lu-* {
+@utility border-lc-* {
   --bd-l: --value(--l-*);
   border-color: oklch(var(--bd-l) var(--bd-c) var(--bd-h));
 }
@@ -203,7 +203,7 @@
 
 /* ── Accent Color ────────────────────────────────────────────────────── */
 
-@utility accent-lu-* {
+@utility accent-lc-* {
   --ac-l: --value(--l-*);
   accent-color: oklch(var(--ac-l) var(--ac-c) var(--ac-h));
 }
@@ -220,7 +220,7 @@
 
 /* ── Gradient From ───────────────────────────────────────────────────── */
 
-@utility from-lu-* {
+@utility from-lc-* {
   --gf-l: --value(--l-*);
   --tw-gradient-from: oklch(var(--gf-l) var(--gf-c) var(--gf-h));
   --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
@@ -240,7 +240,7 @@
 
 /* ── Gradient To ─────────────────────────────────────────────────────── */
 
-@utility to-lu-* {
+@utility to-lc-* {
   --gt-l: --value(--l-*);
   --tw-gradient-to: oklch(var(--gt-l) var(--gt-c) var(--gt-h));
   --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
@@ -260,7 +260,7 @@
 
 /* ── Shadow Color ────────────────────────────────────────────────────── */
 
-@utility shadow-lu-* {
+@utility shadow-lc-* {
   --sh-l: --value(--l-*);
   --tw-shadow-color: oklch(var(--sh-l) var(--sh-c) var(--sh-h));
 }
@@ -277,7 +277,7 @@
 
 /* ── Border Bottom ───────────────────────────────────────────────────── */
 
-@utility border-b-lu-* {
+@utility border-b-lc-* {
   --bdb-l: --value(--l-*);
   border-bottom-color: oklch(var(--bdb-l) var(--bdb-c) var(--bdb-h));
 }

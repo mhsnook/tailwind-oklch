@@ -6,7 +6,7 @@
  *
  * Each shorthand sets the three axis variables AND applies the
  * resolved color, so children can inherit and override single axes
- * via decomposed utilities (e.g. hover:bg-lu-8).
+ * via decomposed utilities (e.g. hover:bg-lc-8).
  *
  * Load via: @plugin "tailwind-oklch/plugin";
  */

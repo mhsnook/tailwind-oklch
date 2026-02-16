@@ -26,8 +26,8 @@ export default function ColorMatrix() {
 	const getLuRange = useCallback(() => {
 		if (typeof window === 'undefined') return LU_RANGE_DARK
 		const style = getComputedStyle(document.documentElement)
-		const start = parseFloat(style.getPropertyValue('--lu-range-start').trim())
-		const end = parseFloat(style.getPropertyValue('--lu-range-end').trim())
+		const start = parseFloat(style.getPropertyValue('--lc-range-start').trim())
+		const end = parseFloat(style.getPropertyValue('--lc-range-end').trim())
 		if (isNaN(start) || isNaN(end)) return LU_RANGE_DARK
 		return { start, end }
 	}, [])
