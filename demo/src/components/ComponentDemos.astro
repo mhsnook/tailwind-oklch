@@ -1,9 +1,103 @@
 ---
+import CodeViewerButton from './CodeViewerButton'
+
+const sources = {
+  multiHue: `<div class="rounded-xl p-6 border border-1-lo-primary bg-1-lo-primary text-fore-lo-primary">
+  <h4 class="text-[0.85rem] mb-3 font-semibold">Multi-Hue Composition</h4>
+  <p class="text-6-lo-primary text-[0.85rem] leading-normal mb-4">
+    Primary container with badges that differ only in hue.
+  </p>
+  <div class="flex flex-wrap gap-2 mt-2">
+    <span class="bg-3-mid-primary text-fore-lo-primary px-3 py-1 rounded-full text-xs font-semibold">primary</span>
+    <span class="bg-3-mid-accent text-fore-lo-accent px-3 py-1 rounded-full text-xs font-semibold">accent</span>
+    <span class="bg-3-mid-warning text-fore-lo-warning px-3 py-1 rounded-full text-xs font-semibold">warning</span>
+    <span class="bg-3-mid-success text-fore-lo-success px-3 py-1 rounded-full text-xs font-semibold">success</span>
+    <span class="bg-3-mid-info text-fore-lo-info px-3 py-1 rounded-full text-xs font-semibold">info</span>
+    <span class="bg-3-mid-danger text-fore-lo-danger px-3 py-1 rounded-full text-xs font-semibold">danger</span>
+  </div>
+</div>`,
+  cascade: `<div class="rounded-xl p-6 border border-8-lo-primary bg-3-mhi-accent text-fore-lo-accent">
+  <h4 class="text-[0.85rem] mb-3 font-semibold">Cascade Override</h4>
+  <p class="text-[0.85rem] leading-normal mb-4">
+    Parent sets bg-3-mhi-accent. Children inherit chroma + hue,
+    override only luminance.
+  </p>
+  <div class="flex gap-2 font-mono font-semibold">
+    <div class="bg-lc-base px-4 py-2 rounded-lg text-[0.75rem] text-fore-lo-accent">bg-lc-0</div>
+    <div class="bg-lc-7 px-4 py-2 rounded-lg text-[0.75rem] text-1-mlo-accent">bg-lc-7</div>
+    <div class="bg-lc-fore px-4 py-2 rounded-lg text-[0.75rem] text-1-mid-accent">bg-lc-10</div>
+  </div>
+</div>`,
+  chroma: `<div class="rounded-xl p-6 border border-5-mhi-success bg-0-lo-success text-6-mid-success">
+  <h4 class="text-[0.85rem] mb-3 font-semibold">Chroma for Activity</h4>
+  <p class="text-5-mlo-success text-[0.85rem] leading-normal mb-4">
+    On hover, these buttons increase chroma and get a little shadow.
+  </p>
+  <div
+    class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold
+           border hover:border-c-mid cursor-pointer transition-all duration-150
+           bg-3-mid-success text-fore-lo-success hover:bg-c-mhi hover:shadow"
+  >success</div>
+  <div
+    class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold
+           cursor-pointer transition-all duration-150 bg-0-lo-success
+           text-8-mhi-success border-2-mid-success hover:bg-c-mlo border
+           hover:shadow hover:border-c-mhi"
+  >outline</div>
+</div>`,
+  luminance: `<div class="rounded-xl p-6 border border-3-mid-primary bg-0-mlo-primary text-7-mid-primary">
+  <h4 class="text-[0.85rem] mb-3 font-semibold">Luminance for Emphasis</h4>
+  <p class="text-[0.85rem] leading-normal mb-4 text-lc-5">
+    Every element uses the same chroma and hue. Other elements only
+    change luminance. Excellent for accessibility.
+  </p>
+  <div
+    class="bg-lc-6 text-lc-1 border-lc-5 hover:bg-lc-5 hover:border-lc-4
+           hover:text-lc-0 inline-block px-5 py-2 rounded-lg text-[0.8rem]
+           font-semibold border cursor-pointer transition-all duration-150 shadow"
+  >primary</div>
+  <div
+    class="hover:text-lc-6 hover:bg-lc-1 border-lc-1 hover:border-lc-3
+           inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold
+           cursor-pointer transition-all duration-150 border shadow"
+  >outline</div>
+</div>`,
+  danger: `<div class="rounded-xl p-6 border border-3-mhi-danger bg-1-mid-danger text-fore-lo-danger">
+  <h4 class="text-[0.85rem] mb-3 font-semibold">Danger Alert</h4>
+  <p class="text-8-mlo-danger text-[0.85rem] leading-normal mb-4">
+    bg-1-mid-danger with buttons bg-5-mhi-danger. Deep, saturated
+    backgrounds that read correctly regardless of context.
+  </p>
+  <div
+    class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold
+           border-0 cursor-pointer transition-all duration-150
+           bg-5-mhi-danger text-0-lo-danger"
+  >Acknowledge</div>
+  <div
+    class="inline-block px-5 py-2 rounded-lg text-[0.8rem] font-semibold
+           border-0 cursor-pointer transition-all duration-150
+           bg-5-mhi-danger text-fore-lo-danger"
+  >Cancel</div>
+</div>`,
+  axis: `<div class="rounded-xl p-6 border border-1-lo-primary bg-1-mlo-primary text-fore-lo-primary">
+  <h4 class="text-[0.85rem] mb-3 font-semibold">Axis Inheritance</h4>
+  <p class="text-5-lo-primary text-[0.85rem] leading-normal mb-4">
+    Parent sets hue to primary. Children swap only the hue axis —
+    luminance and chroma stay inherited.
+  </p>
+  <div class="flex gap-2 mt-2 font-mono font-semibold">
+    <span class="text-center bg-h-success bg-lc-3 bg-c-mid px-3 py-1.5 rounded-full text-xs font-semibold text-fore-lo-success">bg-h-success</span>
+    <span class="text-center bg-h-warning bg-lc-3 bg-c-mid px-3 py-1.5 rounded-full text-xs font-semibold text-fore-lo-warning">bg-h-warning</span>
+    <span class="text-center bg-h-danger bg-lc-3 bg-c-mid px-3 py-1.5 rounded-full text-xs font-semibold text-fore-lo-danger">bg-h-danger</span>
+  </div>
+</div>`,
+}
 ---
 
 <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
     <!-- Multi-Hue Composition -->
-  <div class="rounded-xl p-6 border border-1-lo-primary bg-1-lo-primary text-fore-lo-primary">
+  <div class="relative rounded-xl p-6 border border-1-lo-primary bg-1-lo-primary text-fore-lo-primary">
+    <CodeViewerButton client:load code={sources.multiHue} />
     <h4 class="text-[0.85rem] mb-3 font-semibold">Multi-Hue Composition</h4>
     <p class="text-6-lo-primary text-[0.85rem] leading-normal mb-4">
       Primary container with badges that differ only in hue. Gentle colors, no transparency needed:
@@ -19,7 +113,8 @@
   </div>
 
   <!-- Cascade Demo -->
-  <div class="rounded-xl p-6 border border-8-lo-primary bg-3-mhi-accent text-fore-lo-accent">
+  <div class="relative rounded-xl p-6 border border-8-lo-primary bg-3-mhi-accent text-fore-lo-accent">
+    <CodeViewerButton client:load code={sources.cascade} />
     <h4 class="text-[0.85rem] mb-3 font-semibold">Cascade Override</h4>
     <p class="text-[0.85rem] leading-normal mb-4">
       Parent sets bg-3-mhi-accent. Children inherit chroma + hue, override only
@@ -33,7 +128,8 @@
   </div>
 
   <!-- Chroma Card Success -->
-  <div class="rounded-xl p-6 border border-5-mhi-success bg-0-lo-success text-6-mid-success">
+  <div class="relative rounded-xl p-6 border border-5-mhi-success bg-0-lo-success text-6-mid-success">
+    <CodeViewerButton client:load code={sources.chroma} />
     <h4 class="text-[0.85rem] mb-3 font-semibold">Chroma for Activity</h4>
     <p class="text-5-mlo-success text-[0.85rem] leading-normal mb-4">
       On hover, these buttons increase chroma and get a little shadow. Subtle, pleasing, unlikely to distract.
@@ -50,10 +146,9 @@
     </div>
   </div>
 
-
-
   <!-- Luminance Card Primary -->
-  <div class="rounded-xl p-6 border border-3-mid-primary bg-0-mlo-primary text-7-mid-primary">
+  <div class="relative rounded-xl p-6 border border-3-mid-primary bg-0-mlo-primary text-7-mid-primary">
+    <CodeViewerButton client:load code={sources.luminance} />
     <h4 class="text-[0.85rem] mb-3 font-semibold">Luminance for Emphasis</h4>
     <p class="text-[0.85rem] leading-normal mb-4 text-lc-5">
       Every element in his card uses the same chroma and hue. Other elements only change luminance. Excellent for accessibility.
@@ -71,7 +166,8 @@
   </div>
 
   <!-- Danger Alert -->
-  <div class="rounded-xl p-6 border border-3-mhi-danger bg-1-mid-danger text-fore-lo-danger">
+  <div class="relative rounded-xl p-6 border border-3-mhi-danger bg-1-mid-danger text-fore-lo-danger">
+    <CodeViewerButton client:load code={sources.danger} />
     <h4 class="text-[0.85rem] mb-3 font-semibold">Danger Alert</h4>
     <p class="text-8-mlo-danger text-[0.85rem] leading-normal mb-4">
       bg-1-mid-danger with buttons bg-5-mhi-danger. Deep, saturated backgrounds that read correctly
@@ -91,7 +187,8 @@
   </div>
 
   <!-- Axis Inheritance -->
-  <div class="rounded-xl p-6 border border-1-lo-primary bg-1-mlo-primary text-fore-lo-primary">
+  <div class="relative rounded-xl p-6 border border-1-lo-primary bg-1-mlo-primary text-fore-lo-primary">
+    <CodeViewerButton client:load code={sources.axis} />
     <h4 class="text-[0.85rem] mb-3 font-semibold">Axis Inheritance</h4>
     <p class="text-5-lo-primary text-[0.85rem] leading-normal mb-4">
       Parent sets hue to primary. Children swap only the hue axis — luminance
