@@ -12,7 +12,7 @@
  */
 
 module.exports = function ({ addUtilities }) {
-  const luminances = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'base', 'fore'];
+  const luminances = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'base', 'fore', 'none', 'full'];
   const chromas = ['lo', 'mlo', 'mid', 'mhi', 'hi'];
   const hues = ['primary', 'accent', 'success', 'warning', 'danger', 'info', 'neutral'];
 

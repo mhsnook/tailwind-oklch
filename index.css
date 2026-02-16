@@ -14,6 +14,8 @@
  *   0 / base  = page surface (light in light mode, dark in dark mode)
  *   10 / fore = maximum contrast with the surface
  *   1–9       = evenly distributed between those endpoints
+ *   none      = absolute surface extreme (pure white / pure black)
+ *   full      = absolute contrast extreme (pure black / pure white)
  */
 
 @theme {
@@ -53,6 +55,13 @@
   /* Semantic aliases */
   --l-base: 0.12;
   --l-fore: 0.92;
+
+  /* Absolute extremes — escape the configured range entirely.
+     none = beyond 0 (surface side), full = beyond 10 (contrast side).
+     Dark: none → pure black, full → pure white.
+     Light: none → pure white, full → pure black. */
+  --l-none: 0;
+  --l-full: 1;
 
   /* ── Named Chroma Stops ──────────────────────────────────────────────
      OKLCH chroma: practical range 0–0.25 */
@@ -97,6 +106,9 @@
 
   --l-base: 0.95;
   --l-fore: 0.15;
+
+  --l-none: 1;
+  --l-full: 0;
 }
 
 /* ── Cascade Defaults ────────────────────────────────────────────────────
