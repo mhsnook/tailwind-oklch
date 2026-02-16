@@ -70,11 +70,11 @@ export default function HueControls() {
 	return (
 		<div className="space-y-6">
 			{/* ── Hue Sliders ──────────────────────────────────────── */}
-			<div>
+			<div className="p-5 bg-lc-1 bg-c-lo bg-h-primary rounded-xl border border-lc-2 border-c-lo border-h-primary">
 				<h3 className="text-xs uppercase tracking-[0.08em] text-5-lo-primary font-semibold mb-3">
 					Hues
 				</h3>
-				<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 p-5 bg-lc-1 bg-c-lo bg-h-primary rounded-xl border border-lc-2 border-c-lo border-h-primary">
+				<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
 					{HUES.map((hue) => (
 						<button
 							key={hue.name}
@@ -194,6 +194,51 @@ export default function HueControls() {
 						neutral (<span className="font-mono">lo</span>) to fully
 						vivid (<span className="font-mono">hi</span>).
 					</p>
+				</div>
+			</div>
+
+			{/* ── Selected Color Classes ─────────────────────────── */}
+			<div className="p-5 rounded-xl border border-lc-2 border-c-lo border-h-primary bg-lc-1 bg-c-lo bg-h-primary">
+				<div className="flex items-center gap-3 mb-3">
+					<div
+						className="w-10 h-10 rounded-lg border border-white/10 shrink-0"
+						style={{ backgroundColor: `oklch(${selectedLValue.toFixed(3)} ${selectedChroma.val} var(--hue-${selectedHue}))` }}
+					/>
+					<h3 className="text-xs uppercase tracking-[0.08em] text-5-lo-primary font-semibold">
+						Selected Color Classes
+					</h3>
+				</div>
+				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+					{[
+						{
+							label: 'Full LCH',
+							cls: `bg-${selectedLStep.name}-${selectedChroma.name}-${selectedHue}`,
+						},
+						{
+							label: 'L + C',
+							cls: `bg-lc-${selectedLStep.name} bg-c-${selectedChroma.name}`,
+						},
+						{
+							label: 'C only',
+							cls: `bg-c-${selectedChroma.name}`,
+						},
+						{
+							label: 'H only',
+							cls: `bg-h-${selectedHue}`,
+						},
+					].map((item) => (
+						<div
+							key={item.label}
+							className="flex flex-col gap-1 rounded-lg bg-white/5 px-3 py-2"
+						>
+							<span className="text-[0.65rem] uppercase tracking-[0.06em] text-5-lo-primary opacity-60">
+								{item.label}
+							</span>
+							<code className="text-[0.75rem] font-mono text-8-mid-primary break-all">
+								{item.cls}
+							</code>
+						</div>
+					))}
 				</div>
 			</div>
 		</div>
