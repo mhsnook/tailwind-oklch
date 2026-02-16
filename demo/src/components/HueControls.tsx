@@ -56,7 +56,8 @@ export default function HueControls() {
 		[isDark, applyLuRange],
 	)
 
-	// ── Cross-reference state between L and C strips ───────────────────
+	// ── Cross-reference state between H, L, and C strips ───────────────
+	const [selectedHue, setSelectedHue] = useState(HUES[0].name) // primary
 	const [selectedChroma, setSelectedChroma] = useState(C_STOPS[2]) // mid
 	const [selectedLStep, setSelectedLStep] = useState(L_STOPS[2]) // 5
 
@@ -73,22 +74,35 @@ export default function HueControls() {
 				<h3 className="text-xs uppercase tracking-[0.08em] text-5-lo-primary font-semibold mb-3">
 					Hues
 				</h3>
-				<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 p-5 bg-lc-1 bg-c-lo bg-h-primary rounded-xl border border-lc-2 border-c-lo border-h-primary">
+				<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 p-5 bg-lc-1 bg-c-lo bg-h-primary rounded-xl border border-lc-2 border-c-lo border-h-primary">
 					{HUES.map((hue) => (
-						<div key={hue.name} className="flex flex-col gap-1.5">
-							<label className="text-xs uppercase tracking-[0.08em] text-5-lo-primary font-semibold">
+						<button
+							key={hue.name}
+							type="button"
+							onClick={() => setSelectedHue(hue.name)}
+							className={`flex flex-col gap-1.5 text-left cursor-pointer rounded-lg p-2 transition-colors ${selectedHue === hue.name ? 'bg-white/10' : 'hover:bg-white/5'}`}
+						>
+							<label className="text-xs uppercase tracking-[0.08em] text-5-lo-primary font-semibold pointer-events-none">
 								{hue.name}
 							</label>
-							<SliderControl
-								value={values[hue.name]}
-								onValueChange={(val) => updateHue(hue.name, val)}
-								min={0}
-								max={360}
-								step={1}
-								label={`${hue.name} hue`}
-							/>
-							<div className="font-mono text-[0.8rem] text-8-mid-primary">{values[hue.name]}°</div>
-						</div>
+							<div onClick={(e) => e.stopPropagation()}>
+								<SliderControl
+									value={values[hue.name]}
+									onValueChange={(val) => updateHue(hue.name, val)}
+									min={0}
+									max={360}
+									step={1}
+									label={`${hue.name} hue`}
+								/>
+							</div>
+							<div className="flex items-center gap-2">
+								<div
+									className="w-5 h-5 rounded-md border border-white/10 shrink-0"
+									style={{ backgroundColor: `oklch(${selectedLValue.toFixed(3)} ${selectedChroma.val} var(--hue-${hue.name}))` }}
+								/>
+								<div className="font-mono text-[0.8rem] text-8-mid-primary">{values[hue.name]}°</div>
+							</div>
+						</button>
 					))}
 				</div>
 			</div>
@@ -121,7 +135,7 @@ export default function HueControls() {
 
 					{/* L stops strip */}
 					<div className="text-[0.65rem] font-mono text-5-lo-primary mb-1">
-						chroma: {selectedChroma.name} ({selectedChroma.val})
+						hue: {selectedHue} &middot; chroma: {selectedChroma.name} ({selectedChroma.val})
 					</div>
 					<div className="flex gap-[2px]">
 						{lStopValues.map((l) => (
@@ -133,7 +147,7 @@ export default function HueControls() {
 							>
 								<div
 									className="w-full aspect-[2/1] rounded-md border border-white/10"
-									style={{ backgroundColor: `oklch(${l.value.toFixed(3)} ${selectedChroma.val} var(--hue-primary))` }}
+									style={{ backgroundColor: `oklch(${l.value.toFixed(3)} ${selectedChroma.val} var(--hue-${selectedHue}))` }}
 								/>
 								<div className="text-[0.6rem] font-mono text-5-lo-primary leading-none">
 									L:{l.name}
@@ -152,7 +166,7 @@ export default function HueControls() {
 						Chroma Stops
 					</h3>
 					<div className="text-[0.65rem] font-mono text-5-lo-primary mb-1">
-						luminance: L:{selectedLStep.name} ({selectedLValue.toFixed(2)})
+						hue: {selectedHue} &middot; luminance: L:{selectedLStep.name} ({selectedLValue.toFixed(2)})
 					</div>
 					<div className="flex gap-[2px] mb-3">
 						{C_STOPS.map((c) => (
@@ -164,7 +178,7 @@ export default function HueControls() {
 							>
 								<div
 									className="w-full aspect-[2/1] rounded-md border border-white/10"
-									style={{ backgroundColor: `oklch(${selectedLValue.toFixed(3)} ${c.val} var(--hue-primary))` }}
+									style={{ backgroundColor: `oklch(${selectedLValue.toFixed(3)} ${c.val} var(--hue-${selectedHue}))` }}
 								/>
 								<div className="text-[0.6rem] font-mono text-5-lo-primary leading-none">
 									C:{c.name}
