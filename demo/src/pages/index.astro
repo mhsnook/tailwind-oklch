@@ -4,6 +4,7 @@ import HueControls from "@/components/HueControls";
 import ColorMatrix from "@/components/ColorMatrix";
 import ComponentDemos from "@/components/ComponentDemos.astro";
 import CodeExamples from "@/components/CodeExamples";
+import RelativeLuminanceDemo from "@/components/RelativeLuminanceDemo.astro";
 ---
 
 <Layout title="tw ok — Tailwind OKLCH Color System">
@@ -48,6 +49,23 @@ import CodeExamples from "@/components/CodeExamples";
     </h2>
     <div class="mb-12">
       <ComponentDemos />
+    </div>
+
+    <!-- Relative Luminance -->
+    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-8-mlo-primary">
+      Relative Luminance Offsets
+    </h2>
+    <p class="text-5-lo-primary text-[0.9rem] mb-6 -mt-3">
+      Sometimes you don't need an absolute luminance step — you just want
+      <em>a little lighter</em> or <em>a little darker</em> than whatever
+      the parent set. <code class="text-6-mhi-primary font-mono text-[0.85rem]">bg-lc-up-1</code>
+      pushes toward the viewer (brighter in dark mode, darker in light mode)
+      while <code class="text-6-mhi-primary font-mono text-[0.85rem]">bg-lc-down-1</code>
+      recedes. Perfect for hover states, active items, and subtle depth — the
+      same classes work on every base color.
+    </p>
+    <div class="mb-12">
+      <RelativeLuminanceDemo />
     </div>
 
     <!-- Code Examples -->

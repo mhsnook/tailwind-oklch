@@ -1,0 +1,36 @@
+---
+const navbars = [
+  { base: 'bg-3-mid-primary', hue: 'primary', items: ['Dashboard', 'Projects', 'Team', 'Settings'] },
+  { base: 'bg-4-mhi-accent', hue: 'accent', items: ['Browse', 'Trending', 'Library', 'Upload'] },
+  { base: 'bg-3-mid-success', hue: 'success', items: ['Overview', 'Analytics', 'Reports', 'Export'] },
+  { base: 'bg-2-mid-danger', hue: 'danger', items: ['Alerts', 'Incidents', 'Escalations', 'Logs'] },
+]
+---
+
+<div class="flex flex-col gap-5">
+  {navbars.map(({ base, hue, items }, navIdx) => (
+    <div>
+      <div class:list={[base, `text-lc-fore rounded-lg flex items-center gap-1 px-2 py-2 text-[0.82rem] font-medium`]}>
+        <div class="bg-lc-up-2 rounded px-2.5 py-1.5 font-bold text-[0.8rem] mr-2 tracking-tight">{hue}</div>
+        {items.map((label, i) => (
+          <a class:list={[
+            'px-3 py-1.5 rounded transition-all duration-150 cursor-pointer',
+            i === 0 ? 'bg-lc-up-1' : 'hover:bg-lc-up-1',
+          ]}>
+            {label}
+          </a>
+        ))}
+        <div class="ml-auto flex items-center gap-1">
+          <div class="bg-lc-down-1 rounded px-2.5 py-1.5 text-[0.75rem]">bg-lc-down-1</div>
+          <div class="bg-lc-up-1 rounded px-2.5 py-1.5 text-[0.75rem]">bg-lc-up-1</div>
+          <div class="bg-lc-up-2 rounded px-2.5 py-1.5 text-[0.75rem]">bg-lc-up-2</div>
+        </div>
+      </div>
+    </div>
+  ))}
+  <p class="text-5-lo-neutral text-[0.8rem] leading-relaxed mt-1">
+    Each navbar sets a single base color. <code class="text-6-mhi-primary font-mono text-[0.78rem]">bg-lc-up-1</code> and
+    <code class="text-6-mhi-primary font-mono text-[0.78rem]">bg-lc-down-1</code> nudge luminance toward or away from the
+    viewer — the direction flips automatically in dark mode. Same utility classes, every hue.
+  </p>
+</div>
