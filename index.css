@@ -82,6 +82,14 @@
   --c-80: 0.24;
   --c-90: 0.27;
   --c-95: 0.30;
+
+  /* ── LC Adjustment Steps ───────────────────────────────────────────
+     Each step ≈ one position on the 0–10 scale (~0.08 OKLCH L). */
+  --lc-adj-1: 0.08;
+  --lc-adj-2: 0.16;
+  --lc-adj-3: 0.24;
+  --lc-adj-4: 0.32;
+  --lc-adj-5: 0.40;
 }
 
 /* ── Light-mode luminance contrast range ──────────────────────────────
@@ -89,6 +97,7 @@
    the page), 10/fore is near black (high contrast, like text). */
 
 :root:not(.dark) {
+  --lc-dir: -1;
   --lc-range-start: 0.95;
   --lc-range-end: 0.15;
 
@@ -117,6 +126,8 @@
    naturally flows to children that only set bg-lc-* or bg-c-*. */
 
 :root {
+  --lc-dir: 1;
+
   --bg-l: var(--l-5);
   --bg-c: var(--c-lo);
   --bg-h: var(--hue-primary);
@@ -167,6 +178,20 @@
   background-color: oklch(var(--bg-l) var(--bg-c) var(--bg-h));
 }
 
+/* ── Background LC Adjustments ───────────────────────────────────────
+   Nudge background luminance up (more contrast) or down (less contrast)
+   relative to the current --bg-l, without changing --bg-l itself. */
+
+@utility bg-lc-up-* {
+  --bg-l-adj: --value(--lc-adj-*);
+  background-color: oklch(clamp(0, calc(var(--bg-l) + var(--lc-dir) * var(--bg-l-adj)), 1) var(--bg-c) var(--bg-h));
+}
+
+@utility bg-lc-down-* {
+  --bg-l-adj: --value(--lc-adj-*);
+  background-color: oklch(clamp(0, calc(var(--bg-l) - var(--lc-dir) * var(--bg-l-adj)), 1) var(--bg-c) var(--bg-h));
+}
+
 /* ── Text ────────────────────────────────────────────────────────────── */
 
 @utility text-lc-* {
@@ -182,6 +207,20 @@
 @utility text-h-* {
   --tx-h: --value(--hue-*);
   color: oklch(var(--tx-l) var(--tx-c) var(--tx-h));
+}
+
+/* ── Text LC Adjustments ─────────────────────────────────────────────
+   Nudge text luminance up (more contrast) or down (less contrast)
+   relative to the current --tx-l, without changing --tx-l itself. */
+
+@utility text-lc-up-* {
+  --tx-l-adj: --value(--lc-adj-*);
+  color: oklch(clamp(0, calc(var(--tx-l) + var(--lc-dir) * var(--tx-l-adj)), 1) var(--tx-c) var(--tx-h));
+}
+
+@utility text-lc-down-* {
+  --tx-l-adj: --value(--lc-adj-*);
+  color: oklch(clamp(0, calc(var(--tx-l) - var(--lc-dir) * var(--tx-l-adj)), 1) var(--tx-c) var(--tx-h));
 }
 
 /* ── Border ──────────────────────────────────────────────────────────── */
