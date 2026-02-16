@@ -7,8 +7,13 @@
  *
  * Every setter utility (bg-lu-*, bg-c-*, bg-h-*) both updates its
  * axis variable AND applies the resolved oklch() color. Defaults
- * cascade from :root, so a single class like `bg-lu-mid` immediately
+ * cascade from :root, so a single class like `bg-lu-5` immediately
  * produces a visible color — no helper class needed.
+ *
+ * Luminance scale: 0–10, anchored to the page surface.
+ *   0 / base  = page surface (light in light mode, dark in dark mode)
+ *   10 / fore = maximum contrast with the surface
+ *   1–9       = evenly distributed between those endpoints
  */
 
 @theme {
@@ -22,13 +27,32 @@
   --hue-info: 220;
   --hue-neutral: 260;
 
-  /* ── Named Luminance Stops ───────────────────────────────────────────
-     OKLCH lightness: 0 = black, 1 = white */
-  --l-base: 0.25;
-  --l-subtle: 0.40;
-  --l-mid: 0.55;
-  --l-strong: 0.72;
-  --l-full: 0.90;
+  /* ── Luminance Range ───────────────────────────────────────────────
+     Defines the OKLCH lightness endpoints for the 0–10 scale.
+     Dark-mode defaults: base/0 is near black, fore/10 is near white.
+     Override --lu-range-start and --lu-range-end to shift the range. */
+  --lu-range-start: 0.12;
+  --lu-range-end: 0.92;
+
+  /* ── 0–10 Luminance Scale ──────────────────────────────────────────
+     Computed: step N = start + (end - start) × (N / 10)
+     Dark mode (default): 0→0.12, 5→0.52, 10→0.92
+     Light mode (override): 0→0.95, 5→0.55, 10→0.15 */
+  --l-0: 0.12;
+  --l-1: 0.20;
+  --l-2: 0.28;
+  --l-3: 0.36;
+  --l-4: 0.44;
+  --l-5: 0.52;
+  --l-6: 0.60;
+  --l-7: 0.68;
+  --l-8: 0.76;
+  --l-9: 0.84;
+  --l-10: 0.92;
+
+  /* Semantic aliases */
+  --l-base: 0.12;
+  --l-fore: 0.92;
 
   /* ── Named Chroma Stops ──────────────────────────────────────────────
      OKLCH chroma: practical range 0–0.25 */
@@ -37,18 +61,6 @@
   --c-mid: 0.12;
   --c-mhi: 0.18;
   --c-hi: 0.25;
-
-  /* ── Numeric Luminance Scale ─────────────────────────────────────── */
-  --l-10: 0.10;
-  --l-20: 0.20;
-  --l-30: 0.30;
-  --l-40: 0.40;
-  --l-50: 0.50;
-  --l-60: 0.60;
-  --l-70: 0.70;
-  --l-80: 0.80;
-  --l-90: 0.90;
-  --l-95: 0.95;
 
   /* ── Numeric Chroma Scale ────────────────────────────────────────── */
   --c-10: 0.03;
@@ -63,41 +75,65 @@
   --c-95: 0.30;
 }
 
+/* ── Light-mode luminance range ────────────────────────────────────────
+   Flipping the range makes 0/base = near white, 10/fore = near black.
+   All 0–10 stops are recalculated accordingly. */
+
+:root:not(.dark) {
+  --lu-range-start: 0.95;
+  --lu-range-end: 0.15;
+
+  --l-0: 0.95;
+  --l-1: 0.87;
+  --l-2: 0.79;
+  --l-3: 0.71;
+  --l-4: 0.63;
+  --l-5: 0.55;
+  --l-6: 0.47;
+  --l-7: 0.39;
+  --l-8: 0.31;
+  --l-9: 0.23;
+  --l-10: 0.15;
+
+  --l-base: 0.95;
+  --l-fore: 0.15;
+}
+
 /* ── Cascade Defaults ────────────────────────────────────────────────────
    Sensible fallbacks so any single-axis setter immediately resolves.
    These inherit down the DOM tree, so a parent's bg-h-accent
    naturally flows to children that only set bg-lu-* or bg-c-*. */
 
 :root {
-  --bg-l: var(--l-mid);
+  --bg-l: var(--l-5);
   --bg-c: var(--c-lo);
   --bg-h: var(--hue-primary);
 
-  --tx-l: var(--l-full);
+  --tx-l: var(--l-fore);
   --tx-c: var(--c-lo);
   --tx-h: var(--hue-primary);
 
-  --bd-l: var(--l-subtle);
+  --bd-l: var(--l-3);
   --bd-c: var(--c-lo);
   --bd-h: var(--hue-primary);
 
-  --ac-l: var(--l-mid);
+  --ac-l: var(--l-5);
   --ac-c: var(--c-mid);
   --ac-h: var(--hue-primary);
 
-  --gf-l: var(--l-mid);
+  --gf-l: var(--l-5);
   --gf-c: var(--c-mid);
   --gf-h: var(--hue-primary);
 
-  --gt-l: var(--l-mid);
+  --gt-l: var(--l-5);
   --gt-c: var(--c-mid);
   --gt-h: var(--hue-primary);
 
-  --sh-l: var(--l-mid);
+  --sh-l: var(--l-5);
   --sh-c: var(--c-lo);
   --sh-h: var(--hue-primary);
 
-  --bdb-l: var(--l-subtle);
+  --bdb-l: var(--l-3);
   --bdb-c: var(--c-lo);
   --bdb-h: var(--hue-primary);
 }

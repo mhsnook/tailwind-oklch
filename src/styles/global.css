@@ -12,7 +12,7 @@
 
 /* Force theme variables into the build that aren't auto-detected from source.
    The matrix explorer reads these CSS custom properties via JS inline styles. */
-@source inline("bg-h-warning bg-h-info bg-h-neutral bg-lu-10 bg-lu-20 bg-lu-30 bg-lu-40 bg-lu-50 bg-lu-60 bg-lu-70 bg-lu-80 bg-lu-90 bg-lu-95 bg-c-10 bg-c-20 bg-c-30 bg-c-40 bg-c-50 bg-c-60 bg-c-70 bg-c-80 bg-c-90 bg-c-95 dark:bg-lu-10 bg-lu-95");
+@source inline("bg-h-warning bg-h-info bg-h-neutral bg-lu-0 bg-lu-1 bg-lu-2 bg-lu-3 bg-lu-4 bg-lu-5 bg-lu-6 bg-lu-7 bg-lu-8 bg-lu-9 bg-lu-10 bg-lu-base bg-lu-fore bg-c-10 bg-c-20 bg-c-30 bg-c-40 bg-c-50 bg-c-60 bg-c-70 bg-c-80 bg-c-90 bg-c-95");
 
 /* ── shadcn theme tokens ──────────────────────────────────────────── */
 
@@ -94,16 +94,6 @@
   }
 }
 
-/* ── Light-mode luminance overrides ───────────────────────────────── */
-
-:root:not(.dark) {
-  --l-base: 0.90;
-  --l-subtle: 0.72;
-  /* --l-mid stays 0.55 */
-  --l-strong: 0.40;
-  --l-full: 0.25;
-}
-
 /* ── Demo-specific styles ─────────────────────────────────────────── */
 
 /* Matrix cells — generated in tight JS loops, CSS more efficient */
@@ -113,7 +103,7 @@
   justify-content: center;
   font-size: 0.65rem;
   font-family: var(--font-mono);
-  color: oklch(var(--l-50) var(--c-lo) var(--hue-primary));
+  color: oklch(var(--l-5) var(--c-lo) var(--hue-primary));
   padding: 0.25rem;
   min-height: 2rem;
 }
@@ -130,8 +120,8 @@
 
 /* Preview toast — visibility toggled by JS */
 .class-preview {
-  background: oklch(var(--l-10) var(--c-lo) var(--hue-primary));
-  border: 1px solid oklch(var(--l-30) var(--c-mlo) var(--hue-primary));
+  background: oklch(var(--l-0) var(--c-lo) var(--hue-primary));
+  border: 1px solid oklch(var(--l-2) var(--c-mlo) var(--hue-primary));
   box-shadow: 0 8px 32px oklch(0 0 0 / 0.5);
   opacity: 0;
   pointer-events: none;
@@ -143,7 +133,7 @@
 }
 
 .class-preview .swatch {
-  border: 1px solid oklch(var(--l-40) var(--c-lo) var(--hue-primary));
+  border: 1px solid oklch(var(--l-3) var(--c-lo) var(--hue-primary));
 }
 
 /* Code blocks — always dark, even in light mode */
@@ -153,11 +143,11 @@
 }
 
 :root:not(.dark) .class-preview {
-  background: oklch(var(--l-95) var(--c-lo) var(--hue-primary));
-  border-color: oklch(var(--l-80) var(--c-mlo) var(--hue-primary));
+  background: oklch(var(--l-0) var(--c-lo) var(--hue-primary));
+  border-color: oklch(var(--l-1) var(--c-mlo) var(--hue-primary));
   box-shadow: 0 8px 32px oklch(0 0 0 / 0.12);
 }
 
 :root:not(.dark) .class-preview .swatch {
-  border-color: oklch(var(--l-70) var(--c-lo) var(--hue-primary));
+  border-color: oklch(var(--l-2) var(--c-lo) var(--hue-primary));
 }

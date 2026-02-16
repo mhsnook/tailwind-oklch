@@ -8,22 +8,22 @@ import CodeExamples from "@/components/CodeExamples";
 
 <Layout title="tw-ok — Tailwind OKLCH Color System">
   <div class="max-w-[1200px] mx-auto px-8 py-12">
-    <div class="rounded-2xl mb-6 inline-block overflow-hidden border border-mid-mlo-neutral">
-      <div class="flex items-center gap-2 px-5 py-1 border-b border-mid-mlo-neutral text-mid-mlo-neutral">tailwind-oklch plugin</div>
+    <div class="rounded-2xl mb-6 inline-block overflow-hidden border border-5-mlo-neutral">
+      <div class="flex items-center gap-2 px-5 py-1 border-b border-5-mlo-neutral text-5-mlo-neutral">tailwind-oklch plugin</div>
       <div class="px-10 py-8">
         <h1 class="text-[4rem] font-bold tracking-[-0.04em] font-mono leading-none">
-          <span style="color: oklch(0.746 0.16 233)">tw</span><span class="text-lu-60 dark:text-lu-80">-</span><span style="color: oklch(0.718 0.202 350)">ok</span>
+          <span style="color: oklch(0.746 0.16 233)">tw</span><span class="text-lu-7">-</span><span style="color: oklch(0.718 0.202 350)">ok</span>
         </h1>
       </div>
     </div>
-    <p class="text-[1.1rem] mb-12 max-w-[680px] leading-[1.6] text-mid-mlo-primary">
+    <p class="text-[1.1rem] mb-12 max-w-[680px] leading-[1.6] text-5-mlo-primary">
 		Bringing the Tailwind CSS philosophy of <em>atomic utility classes</em> to the color variables that power OKLCH.
 		Tailwind OKLCH lets you set full color values or change one parameter at a time – no more opacity hacks
 		required! Re-theme your whole app with just a variable or a class.
 	 </p>
 
     <!-- Theme Controls -->
-    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-strong-mlo-primary">
+    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-8-mlo-primary">
       Theme Hues
     </h2>
     <div class="mb-12">
@@ -31,11 +31,11 @@ import CodeExamples from "@/components/CodeExamples";
     </div>
 
     <!-- Color Matrix -->
-    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-strong-mlo-primary">
-      5×5 Luminance × Chroma Grid
+    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-8-mlo-primary">
+      11×5 Luminance × Chroma Grid
     </h2>
-    <p class="text-mid-lo-primary text-[0.9rem] mb-6 -mt-3">
-      Each matrix shows all combinations of luminance (rows) and chroma
+    <p class="text-5-lo-primary text-[0.9rem] mb-6 -mt-3">
+      Each matrix shows all combinations of luminance (rows, 0–10) and chroma
       (columns) for a given hue. Hover to see the class name.
     </p>
     <div class="mb-12">
@@ -43,7 +43,7 @@ import CodeExamples from "@/components/CodeExamples";
     </div>
 
     <!-- Live Component Demos -->
-    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-strong-mlo-primary">
+    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-8-mlo-primary">
       Live Component Examples
     </h2>
     <div class="mb-12">
@@ -51,7 +51,7 @@ import CodeExamples from "@/components/CodeExamples";
     </div>
 
     <!-- Code Examples -->
-    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-strong-mlo-primary">
+    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-8-mlo-primary">
       Implementation
     </h2>
     <CodeExamples client:visible />

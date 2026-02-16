@@ -14,15 +14,26 @@ const CODE_EXAMPLES = {
 
 /* That's it. You now have:
 
-   SHORTHAND    bg-mid-hi-primary        one class, full color
-   DECOMPOSED   bg-lu-mid bg-c-hi bg-h-primary   per-axis control
+   SHORTHAND    bg-5-hi-primary          one class, full color
+   DECOMPOSED   bg-lu-5 bg-c-hi bg-h-primary   per-axis control
    CASCADING    parent sets color, child overrides one axis
+
+   Luminance 0–10 scale:
+     0 / base  = page surface (adapts to light/dark mode)
+     10 / fore = maximum contrast with the surface
+     1–9       = evenly distributed increments
 
    To customize hues, override in your own @theme block: */
 
 @theme {
   --hue-primary: 180;  /* teal instead of purple */
   --hue-accent:  320;  /* pink instead of orange */
+}
+
+/* To shift the luminance range: */
+:root {
+  --lu-range-start: 0.95;  /* base/0 lightness */
+  --lu-range-end:   0.15;  /* fore/10 lightness */
 }`,
 	},
 	cascade: {
@@ -39,23 +50,23 @@ const CODE_EXAMPLES = {
    just to change one channel. -->
 
 <!-- Parent sets the full color via shorthand -->
-<div class="bg-mid-hi-accent p-6 rounded-xl">
+<div class="bg-5-hi-accent p-6 rounded-xl">
 
   <!-- Child overrides ONLY luminance — inherits chroma + hue -->
-  <button class="hover:bg-lu-strong px-4 py-2 rounded">
+  <button class="hover:bg-lu-8 px-4 py-2 rounded">
     Lighter on hover
   </button>
 
-  <!-- Another child shifts to low luminance -->
+  <!-- Another child shifts to surface luminance -->
   <footer class="bg-lu-base p-4 rounded">
-    Dark footer, same chroma + hue as parent
+    Surface footer, same chroma + hue as parent
   </footer>
 </div>
 
 <!-- Works across nesting levels too -->
-<div class="bg-base-mlo-primary">           <!-- L:base C:mlo H:primary -->
+<div class="bg-1-mlo-primary">              <!-- L:1 C:mlo H:primary -->
   <div class="bg-h-success">              <!-- swap hue, keep L+C -->
-    <div class="bg-lu-full">                 <!-- swap luminance, keep C+H -->
+    <div class="bg-lu-fore">                <!-- swap luminance, keep C+H -->
       Three levels deep, each overriding one axis.
     </div>
   </div>
@@ -63,10 +74,10 @@ const CODE_EXAMPLES = {
 
 <!-- Hover/focus only changes what matters -->
 <button class="
-  bg-mid-hi-primary text-full-lo-primary
-  hover:bg-lu-strong              only luminance shifts
-  active:bg-lu-subtle             darker on press
-  focus:bg-c-mhi              more saturated on focus
+  bg-5-hi-primary text-fore-lo-primary
+  hover:bg-lu-8                only luminance shifts
+  active:bg-lu-3               darker on press
+  focus:bg-c-mhi               more saturated on focus
 ">Interactive</button>
 
 <!-- Re-theme the entire tree via JS -->
@@ -79,12 +90,13 @@ const CODE_EXAMPLES = {
 		lang: 'html',
 		code: `<!-- ── SHORTHAND ────────────────────────────────────────────
    Pattern: {property}-{luminance}-{chroma}-{hue}
+   Luminance: 0–10 (or base/fore aliases)
    Best for: setting a complete color in one class. -->
 
-<div class="bg-full-lo-primary rounded-xl p-6">
-  <h2 class="text-base-hi-primary text-xl font-bold">Dashboard</h2>
-  <p class="text-subtle-mlo-primary">Muted body text</p>
-  <button class="bg-mid-hi-accent text-full-lo-accent px-4 py-2 rounded">
+<div class="bg-fore-lo-primary rounded-xl p-6">
+  <h2 class="text-1-hi-primary text-xl font-bold">Dashboard</h2>
+  <p class="text-3-mlo-primary">Muted body text</p>
+  <button class="bg-5-hi-accent text-fore-lo-accent px-4 py-2 rounded">
     Action
   </button>
 </div>
@@ -95,29 +107,33 @@ const CODE_EXAMPLES = {
    parent already set the other two axes. -->
 
 <button class="
-  bg-lu-mid bg-c-hi bg-h-primary
-  hover:bg-lu-strong
+  bg-lu-5 bg-c-hi bg-h-primary
+  hover:bg-lu-8
 ">Only luminance changes on hover</button>
 
-<!-- ── NUMERIC VALUES ──────────────────────────────────────
-   Use the 10–95 scale for fine-grained steps between
-   the named stops (base/subtle/mid/strong/full). -->
+<!-- ── SEMANTIC ALIASES ──────────────────────────────────────
+   base = 0 (page surface), fore = 10 (max contrast).
+   The same class works in both light and dark mode. -->
 
-<div class="bg-lu-70 bg-c-30 bg-h-primary">
-  Luminance 70, Chroma 30
+<div class="bg-lu-base bg-c-lo bg-h-primary">
+  Blends with the page in any mode.
+</div>
+<div class="bg-lu-fore bg-c-lo bg-h-primary">
+  Maximum contrast in any mode.
 </div>
 
-<!-- ── SINGLE AXIS ─────────────────────────────────────────
-   Defaults cascade from :root. A single class is enough. -->
+<!-- ── MENTAL MODEL ───────────────────────────────────────
+   "My card bg is lu-1, my border is lu-3"
+   = 2 stops of visible difference, in both modes. -->
 
-<div class="bg-lu-90">
-  Just luminance — chroma + hue come from :root defaults.
+<div class="bg-1-lo-primary border border-3-lo-primary rounded-lg p-4">
+  Predictable contrast increments.
 </div>
 
 <!-- ── SEMANTIC ALERTS ─────────────────────────────────────
    Swap the hue for instant semantic meaning. -->
 
-<div class="bg-full-mlo-danger text-base-mid-danger border-strong-mid-danger border rounded-lg p-4">
+<div class="bg-fore-mlo-danger text-1-mid-danger border-8-mid-danger border rounded-lg p-4">
   Something went wrong
 </div>`,
 	},
@@ -127,44 +143,57 @@ const CODE_EXAMPLES = {
 		code: `/* ── WHAT THE UTILITIES ACTUALLY DO ──────────────────────────
 
    Every setter both updates its axis AND applies the resolved
-   color. This is why a single bg-lu-mid works — the other two
+   color. This is why a single bg-lu-5 works — the other two
    axes are already defined at :root. */
 
 /* Decomposed utility (from index.css) */
-.bg-lu-mid {
-  --bg-l: var(--l-mid);                   /* set the axis     */
-  background-color: oklch(                 /* apply the color  */
+.bg-lu-5 {
+  --bg-l: var(--l-5);                    /* set the axis     */
+  background-color: oklch(                /* apply the color  */
     var(--bg-l) var(--bg-c) var(--bg-h)
   );
 }
 
 /* Shorthand utility (from plugin.js) */
-.bg-mid-hi-primary {
-  --bg-l: var(--l-mid);                   /* set all 3 axes   */
+.bg-5-hi-primary {
+  --bg-l: var(--l-5);                    /* set all 3 axes   */
   --bg-c: var(--c-hi);
   --bg-h: var(--hue-primary);
-  background-color: oklch(                 /* apply the color  */
+  background-color: oklch(                /* apply the color  */
     var(--bg-l) var(--bg-c) var(--bg-h)
   );
 }
 
 /* Root defaults — the reason single-axis classes work */
 :root {
-  --bg-l: var(--l-mid);
+  --bg-l: var(--l-5);
   --bg-c: var(--c-lo);
   --bg-h: var(--hue-primary);
   /* ...same for text, border, gradient, etc. */
 }
 
+/* ── THE 0–10 SCALE ───────────────────────────────────────
+
+   0 / base = page surface luminance
+   10 / fore = maximum contrast with the surface
+
+   The range flips between modes:
+
+   Light mode: 0→0.95, 5→0.55, 10→0.15
+   Dark mode:  0→0.12, 5→0.52, 10→0.92
+
+   So "lu-3" always means "3 stops from the surface" —
+   a subtle, readable contrast in either mode. */
+
 /* ── THE CASCADE IN ACTION ──────────────────────────────────
 
-   Parent:  bg-mid-hi-accent
-     └─ sets --bg-l: mid, --bg-c: hi, --bg-h: accent
+   Parent:  bg-5-hi-accent
+     └─ sets --bg-l: var(--l-5), --bg-c: hi, --bg-h: accent
 
-   Child:   bg-lu-strong
-     └─ overrides --bg-l: strong
+   Child:   bg-lu-8
+     └─ overrides --bg-l: var(--l-8)
      └─ --bg-c and --bg-h INHERIT from parent
-     └─ result: oklch(0.72 0.25 30) — lighter accent
+     └─ result: brighter accent at same chroma
 
    This is pure CSS inheritance. No JS, no context providers,
    no re-renders. The browser does the work. */
@@ -176,8 +205,8 @@ const CODE_EXAMPLES = {
      hover:bg-primary/20      washes out over other colors
 
    OKLCH composed (new):
-     bg-full-lo-primary         absolute color, portable
-     hover:bg-lu-strong           single-axis shift, no blending
+     bg-fore-lo-primary         absolute color, portable
+     hover:bg-lu-8               single-axis shift, no blending
 
    The color is the SAME regardless of what sits behind it.
    No stacking-context surprises. No blending artifacts. */`,
