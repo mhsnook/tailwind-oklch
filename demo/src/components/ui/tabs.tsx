@@ -9,7 +9,7 @@ function TabsRoot({ className, ...props }: React.ComponentProps<typeof Tabs.Root
 function TabsList({ className, ...props }: React.ComponentProps<typeof Tabs.List>) {
 	return (
 		<Tabs.List
-			className={cn('border-b border-border inline-flex w-full items-center gap-1 overflow-x-auto', className)}
+			className={cn('border-b border-border inline-flex w-full items-center gap-1 overflow-x-auto overflow-y-hidden scrollbar-none', className)}
 			{...props}
 		/>
 	)
