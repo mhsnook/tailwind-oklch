@@ -1,25 +1,30 @@
 ---
 const navbars = [
-  { base: 'bg-2-mid-primary', text: 'text-10-lo-primary', hue: 'primary', items: ['Dashboard', 'Projects', 'Team', 'Settings'] },
-  { base: 'bg-3-mhi-accent', text: 'text-10-lo-accent', hue: 'accent', items: ['Browse', 'Trending', 'Library', 'Upload'] },
-  { base: 'bg-2-mid-success', text: 'text-10-lo-success', hue: 'success', items: ['Overview', 'Analytics', 'Reports', 'Export'] },
-  { base: 'bg-1-mid-danger', text: 'text-10-lo-danger', hue: 'danger', items: ['Alerts', 'Incidents', 'Escalations', 'Logs'] },
+  { base: 'bg-2-mid-primary', text: 'text-10-lo-primary', hue: 'primary', items: ['Dashboard', 'Projects', 'Team'] },
+  { base: 'bg-3-mhi-accent', text: 'text-10-lo-accent', hue: 'accent', items: ['Browse', 'Trending', 'Library'] },
+  { base: 'bg-2-mid-success', text: 'text-10-lo-success', hue: 'success', items: ['Overview', 'Analytics', 'Reports'] },
+  { base: 'bg-1-mid-danger', text: 'text-10-lo-danger', hue: 'danger', items: ['Alerts', 'Incidents', 'Escalations'] },
 ]
 ---
 
 <div class="flex flex-col gap-4">
   {navbars.map(({ base, text, hue, items }) => (
-    <div class:list={[base, text, 'rounded-lg flex items-center gap-1 px-2 py-2 text-[0.82rem] font-medium']}>
-      <div class="bg-lc-up-2 rounded px-2.5 py-1.5 font-bold text-[0.8rem] mr-2 tracking-tight">{hue}</div>
-      {items.map((label, i) => (
-        <a class:list={[
-          'px-3 py-1.5 rounded transition-all duration-150 cursor-pointer',
-          i === 0 ? 'bg-lc-up-1' : 'hover:bg-lc-up-1',
-        ]}>
-          {label}
-        </a>
-      ))}
-      <div class="ml-auto flex items-center gap-1 text-[0.72rem] font-mono opacity-70">
+    <div class:list={[base, text, 'rounded-lg flex items-center gap-1 px-2 py-2 text-[0.75rem] sm:text-[0.82rem] font-medium']}>
+      <div class="flex-1 flex items-center gap-1 min-w-0 overflow-hidden">
+        <div class="bg-lc-up-2 rounded px-2 sm:px-2.5 py-1.5 font-bold text-[0.75rem] sm:text-[0.8rem] mr-1 sm:mr-2 tracking-tight shrink-0">{hue}</div>
+        {items.map((label, i) => (
+          <a class:list={[
+            'px-2 sm:px-3 py-1.5 rounded transition-all duration-150 cursor-pointer whitespace-nowrap',
+            i === 0 ? 'bg-lc-up-1' : 'hover:bg-lc-up-1',
+          ]}>
+            {label}
+          </a>
+        ))}
+      </div>
+      <a class="shrink-0 bg-lc-down-1 rounded px-2 py-1.5 cursor-pointer hover:bg-lc-down-2 transition-all duration-150" title="More">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+      </a>
+      <div class="hidden sm:flex items-center gap-1 text-[0.72rem] font-mono opacity-70 shrink-0 ml-auto">
         <div class="bg-lc-down-1 rounded px-2 py-1">down-1</div>
         <div class="bg-lc-up-1 rounded px-2 py-1">up-1</div>
         <div class="bg-lc-up-2 rounded px-2 py-1">up-2</div>
