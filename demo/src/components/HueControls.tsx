@@ -25,6 +25,8 @@ export default function HueControls() {
 			const lVal = range.start + (range.end - range.start) * (i / 10)
 			document.documentElement.style.setProperty(`--l-${i}`, String(lVal.toFixed(4)))
 		}
+		document.documentElement.style.setProperty('--l-base', String(range.start.toFixed(4)))
+		document.documentElement.style.setProperty('--l-fore', String(range.end.toFixed(4)))
 		window.dispatchEvent(new CustomEvent('hue-change'))
 	}, [])
 
