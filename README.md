@@ -129,6 +129,40 @@ All utilities work with standard Tailwind modifiers:
 </input>
 ```
 
+### Relative Luminance Offsets
+
+Sometimes you don't want to set an absolute luminance — you want to nudge it relative to the inherited value. The `lc-up` and `lc-down` utilities shift luminance **toward more contrast** or **toward less contrast** without replacing the underlying `--bg-l` or `--tx-l` variable. This means children still inherit the original value.
+
+- **`lc-up-{N}`** — increase contrast (move away from the page color)
+- **`lc-down-{N}`** — decrease contrast (move toward the page color)
+
+Where `{N}` is 1–5, with each step equal to ~0.08 OKLCH lightness (roughly one position on the 0–10 scale).
+
+Available for `bg` and `text`:
+
+| Pattern | Effect |
+|---|---|
+| `bg-lc-up-{N}` | Background becomes more contrasting |
+| `bg-lc-down-{N}` | Background becomes less contrasting |
+| `text-lc-up-{N}` | Text becomes more contrasting |
+| `text-lc-down-{N}` | Text becomes less contrasting |
+
+The direction automatically adapts to light/dark mode — "up" always means more contrast with the page, "down" always means less, regardless of whether luminance values are increasing or decreasing.
+
+```html
+<!-- A card with a hover state one step brighter/darker than the parent -->
+<div class="bg-3-mlo-primary">
+  <button class="hover:bg-lc-up-1">Slightly more contrast on hover</button>
+  <span class="bg-lc-down-2">Subtler background, closer to page</span>
+</div>
+
+<!-- Muted secondary text that's two steps less contrasting than default -->
+<p class="text-fore-lo-neutral">
+  Primary text
+  <span class="text-lc-down-2">Secondary text</span>
+</p>
+```
+
 ### Gradients
 
 ```html
@@ -216,6 +250,27 @@ document.documentElement.style.setProperty('--hue-primary', '180');
 | `hi` | 0.25 | Maximum saturation |
 
 A numeric chroma scale (`c-10` through `c-95`) is also available for finer control in the decomposed utilities.
+
+### LC Adjustment Steps
+
+Used by the relative luminance offset utilities (`bg-lc-up-*`, `bg-lc-down-*`, etc.):
+
+| Step | OKLCH L offset | Approximate scale positions |
+|---|---|---|
+| `1` | 0.08 | ~1 step |
+| `2` | 0.16 | ~2 steps |
+| `3` | 0.24 | ~3 steps |
+| `4` | 0.32 | ~4 steps |
+| `5` | 0.40 | ~5 steps |
+
+Override in a `@theme` block:
+
+```css
+@theme {
+  --lc-adj-1: 0.06;   /* smaller steps */
+  --lc-adj-2: 0.12;
+}
+```
 
 ### Supported Properties
 
