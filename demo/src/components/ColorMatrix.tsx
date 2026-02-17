@@ -54,14 +54,14 @@ export default function ColorMatrix() {
 								{/* Column headers — luminance (left=base, right=fore) */}
 								{L_STOPS.map((l) => (
 									<div key={l.name} className="matrix-label col-label">
-										LC:{l.name}
+										lc&#8209;{l.name}
 									</div>
 								))}
 
 								{/* Rows — chroma (top=hi, bottom=lo) */}
 								{[...C_STOPS].reverse().map((c) => (
 									<Fragment key={c.name}>
-										<div className="matrix-label">C:{c.name}</div>
+										<div className="matrix-label">c&#8209;{c.name}</div>
 										{L_STOPS.map((l) => {
 											// Use CSS vars for the cell color so it adapts to light/dark mode natively
 											const color = `oklch(var(--l-${l.name}) ${c.val} var(--hue-${hue.name}))`
