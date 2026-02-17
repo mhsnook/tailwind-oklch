@@ -58,9 +58,9 @@ export default function CodeViewerButton({ code }: { code: string }) {
 			<dialog
 				ref={dialogRef}
 				onClose={() => setOpen(false)}
-				className="m-auto max-w-[720px] w-[90vw] max-h-[80vh] rounded-xl p-0 border border-5-mlo-neutral bg-transparent backdrop:bg-black/50 backdrop:backdrop-blur-sm"
+				className="mx-0 mb-0 mt-auto sm:m-auto max-w-full sm:max-w-[720px] w-full sm:w-[90vw] max-h-[85vh] sm:max-h-[80vh] rounded-t-xl sm:rounded-xl p-0 border border-5-mlo-neutral bg-transparent backdrop:bg-black/50 backdrop:backdrop-blur-sm"
 			>
-				<div className="code-block rounded-xl overflow-hidden">
+				<div className="code-block rounded-t-xl sm:rounded-xl overflow-hidden">
 					<div className="flex items-center justify-between px-4 py-2 border-b border-white/10">
 						<span className="text-[0.75rem] font-mono text-white/50">
 							HTML
@@ -80,14 +80,14 @@ export default function CodeViewerButton({ code }: { code: string }) {
 							</button>
 						</div>
 					</div>
-					<div className="p-4 overflow-auto max-h-[calc(80vh-3rem)]">
+					<div className="p-4 overflow-auto max-h-[calc(85vh-3rem)] sm:max-h-[calc(80vh-3rem)]">
 						{highlighted ? (
 							<div
-								className="font-mono text-[0.78rem] leading-[1.7] [&_pre]:!bg-transparent [&_code]:!bg-transparent"
+								className="font-mono text-[0.78rem] leading-[1.7] [&_pre]:!bg-transparent [&_code]:!bg-transparent [&_code]:break-words [&_code]:whitespace-pre-wrap"
 								dangerouslySetInnerHTML={{ __html: highlighted }}
 							/>
 						) : (
-							<pre className="font-mono text-[0.78rem] leading-[1.7] text-white/60">
+							<pre className="font-mono text-[0.78rem] leading-[1.7] text-white/60 break-words whitespace-pre-wrap">
 								{code}
 							</pre>
 						)}
