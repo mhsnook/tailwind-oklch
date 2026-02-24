@@ -1,12 +1,18 @@
 /**
  * tailwind-oklch shorthand generator
  *
- * Generates .{prop}-{L}-{C}-{H} utilities for all combinations of
- * the 0–10 luminance contrast scale × chroma × hue stops across bg/text/border.
+ * Generates two kinds of shorthand utilities:
  *
- * Each shorthand sets the three axis variables AND applies the
- * resolved color, so children can inherit and override single axes
- * via decomposed utilities (e.g. hover:bg-lc-8).
+ * Three-axis: .{prop}-{L}-{C}-{H}  — sets all three axes explicitly
+ *   e.g. bg-3-mhi-accent
+ *
+ * Two-axis:   .{prop}-{L}-{C}      — sets L and C, inherits H from
+ *   the cascade (set by hue-* or :root default)
+ *   e.g. bg-3-mhi (pair with hue-accent on a parent)
+ *
+ * Each shorthand sets the axis variables AND applies the resolved
+ * color, so children can inherit and override single axes via
+ * decomposed utilities (e.g. hover:bg-lc-8).
  *
  * Load via: @plugin "tailwind-oklch/plugin";
  */
@@ -28,8 +34,16 @@ module.exports = function ({ addUtilities }) {
   const utilities = {};
 
   for (const prop of properties) {
+    // Two-axis shorthands: .{prop}-{L}-{C} — inherits H from cascade
     for (const l of luminances) {
       for (const c of chromas) {
+        utilities[`.${prop.prefix}-${l}-${c}`] = {
+          [prop.vars[0]]: `var(--l-${l})`,
+          [prop.vars[1]]: `var(--c-${c})`,
+          [prop.css]: `oklch(var(${prop.vars[0]}) var(${prop.vars[1]}) var(${prop.vars[2]}))`,
+        };
+
+        // Three-axis shorthands: .{prop}-{L}-{C}-{H}
         for (const h of hues) {
           utilities[`.${prop.prefix}-${l}-${c}-${h}`] = {
             [prop.vars[0]]: `var(--l-${l})`,
@@ -48,6 +62,21 @@ module.exports = function ({ addUtilities }) {
 
   for (const l of luminances) {
     for (const c of chromas) {
+      // Two-axis gradient shorthands — inherit H from cascade
+      utilities[`.from-${l}-${c}`] = {
+        '--gf-l': `var(--l-${l})`,
+        '--gf-c': `var(--c-${c})`,
+        '--tw-gradient-from': `oklch(var(--gf-l) var(--gf-c) var(--gf-h))`,
+        '--tw-gradient-stops': stopsExpr,
+      };
+      utilities[`.to-${l}-${c}`] = {
+        '--gt-l': `var(--l-${l})`,
+        '--gt-c': `var(--c-${c})`,
+        '--tw-gradient-to': `oklch(var(--gt-l) var(--gt-c) var(--gt-h))`,
+        '--tw-gradient-stops': stopsExpr,
+      };
+
+      // Three-axis gradient shorthands
       for (const h of hues) {
         utilities[`.from-${l}-${c}-${h}`] = {
           '--gf-l': `var(--l-${l})`,

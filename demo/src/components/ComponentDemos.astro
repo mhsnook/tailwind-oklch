@@ -2,18 +2,18 @@
 import CodeViewerButton from './CodeViewerButton'
 
 const sources = {
-  multiHue: `<div class="bg-1-lo-primary text-10-lo-primary border-1-lo-primary rounded-xl p-6 border">
+  multiHue: `<div class="hue-primary bg-1-lo text-10-lo border-1-lo rounded-xl p-6 border">
   <h4 class="text-[0.85rem] mb-3 font-semibold">Multi-Hue Composition</h4>
-  <p class="text-6-lo-primary text-[0.85rem] leading-normal mb-4">
-    Primary container with badges that differ only in hue.
+  <p class="text-lc-6 text-[0.85rem] leading-normal mb-4">
+    hue-primary on the container. Badges swap hue — L and C stay identical.
   </p>
   <div class="flex flex-wrap gap-2 mt-2 *:px-3 *:py-1 *:rounded-full *:text-xs *:font-semibold">
-    <span class="bg-3-mid-primary text-10-lo-primary">primary</span>
-    <span class="bg-3-mid-accent text-10-lo-accent">accent</span>
-    <span class="bg-3-mid-warning text-10-lo-warning">warning</span>
-    <span class="bg-3-mid-success text-10-lo-success">success</span>
-    <span class="bg-3-mid-info text-10-lo-info">info</span>
-    <span class="bg-3-mid-danger text-10-lo-danger">danger</span>
+    <span class="hue-primary bg-3-mid text-10-lo">primary</span>
+    <span class="hue-accent bg-3-mid text-10-lo">accent</span>
+    <span class="hue-warning bg-3-mid text-10-lo">warning</span>
+    <span class="hue-success bg-3-mid text-10-lo">success</span>
+    <span class="hue-info bg-3-mid text-10-lo">info</span>
+    <span class="hue-danger bg-3-mid text-10-lo">danger</span>
   </div>
 </div>`,
   cascade: `<div class="bg-3-mhi-accent text-10-lo-accent border-8-lo-primary rounded-xl p-6 border">
@@ -49,15 +49,15 @@ const sources = {
     <div class="border-lc-1 hover:text-lc-6 hover:bg-lc-1 hover:border-lc-3">outline</div>
   </div>
 </div>`,
-  danger: `<div class="bg-1-mid-danger text-10-lo-danger border-3-mhi-danger rounded-xl p-6 border">
+  danger: `<div class="hue-danger bg-1-mid text-10-lo border-3-mhi rounded-xl p-6 border">
   <h4 class="text-[0.85rem] mb-3 font-semibold">Danger Alert</h4>
-  <p class="text-8-mlo-danger text-[0.85rem] leading-normal mb-4">
-    bg-1-mid-danger with buttons bg-5-mhi-danger. Deep, saturated
-    backgrounds that read correctly regardless of context.
+  <p class="text-8-mlo text-[0.85rem] leading-normal mb-4">
+    hue-danger on the container — every child inherits the hue.
+    Only L and C vary per element.
   </p>
   <div class="flex gap-2 *:px-5 *:py-2 *:rounded-lg *:text-[0.8rem] *:font-semibold *:border-0 *:cursor-pointer *:transition-all *:duration-150">
-    <div class="bg-5-mhi-danger text-0-lo-danger">Acknowledge</div>
-    <div class="bg-5-mhi-danger text-10-lo-danger">Cancel</div>
+    <div class="bg-5-mhi text-0-lo">Acknowledge</div>
+    <div class="bg-5-mhi text-10-lo">Cancel</div>
   </div>
 </div>`,
   axis: `<div class="bg-1-mlo-primary text-10-lo-primary border-1-lo-primary rounded-xl p-6 border">
@@ -77,19 +77,19 @@ const sources = {
 
 <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
     <!-- Multi-Hue Composition -->
-  <div class="relative bg-1-lo-primary text-10-lo-primary border-1-lo-primary rounded-xl p-6 border">
+  <div class="relative hue-primary bg-1-lo text-10-lo border-1-lo rounded-xl p-6 border">
     <CodeViewerButton client:load code={sources.multiHue} />
     <h4 class="text-[0.85rem] mb-3 font-semibold">Multi-Hue Composition</h4>
-    <p class="text-6-lo-primary text-[0.85rem] leading-normal mb-4">
-      Primary container with badges that differ only in hue. Gentle colors, no transparency needed:
+    <p class="text-lc-6 text-[0.85rem] leading-normal mb-4">
+      hue-primary on the container. Badges swap hue — L and C stay identical:
     </p>
     <div class="flex flex-wrap gap-2 mt-2 *:px-3 *:py-1 *:rounded-full *:text-xs *:font-semibold">
-      <span class="bg-3-mid-primary text-10-lo-primary">primary</span>
-      <span class="bg-3-mid-accent text-10-lo-accent">accent</span>
-      <span class="bg-3-mid-warning text-10-lo-warning">warning</span>
-      <span class="bg-3-mid-success text-10-lo-success">success</span>
-      <span class="bg-3-mid-info text-10-lo-info">info</span>
-      <span class="bg-3-mid-danger text-10-lo-danger">danger</span>
+      <span class="hue-primary bg-3-mid text-10-lo">primary</span>
+      <span class="hue-accent bg-3-mid text-10-lo">accent</span>
+      <span class="hue-warning bg-3-mid text-10-lo">warning</span>
+      <span class="hue-success bg-3-mid text-10-lo">success</span>
+      <span class="hue-info bg-3-mid text-10-lo">info</span>
+      <span class="hue-danger bg-3-mid text-10-lo">danger</span>
     </div>
   </div>
 
@@ -143,22 +143,21 @@ const sources = {
   </div>
 
   <!-- Danger Alert -->
-  <div class="relative bg-1-mid-danger text-10-lo-danger border-3-mhi-danger rounded-xl p-6 border">
+  <div class="relative hue-danger bg-1-mid text-10-lo border-3-mhi rounded-xl p-6 border">
     <CodeViewerButton client:load code={sources.danger} />
     <h4 class="text-[0.85rem] mb-3 font-semibold">Danger Alert</h4>
-    <p class="text-8-mlo-danger text-[0.85rem] leading-normal mb-4">
-      bg-1-mid-danger with buttons bg-5-mhi-danger. Deep, saturated backgrounds that read correctly
-      regardless of context.
+    <p class="text-8-mlo text-[0.85rem] leading-normal mb-4">
+      hue-danger on the container — every child inherits the hue.
+      Only L and C vary per element.
     </p>
     <div class="flex gap-2 *:px-5 *:py-2 *:rounded-lg *:text-[0.8rem] *:font-semibold *:border-0 *:cursor-pointer *:transition-all *:duration-150">
-      <div class="bg-5-mhi-danger text-0-lo-danger">
+      <div class="bg-5-mhi text-0-lo">
         Acknowledge
       </div>
-      <div class="bg-5-mhi-danger text-10-lo-danger">
+      <div class="bg-5-mhi text-10-lo">
         Cancel
       </div>
     </div>
-
   </div>
 
   <!-- Axis Inheritance -->
