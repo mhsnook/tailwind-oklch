@@ -3,6 +3,7 @@ import Layout from "@/layouts/Layout.astro";
 import HueControls from "@/components/HueControls";
 import ColorMatrix from "@/components/ColorMatrix";
 import ComponentDemos from "@/components/ComponentDemos.astro";
+import HueContextDemo from "@/components/HueContextDemo";
 import CodeExamples from "@/components/CodeExamples";
 import RelativeLuminanceDemo from "@/components/RelativeLuminanceDemo.astro";
 ---
@@ -56,6 +57,21 @@ import RelativeLuminanceDemo from "@/components/RelativeLuminanceDemo.astro";
     </h2>
     <div class="mb-12">
       <ComponentDemos />
+    </div>
+
+    <!-- Hue Context Demo -->
+    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-8-mlo-primary">
+      Using Hue Context
+    </h2>
+    <p class="text-5-lo-primary text-[0.9rem] mb-6 -mt-3 max-w-[680px] leading-[1.6]">
+      Set <code class="text-6-mhi-primary font-mono text-[0.85rem]">hue-*</code>
+      once on a container and every child inherits it. Elements only specify
+      <strong>luminance</strong> and <strong>chroma</strong> via two-axis
+      shorthands like <code class="text-6-mhi-primary font-mono text-[0.85rem]">bg-5-mhi</code>
+      &mdash; no hue suffix needed. Click a hue to re-theme the showcase.
+    </p>
+    <div class="mb-12">
+      <HueContextDemo client:load />
     </div>
 
     <!-- Relative Luminance -->
