@@ -74,20 +74,41 @@ Set one axis at a time. The other two axes inherit from the parent or the root d
 
 The same pattern applies to `border-b-*` (border-bottom), `accent-*`, `from-*` (gradient from), `to-*` (gradient to), and `shadow-*`.
 
-### Shorthand Utilities (all axes at once)
+### Global Hue and Chroma
 
-The plugin generates shorthands that set all three axes in a single class:
-
-```
-{property}-{L}-{C}-{H}
-```
-
-Examples:
+Most of the time, every color property on an element shares the same hue — the differences are in lightness and chroma. The `hue-*` utility sets the hue for **all** color properties at once:
 
 ```html
-<div class="bg-3-mhi-accent">          <!-- L=3, C=medium-high, H=accent -->
-<p class="text-fore-lo-neutral">       <!-- L=foreground, C=low, H=neutral -->
-<div class="border-5-mid-primary">     <!-- L=5, C=medium, H=primary -->
+<!-- Set hue once, vary L and C per property -->
+<div class="hue-danger bg-1-mid text-10-lo border-3-mhi">
+  <button class="bg-5-mhi text-0-lo">Acknowledge</button>
+  <button class="bg-5-mhi text-10-lo">Cancel</button>
+</div>
+```
+
+`chroma-*` does the same for chroma:
+
+```html
+<!-- Everything low-chroma -->
+<div class="hue-primary chroma-lo bg-lc-1 text-lc-fore border-lc-3">
+```
+
+Per-property utilities (`bg-h-*`, `text-c-*`, etc.) still work as overrides when you need one property to differ.
+
+### Shorthand Utilities
+
+The plugin generates shorthands for common combinations:
+
+**Two-axis: `{property}-{L}-{C}`** — sets luminance and chroma, inherits hue from the cascade (set by `hue-*` or `:root` default):
+
+```html
+<div class="hue-accent bg-3-mhi text-10-lo border-2-mid">
+```
+
+**Three-axis: `{property}-{L}-{C}-{H}`** — sets all three axes explicitly in a single class:
+
+```html
+<div class="bg-3-mhi-accent text-fore-lo-neutral border-5-mid-primary">
 ```
 
 Available properties: `bg`, `text`, `border`, `border-b`, `accent`, `from`, `to`.
@@ -274,16 +295,25 @@ Override in a `@theme` block:
 
 ### Supported Properties
 
-| Prefix | CSS Property | Decomposed | Shorthand |
-|---|---|---|---|
-| `bg` | `background-color` | `bg-lc-*`, `bg-c-*`, `bg-h-*` | `bg-{L}-{C}-{H}` |
-| `text` | `color` | `text-lc-*`, `text-c-*`, `text-h-*` | `text-{L}-{C}-{H}` |
-| `border` | `border-color` | `border-lc-*`, `border-c-*`, `border-h-*` | `border-{L}-{C}-{H}` |
-| `border-b` | `border-bottom-color` | `border-b-lc-*`, `border-b-c-*`, `border-b-h-*` | `border-b-{L}-{C}-{H}` |
-| `accent` | `accent-color` | `accent-lc-*`, `accent-c-*`, `accent-h-*` | `accent-{L}-{C}-{H}` |
-| `from` | gradient from | `from-lc-*`, `from-c-*`, `from-h-*` | `from-{L}-{C}-{H}` |
-| `to` | gradient to | `to-lc-*`, `to-c-*`, `to-h-*` | `to-{L}-{C}-{H}` |
-| `shadow` | shadow color | `shadow-lc-*`, `shadow-c-*`, `shadow-h-*` | — |
+**Global context setters** (set all properties at once):
+
+| Utility | Sets |
+|---|---|
+| `hue-{H}` | Hue for all properties (`--bg-h`, `--tx-h`, `--bd-h`, etc.) |
+| `chroma-{C}` | Chroma for all properties (`--bg-c`, `--tx-c`, `--bd-c`, etc.) |
+
+**Per-property utilities:**
+
+| Prefix | CSS Property | Decomposed | 2-axis Shorthand | 3-axis Shorthand |
+|---|---|---|---|---|
+| `bg` | `background-color` | `bg-lc-*`, `bg-c-*`, `bg-h-*` | `bg-{L}-{C}` | `bg-{L}-{C}-{H}` |
+| `text` | `color` | `text-lc-*`, `text-c-*`, `text-h-*` | `text-{L}-{C}` | `text-{L}-{C}-{H}` |
+| `border` | `border-color` | `border-lc-*`, `border-c-*`, `border-h-*` | `border-{L}-{C}` | `border-{L}-{C}-{H}` |
+| `border-b` | `border-bottom-color` | `border-b-lc-*`, `border-b-c-*`, `border-b-h-*` | `border-b-{L}-{C}` | `border-b-{L}-{C}-{H}` |
+| `accent` | `accent-color` | `accent-lc-*`, `accent-c-*`, `accent-h-*` | `accent-{L}-{C}` | `accent-{L}-{C}-{H}` |
+| `from` | gradient from | `from-lc-*`, `from-c-*`, `from-h-*` | `from-{L}-{C}` | `from-{L}-{C}-{H}` |
+| `to` | gradient to | `to-lc-*`, `to-c-*`, `to-h-*` | `to-{L}-{C}` | `to-{L}-{C}-{H}` |
+| `shadow` | shadow color | `shadow-lc-*`, `shadow-c-*`, `shadow-h-*` | — | — |
 
 ### Light / Dark Mode
 

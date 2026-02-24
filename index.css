@@ -161,6 +161,38 @@
   --bdb-h: var(--hue-primary);
 }
 
+/* ── Global Hue ─────────────────────────────────────────────────────────
+   Set the hue for ALL color properties at once. Per-property hue
+   utilities (bg-h-*, text-h-*, etc.) still work as overrides.
+   Usage: hue-primary, hue-accent, hue-danger, etc. */
+
+@utility hue-* {
+  --bg-h: --value(--hue-*);
+  --tx-h: --value(--hue-*);
+  --bd-h: --value(--hue-*);
+  --bdb-h: --value(--hue-*);
+  --ac-h: --value(--hue-*);
+  --gf-h: --value(--hue-*);
+  --gt-h: --value(--hue-*);
+  --sh-h: --value(--hue-*);
+}
+
+/* ── Global Chroma ──────────────────────────────────────────────────────
+   Set the chroma for ALL color properties at once. Per-property chroma
+   utilities (bg-c-*, text-c-*, etc.) still work as overrides.
+   Usage: chroma-lo, chroma-mid, chroma-hi, etc. */
+
+@utility chroma-* {
+  --bg-c: --value(--c-*);
+  --tx-c: --value(--c-*);
+  --bd-c: --value(--c-*);
+  --bdb-c: --value(--c-*);
+  --ac-c: --value(--c-*);
+  --gf-c: --value(--c-*);
+  --gt-c: --value(--c-*);
+  --sh-c: --value(--c-*);
+}
+
 /* ── Background ──────────────────────────────────────────────────────── */
 
 @utility bg-lc-* {
