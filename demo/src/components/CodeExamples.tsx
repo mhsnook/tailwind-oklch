@@ -215,6 +215,60 @@ const CODE_EXAMPLES = {
    The color is the SAME regardless of what sits behind it.
    No stacking-context surprises. No blending artifacts. */`,
 	},
+	arbitrary: {
+		label: 'Arbitrary Values',
+		lang: 'html',
+		code: `<!-- ── ARBITRARY HUE & CHROMA ─────────────────────────────
+   Use bracket syntax for exact values outside the preset stops.
+   hue-[degrees] and chroma-[value] work globally or per-property. -->
+
+<!-- Global: sets hue for ALL properties on this subtree -->
+<div class="hue-[180] chroma-[0.15]">
+  <div class="bg-3-mid">Teal card — hue 180°, chroma 0.15</div>
+</div>
+
+<!-- Per-property: only affects one channel -->
+<div class="bg-h-[280] bg-c-[0.2] bg-lc-5">
+  Purple background — hue 280°, chroma 0.2
+</div>
+
+<!-- ── AUTO-FLIP LUMINANCE ───────────────────────────────
+   bg-lc-[N] takes a 0–100 value and auto-flips for dark mode.
+   Light mode uses the value directly.
+   Dark mode reflects it: dark = 100 − light.
+
+   This means bg-lc-[70] → L 0.70 in light, L 0.30 in dark.
+   Toggle the theme to see it in action. -->
+
+<div class="hue-[180] chroma-[0.15]">
+  <!-- These luminance values flip automatically -->
+  <div class="bg-lc-[15] text-lc-[90]">
+    Near-page bg, high-contrast text
+  </div>
+  <span class="bg-lc-[30]">Subtle chip</span>
+  <span class="bg-lc-[50]">Mid-range chip</span>
+  <span class="bg-lc-[70]">Prominent chip</span>
+</div>
+
+<!-- Works with all properties and pseudo-states -->
+<button class="
+  bg-lc-[25] text-lc-[85] border-lc-[35]
+  hover:bg-lc-[30] hover:border-lc-[40]
+">Auto-flip button</button>
+
+<!-- ── HOW IT WORKS ──────────────────────────────────────
+   The CSS uses a --lc-flip variable (0 in light, 1 in dark)
+   to compute the luminance at runtime:
+
+   L = value/100 + --lc-flip × (1 − 2 × value/100)
+
+   Light (flip=0): L = value/100          → use as-is
+   Dark  (flip=1): L = 1 − value/100      → reflected
+
+   Named classes like bg-lc-5 are UNCHANGED — they still
+   use the semantic 0–10 scale with automatic mode support.
+   Bracket syntax is for when you need exact control. -->`,
+	},
 } as const
 
 type TabKey = keyof typeof CODE_EXAMPLES
