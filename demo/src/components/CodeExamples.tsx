@@ -220,16 +220,18 @@ const CODE_EXAMPLES = {
 		lang: 'html',
 		code: `<!-- ── ARBITRARY HUE & CHROMA ─────────────────────────────
    Use bracket syntax for exact values outside the preset stops.
-   hue-[degrees] and chroma-[value] work globally or per-property. -->
+   hue-[degrees] and chroma-[value] work globally or per-property.
+   All bracket values use integer scales: hue 0–360, chroma and
+   luminance 0–100 (divided by 100 internally). -->
 
 <!-- Global: sets hue for ALL properties on this subtree -->
-<div class="hue-[180] chroma-[0.15]">
-  <div class="bg-3-mid">Teal card — hue 180°, chroma 0.15</div>
+<div class="hue-[180] chroma-[15]">
+  <div class="bg-3-mid">Teal card — hue 180°, chroma 15 (=0.15)</div>
 </div>
 
 <!-- Per-property: only affects one channel -->
-<div class="bg-h-[280] bg-c-[0.2] bg-lc-5">
-  Purple background — hue 280°, chroma 0.2
+<div class="bg-h-[280] bg-c-[20] bg-lc-5">
+  Purple background — hue 280°, chroma 20 (=0.20)
 </div>
 
 <!-- ── AUTO-FLIP LUMINANCE ───────────────────────────────
@@ -240,7 +242,7 @@ const CODE_EXAMPLES = {
    This means bg-lc-[70] → L 0.70 in light, L 0.30 in dark.
    Toggle the theme to see it in action. -->
 
-<div class="hue-[180] chroma-[0.15]">
+<div class="hue-[180] chroma-[15]">
   <!-- These luminance values flip automatically -->
   <div class="bg-lc-[15] text-lc-[90]">
     Near-page bg, high-contrast text
