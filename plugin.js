@@ -152,27 +152,35 @@ module.exports = function ({ addUtilities, matchUtilities }) {
   );
 
   // ── Arbitrary chroma values ───────────────────────────────────────────
-  // chroma-[0.15] → sets all chroma properties to 0.15.
-  // bg-c-[0.2] → sets only background chroma to 0.2.
+  // chroma-[15] → sets all chroma properties to 0.15.
+  // bg-c-[20] → sets only background chroma to 0.20.
 
   const chromaVars = ['--bg-c', '--tx-c', '--bd-c', '--bdb-c', '--ac-c', '--gf-c', '--gt-c', '--sh-c'];
 
+  const chromaValue = (value) => {
+    const v = Number(value) / 100;
+    return `${Math.round(v * 1e6) / 1e6}`;
+  };
+
   matchUtilities(
     {
-      chroma: (value) => Object.fromEntries(chromaVars.map((v) => [v, value])),
+      chroma: (value) => {
+        const c = chromaValue(value);
+        return Object.fromEntries(chromaVars.map((v) => [v, c]));
+      },
     },
-    { type: ['number'] },
+    { type: ['integer'] },
   );
 
   for (const prop of properties) {
     matchUtilities(
       {
         [`${prop.prefix}-c`]: (value) => ({
-          [prop.vars[1]]: value,
+          [prop.vars[1]]: chromaValue(value),
           [prop.css]: `oklch(var(${prop.vars[0]}) var(${prop.vars[1]}) var(${prop.vars[2]}))`,
         }),
       },
-      { type: ['number'] },
+      { type: ['integer'] },
     );
   }
 
@@ -180,28 +188,28 @@ module.exports = function ({ addUtilities, matchUtilities }) {
   matchUtilities(
     {
       'from-c': (value) => ({
-        '--gf-c': value,
+        '--gf-c': chromaValue(value),
         '--tw-gradient-from': 'oklch(var(--gf-l) var(--gf-c) var(--gf-h))',
         '--tw-gradient-stops': stopsExpr,
       }),
       'to-c': (value) => ({
-        '--gt-c': value,
+        '--gt-c': chromaValue(value),
         '--tw-gradient-to': 'oklch(var(--gt-l) var(--gt-c) var(--gt-h))',
         '--tw-gradient-stops': stopsExpr,
       }),
     },
-    { type: ['number'] },
+    { type: ['integer'] },
   );
 
   // Shadow arbitrary chroma
   matchUtilities(
     {
       'shadow-c': (value) => ({
-        '--sh-c': value,
+        '--sh-c': chromaValue(value),
         '--tw-shadow-color': 'oklch(var(--sh-l) var(--sh-c) var(--sh-h))',
       }),
     },
-    { type: ['number'] },
+    { type: ['integer'] },
   );
 
   // ── Auto-flip luminance for arbitrary values ──────────────────────────
