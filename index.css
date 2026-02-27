@@ -98,6 +98,7 @@
 
 :root:not(.dark) {
   --lc-dir: -1;
+  --lc-flip: 0;
   --lc-range-start: 0.95;
   --lc-range-end: 0.15;
 
@@ -127,6 +128,7 @@
 
 :root {
   --lc-dir: 1;
+  --lc-flip: 1;
 
   --bg-l: var(--l-5);
   --bg-c: var(--c-lo);

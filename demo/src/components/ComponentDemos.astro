@@ -72,6 +72,18 @@ const sources = {
     <span class="bg-h-danger text-10-lo-danger">bg-h-danger</span>
   </div>
 </div>`,
+  arbitrary: `<div class="hue-[180] chroma-[0.15] bg-lc-[15] text-lc-[90] border-lc-[30] rounded-xl p-6 border">
+  <h4 class="text-[0.85rem] mb-3 font-semibold">Arbitrary Values</h4>
+  <p class="text-lc-[65] text-[0.85rem] leading-normal mb-4">
+    hue-[180] for a custom hue, chroma-[0.15] for exact chroma.
+    Luminance auto-flips between light and dark mode.
+  </p>
+  <div class="flex flex-wrap gap-2 mt-2 *:px-3 *:py-1 *:rounded-full *:text-xs *:font-semibold">
+    <span class="bg-lc-[30] text-lc-[90]">lc-[30]</span>
+    <span class="bg-lc-[50] text-lc-[95]">lc-[50]</span>
+    <span class="bg-lc-[70] text-lc-[15]">lc-[70]</span>
+  </div>
+</div>`,
 }
 ---
 
@@ -172,6 +184,21 @@ const sources = {
       <span class="bg-h-success text-10-lo-success">bg-h-success</span>
       <span class="bg-h-warning text-10-lo-warning">bg-h-warning</span>
       <span class="bg-h-danger text-10-lo-danger">bg-h-danger</span>
+    </div>
+  </div>
+
+  <!-- Arbitrary Values -->
+  <div class="relative hue-[180] chroma-[0.15] bg-lc-[15] text-lc-[90] border-lc-[30] rounded-xl p-6 border">
+    <CodeViewerButton client:load code={sources.arbitrary} />
+    <h4 class="text-[0.85rem] mb-3 font-semibold">Arbitrary Values</h4>
+    <p class="text-lc-[65] text-[0.85rem] leading-normal mb-4">
+      hue-[180] for a custom hue, chroma-[0.15] for exact chroma.
+      Luminance auto-flips between light and dark mode.
+    </p>
+    <div class="flex flex-wrap gap-2 mt-2 *:px-3 *:py-1 *:rounded-full *:text-xs *:font-semibold">
+      <span class="bg-lc-[30] text-lc-[90]">lc-[30]</span>
+      <span class="bg-lc-[50] text-lc-[95]">lc-[50]</span>
+      <span class="bg-lc-[70] text-lc-[15]">lc-[70]</span>
     </div>
   </div>
 </div>
