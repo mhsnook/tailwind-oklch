@@ -184,6 +184,36 @@ The direction automatically adapts to light/dark mode — "up" always means more
 </p>
 ```
 
+### Arbitrary Values
+
+All three axes support arbitrary values using Tailwind's bracket syntax. This gives you fine-grained control beyond the named stops.
+
+**Hue** — any degree value (0–360):
+
+```html
+<div class="hue-[180] bg-3-mid">Teal background</div>
+<div class="bg-h-[280] text-h-[40]">Purple bg, orange text</div>
+```
+
+**Chroma** — integer 0–100, mapped to OKLCH 0.00–1.00 (practical range is roughly 0–25):
+
+```html
+<div class="chroma-[8] bg-lc-3">All properties at chroma 0.08</div>
+<div class="bg-c-[15]">Background chroma 0.15</div>
+```
+
+**Luminance** — integer 0–100, with automatic light/dark mode flip:
+
+```html
+<div class="bg-lc-[60]">
+  Light mode: L=0.60 · Dark mode: L=0.40
+</div>
+```
+
+Arbitrary luminance values automatically invert in dark mode (reflected around 0.50), so `bg-lc-[70]` renders as 0.70 in light mode and 0.30 in dark mode — always maintaining the same relationship to the page.
+
+Available for all property prefixes (`bg-`, `text-`, `border-`, etc.), global setters (`hue-`, `chroma-`), and gradients (`from-`, `to-`).
+
 ### Gradients
 
 ```html
@@ -246,19 +276,19 @@ document.documentElement.style.setProperty('--hue-primary', '180');
 
 ### Luminance Contrast Scale
 
-| Stop | Dark Mode | Light Mode |
+| Stop | Light Mode | Dark Mode |
 |---|---|---|
-| `0` / `base` | 0.12 | 0.95 |
-| `1` | 0.20 | 0.87 |
-| `2` | 0.28 | 0.79 |
-| `3` | 0.36 | 0.71 |
-| `4` | 0.44 | 0.63 |
-| `5` | 0.52 | 0.55 |
-| `6` | 0.60 | 0.47 |
-| `7` | 0.68 | 0.39 |
-| `8` | 0.76 | 0.31 |
-| `9` | 0.84 | 0.23 |
-| `10` / `fore` | 0.92 | 0.15 |
+| `0` / `base` | 0.95 | 0.12 |
+| `1` | 0.87 | 0.20 |
+| `2` | 0.79 | 0.28 |
+| `3` | 0.71 | 0.36 |
+| `4` | 0.63 | 0.44 |
+| `5` | 0.55 | 0.52 |
+| `6` | 0.47 | 0.60 |
+| `7` | 0.39 | 0.68 |
+| `8` | 0.31 | 0.76 |
+| `9` | 0.23 | 0.84 |
+| `10` / `fore` | 0.15 | 0.92 |
 
 ### Named Chroma Stops
 
@@ -270,7 +300,7 @@ document.documentElement.style.setProperty('--hue-primary', '180');
 | `mhi` | 0.18 | Vivid |
 | `hi` | 0.25 | Maximum saturation |
 
-A numeric chroma scale (`c-10` through `c-95`) is also available for finer control in the decomposed utilities.
+For finer control, use arbitrary chroma values (see [Arbitrary Values](#arbitrary-values) below).
 
 ### LC Adjustment Steps
 
@@ -317,7 +347,7 @@ Override in a `@theme` block:
 
 ### Light / Dark Mode
 
-Dark mode is the default. Light mode activates when the root element does **not** have the `.dark` class (`:root:not(.dark)`). The luminance contrast scale flips automatically — `lc-0` is always near the page, `lc-10` is always high contrast — no additional classes needed.
+Light mode is the default. Dark mode activates when the root element has the `.dark` class. The luminance contrast scale flips automatically — `lc-0` is always near the page, `lc-10` is always high contrast — no additional classes needed.
 
 ## License
 
