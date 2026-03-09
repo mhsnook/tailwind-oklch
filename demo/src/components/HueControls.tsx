@@ -70,10 +70,10 @@ export default function HueControls() {
 	const selectedLValue = luValue(selectedLStep.step, luRange)
 
 	return (
-		<div className="space-y-6">
+		<div className="hue-primary chroma-[2] space-y-6">
 			{/* ── Hue Sliders ──────────────────────────────────────── */}
-			<div className="p-5 bg-lc-1 bg-c-lo bg-h-primary rounded-xl border border-lc-2 border-c-lo border-h-primary">
-				<h3 className="text-xs uppercase tracking-[0.08em] text-5-lo-primary font-semibold mb-3">
+			<div className="p-5 bg-lc-1 rounded-xl border border-lc-2">
+				<h3 className="text-xs uppercase tracking-[0.08em] text-lc-[50] font-semibold mb-3">
 					Hues
 				</h3>
 				<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -84,7 +84,7 @@ export default function HueControls() {
 							onClick={() => setSelectedHue(hue.name)}
 							className={`flex flex-col gap-1.5 text-left cursor-pointer rounded-lg p-2 transition-colors ${selectedHue === hue.name ? 'bg-white/10' : 'hover:bg-white/5'}`}
 						>
-							<label className="text-xs uppercase tracking-[0.08em] text-5-lo-primary font-semibold pointer-events-none">
+							<label className="text-xs uppercase tracking-[0.08em] text-lc-[50] font-semibold pointer-events-none">
 								{hue.name}
 							</label>
 							<div onClick={(e) => e.stopPropagation()}>
@@ -102,7 +102,7 @@ export default function HueControls() {
 									className="w-5 h-5 rounded-md border border-white/10 shrink-0"
 									style={{ backgroundColor: `oklch(${selectedLValue.toFixed(3)} ${selectedChroma.val} var(--hue-${hue.name}))` }}
 								/>
-								<div className="font-mono text-[0.8rem] text-8-mid-primary">{values[hue.name]}°</div>
+								<div className="font-mono text-[0.8rem] text-lc-[22] chroma-[12]">{values[hue.name]}°</div>
 							</div>
 						</button>
 					))}
@@ -112,8 +112,8 @@ export default function HueControls() {
 			{/* ── Luminance + Chroma ──────────────────────────────── */}
 			<div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-6">
 				{/* Luminance Range */}
-				<div className="p-5 rounded-xl border border-lc-2 border-c-lo border-h-primary bg-lc-1 bg-c-lo bg-h-primary">
-					<h3 className="text-xs uppercase tracking-[0.08em] text-5-lo-primary font-semibold mb-4">
+				<div className="p-5 rounded-xl border border-lc-2 bg-lc-1">
+					<h3 className="text-xs uppercase tracking-[0.08em] text-lc-[50] font-semibold mb-4">
 						Luminance Range
 						<span className="normal-case tracking-normal font-normal ml-2 opacity-70">
 							({isDark ? 'dark' : 'light'} mode)
@@ -130,13 +130,13 @@ export default function HueControls() {
 							labelEnd="Luminance fore (10)"
 						/>
 					</div>
-					<div className="flex justify-between text-[0.75rem] font-mono text-5-lo-primary mb-5">
+					<div className="flex justify-between text-[0.75rem] font-mono text-lc-[50] mb-5">
 						<span>base (0): {luRange.start.toFixed(2)}</span>
 						<span>fore (10): {luRange.end.toFixed(2)}</span>
 					</div>
 
 					{/* L stops strip */}
-					<div className="text-[0.65rem] font-mono text-5-lo-primary mb-1">
+					<div className="text-[0.65rem] font-mono text-lc-[50] mb-1">
 						bg-h-{selectedHue} &middot; bg-c-{selectedChroma.name} ({selectedChroma.val})
 					</div>
 					<div className="flex gap-[2px]">
@@ -151,10 +151,10 @@ export default function HueControls() {
 									className="w-full aspect-[2/1] rounded-md border border-white/10"
 									style={{ backgroundColor: `oklch(${l.value.toFixed(3)} ${selectedChroma.val} var(--hue-${selectedHue}))` }}
 								/>
-								<div className="text-[0.6rem] font-mono text-5-lo-primary leading-none">
+								<div className="text-[0.6rem] font-mono text-lc-[50] leading-none">
 									bg-lc-{l.name}
 								</div>
-								<div className="text-[0.55rem] font-mono text-5-lo-primary opacity-60 leading-none">
+								<div className="text-[0.55rem] font-mono text-lc-[50] opacity-60 leading-none">
 									{l.value.toFixed(2)}
 								</div>
 							</button>
@@ -163,11 +163,11 @@ export default function HueControls() {
 				</div>
 
 				{/* Chroma Stops */}
-				<div className="p-5 rounded-xl border border-lc-2 border-c-lo border-h-primary bg-lc-1 bg-c-lo bg-h-primary">
-					<h3 className="text-xs uppercase tracking-[0.08em] text-5-lo-primary font-semibold mb-4">
+				<div className="p-5 rounded-xl border border-lc-2 bg-lc-1">
+					<h3 className="text-xs uppercase tracking-[0.08em] text-lc-[50] font-semibold mb-4">
 						Chroma Stops
 					</h3>
-					<div className="text-[0.65rem] font-mono text-5-lo-primary mb-1">
+					<div className="text-[0.65rem] font-mono text-lc-[50] mb-1">
 						bg-h-{selectedHue} &middot; bg-lc-{selectedLStep.name} ({selectedLValue.toFixed(2)})
 					</div>
 					<div className="flex gap-[2px] mb-3">
@@ -182,16 +182,16 @@ export default function HueControls() {
 									className="w-full aspect-[2/1] rounded-md border border-white/10"
 									style={{ backgroundColor: `oklch(${selectedLValue.toFixed(3)} ${c.val} var(--hue-${selectedHue}))` }}
 								/>
-								<div className="text-[0.6rem] font-mono text-5-lo-primary leading-none">
+								<div className="text-[0.6rem] font-mono text-lc-[50] leading-none">
 									bg-c-{c.name}
 								</div>
-								<div className="text-[0.55rem] font-mono text-5-lo-primary opacity-60 leading-none">
+								<div className="text-[0.55rem] font-mono text-lc-[50] opacity-60 leading-none">
 									{c.val}
 								</div>
 							</button>
 						))}
 					</div>
-					<p className="text-[0.75rem] text-5-lo-primary leading-relaxed">
+					<p className="text-[0.75rem] text-lc-[50] leading-relaxed">
 						Chroma controls saturation intensity &mdash; from nearly
 						neutral (<span className="font-mono">lo</span>) to fully
 						vivid (<span className="font-mono">hi</span>).
@@ -200,7 +200,7 @@ export default function HueControls() {
 			</div>
 
 			{/* ── Selected Color Classes ─────────────────────────── */}
-			<div className="p-5 rounded-xl border border-lc-2 border-c-lo border-h-primary bg-lc-1 bg-c-lo bg-h-primary">
+			<div className="p-5 rounded-xl border border-lc-2 bg-lc-1">
 				{/* Hero: full LCH class */}
 				<div className="flex items-center gap-4 mb-4">
 					<div
@@ -208,10 +208,10 @@ export default function HueControls() {
 						style={{ backgroundColor: `oklch(${selectedLValue.toFixed(3)} ${selectedChroma.val} var(--hue-${selectedHue}))` }}
 					/>
 					<div className="flex flex-col gap-1">
-						<code className="text-lg sm:text-xl font-mono font-semibold text-8-mid-primary">
+						<code className="text-lg sm:text-xl font-mono font-semibold text-lc-[22] chroma-[12]">
 							bg-{selectedLStep.name}-{selectedChroma.name}-{selectedHue}
 						</code>
-						<div className="text-[0.75rem] font-mono text-5-lo-primary flex items-center gap-1 flex-wrap">
+						<div className="text-[0.75rem] font-mono text-lc-[50] flex items-center gap-1 flex-wrap">
 							<span>bg-</span>
 							<span className="rounded bg-white/10 px-1.5 py-0.5">{selectedLStep.name}</span>
 							<span>-</span>
@@ -235,7 +235,7 @@ export default function HueControls() {
 							key={cls}
 							className="flex items-center rounded-lg bg-white/5 px-3 py-2"
 						>
-							<code className="text-[0.75rem] font-mono text-8-mid-primary break-all">
+							<code className="text-[0.75rem] font-mono text-lc-[22] chroma-[12] break-all">
 								{cls}
 							</code>
 						</div>

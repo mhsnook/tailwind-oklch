@@ -5,17 +5,25 @@
  *   @import "tailwind-oklch";
  *   @plugin "tailwind-oklch/plugin";
  *
+ * Recommended pattern — set hue globally, vary luminance and chroma:
+ *
+ *   <div class="hue-primary chroma-[8]">
+ *     <div class="bg-lc-[93] text-lc-fore border-lc-[80]">...</div>
+ *     <button class="bg-lc-[45] chroma-[18] text-lc-[95]">Action</button>
+ *   </div>
+ *
  * Every setter utility (bg-lc-*, bg-c-*, bg-h-*) both updates its
  * axis variable AND applies the resolved oklch() color. Defaults
  * cascade from :root, so a single class like `bg-lc-5` immediately
  * produces a visible color — no helper class needed.
  *
- * Luminance contrast scale: 0–10.
+ * Luminance contrast: 0–10 named scale or arbitrary [0–100].
  *   0 / base  = close to the page color (blends in)
  *   10 / fore = high contrast with the page (stands out, like text)
- *   1–9       = evenly distributed between those endpoints
- *   none      = absolute minimum (pure white or pure black, per mode)
- *   full      = absolute maximum (pure black or pure white, per mode)
+ *   [N]       = precise value (0–100 → 0.00–1.00), auto-flips in dark mode
+ *
+ * Chroma: named stops (lo/mlo/mid/mhi/hi) or arbitrary [0–100].
+ *   chroma-[8] sets all properties to 0.08; bg-c-[15] sets bg only.
  */
 
 @theme {

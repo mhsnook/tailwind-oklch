@@ -10,25 +10,25 @@ import RelativeLuminanceDemo from "@/components/RelativeLuminanceDemo.astro";
 
 <Layout title="tw ok — Tailwind OKLCH Color System">
   <div class="max-w-[1200px] mx-auto px-8 py-12">
-    <div class="rounded-2xl mb-6 inline-block overflow-hidden border border-5-mlo-neutral">
-      <div class="flex items-center gap-2 px-5 py-1 border-b border-5-mlo-neutral text-5-mlo-neutral">tailwind-oklch plugin</div>
+    <div class="hue-neutral rounded-2xl mb-6 inline-block overflow-hidden border border-lc-[50] chroma-[4]">
+      <div class="flex items-center gap-2 px-5 py-1 border-b border-lc-[50] text-lc-[50] chroma-[4]">tailwind-oklch plugin</div>
       <div class="px-10 py-8">
         <h1 class="text-[4rem] font-bold tracking-[-0.04em] font-mono leading-none">
           <span style="color: oklch(0.746 0.16 233)">tw</span><span class="text-lc-9">/</span><span style="color: oklch(0.718 0.202 350)">ok</span>
         </h1>
       </div>
     </div>
-    <p class="text-[1.1rem] mb-12 max-w-[680px] leading-[1.6] text-8-mlo-primary">
+    <p class="hue-primary text-[1.1rem] mb-12 max-w-[680px] leading-[1.6] text-lc-[22] chroma-[5]">
 		Bringing the Tailwind CSS philosophy of <em>atomic utility classes</em> to the color variables that power OKLCH.
 		Tailwind OKLCH lets you set full color values or change one parameter at a time – no more opacity hacks
 		required. Re-theme your whole app with just a variable or a class.
 	 </p>
 
     <!-- Theme Controls -->
-    <h2 class="text-[1.3rem] font-semibold mb-4 tracking-[-0.01em] text-8-mlo-primary">
+    <h2 class="hue-primary text-[1.3rem] font-semibold mb-4 tracking-[-0.01em] text-lc-[22] chroma-[5]">
       Theme Controls
     </h2>
-    <p class="text-5-lo-primary text-[0.9rem] mb-6 -mt-1 max-w-[680px] leading-[1.6]">
+    <p class="hue-primary text-lc-[50] chroma-[2] text-[0.9rem] mb-6 -mt-1 max-w-[680px] leading-[1.6]">
       Tailwind OKLCH gives you Tailwind-style, fine-grained control over your
       colors. Every color is built from three independent dimensions &mdash;
       <strong>hue</strong>, <strong>luminance</strong>, and
@@ -40,10 +40,10 @@ import RelativeLuminanceDemo from "@/components/RelativeLuminanceDemo.astro";
     </div>
 
     <!-- Color Matrix -->
-    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-8-mlo-primary">
+    <h2 class="hue-primary text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-lc-[22] chroma-[5]">
       5×5 Luminance × Chroma Grid
     </h2>
-    <p class="text-5-lo-primary text-[0.9rem] mb-6 -mt-3">
+    <p class="hue-primary text-lc-[50] chroma-[2] text-[0.9rem] mb-6 -mt-3">
       Each matrix shows chroma (rows, hi→lo) × luminance
       (columns, 0→10) for a given hue. Hover to see the class name.
     </p>
@@ -52,7 +52,7 @@ import RelativeLuminanceDemo from "@/components/RelativeLuminanceDemo.astro";
     </div>
 
     <!-- Live Component Demos -->
-    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-8-mlo-primary">
+    <h2 class="hue-primary text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-lc-[22] chroma-[5]">
       Live Component Examples
     </h2>
     <div class="mb-12">
@@ -60,14 +60,16 @@ import RelativeLuminanceDemo from "@/components/RelativeLuminanceDemo.astro";
     </div>
 
     <!-- Hue Context Demo -->
-    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-8-mlo-primary">
+    <h2 class="hue-primary text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-lc-[22] chroma-[5]">
       Using Hue Context
     </h2>
-    <p class="text-5-lo-primary text-[0.9rem] mb-6 -mt-3 max-w-[680px] leading-[1.6]">
-      Set <code class="text-6-mhi-primary font-mono text-[0.85rem]">hue-*</code>
+    <p class="hue-primary text-lc-[50] chroma-[2] text-[0.9rem] mb-6 -mt-3 max-w-[680px] leading-[1.6]">
+      Set <code class="hue-primary text-lc-[40] chroma-[16] font-mono text-[0.85rem]">hue-*</code>
       once on a container and every child inherits it. Elements only specify
-      <strong>luminance</strong> and <strong>chroma</strong> via two-axis
-      shorthands like <code class="text-6-mhi-primary font-mono text-[0.85rem]">bg-5-mhi</code>
+      <strong>luminance</strong> and <strong>chroma</strong> via
+      <code class="hue-primary text-lc-[40] chroma-[16] font-mono text-[0.85rem]">bg-lc-[N]</code>
+      and
+      <code class="hue-primary text-lc-[40] chroma-[16] font-mono text-[0.85rem]">chroma-[N]</code>
       &mdash; no hue suffix needed. Click a hue to re-theme the showcase.
     </p>
     <div class="mb-12">
@@ -75,15 +77,15 @@ import RelativeLuminanceDemo from "@/components/RelativeLuminanceDemo.astro";
     </div>
 
     <!-- Relative Luminance -->
-    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-8-mlo-primary">
+    <h2 class="hue-primary text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-lc-[22] chroma-[5]">
       Relative Luminance Offsets
     </h2>
-    <p class="text-5-lo-primary text-[0.9rem] mb-6 -mt-3">
+    <p class="hue-primary text-lc-[50] chroma-[2] text-[0.9rem] mb-6 -mt-3">
       Sometimes you don't need an absolute luminance step — you just want
       <em>a little lighter</em> or <em>a little darker</em> than whatever
-      the parent set. <code class="text-6-mhi-primary font-mono text-[0.85rem]">bg-lc-up-1</code>
+      the parent set. <code class="hue-primary text-lc-[40] chroma-[16] font-mono text-[0.85rem]">bg-lc-up-1</code>
       pushes toward the viewer (brighter in dark mode, darker in light mode)
-      while <code class="text-6-mhi-primary font-mono text-[0.85rem]">bg-lc-down-1</code>
+      while <code class="hue-primary text-lc-[40] chroma-[16] font-mono text-[0.85rem]">bg-lc-down-1</code>
       recedes. Perfect for hover states, active items, and subtle depth — the
       same classes work on every base color.
     </p>
@@ -92,7 +94,7 @@ import RelativeLuminanceDemo from "@/components/RelativeLuminanceDemo.astro";
     </div>
 
     <!-- Code Examples -->
-    <h2 class="text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-8-mlo-primary">
+    <h2 class="hue-primary text-[1.3rem] font-semibold mb-6 tracking-[-0.01em] text-lc-[22] chroma-[5]">
       Implementation
     </h2>
     <CodeExamples client:visible />

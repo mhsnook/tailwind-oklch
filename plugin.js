@@ -1,18 +1,22 @@
 /**
- * tailwind-oklch shorthand generator
+ * tailwind-oklch shorthand & arbitrary-value generator
  *
- * Generates two kinds of shorthand utilities:
+ * Recommended pattern: set hue-* and chroma-[N] on a container,
+ * then use bg-lc-[N] / text-lc-[N] per-element for precise luminance.
  *
- * Three-axis: .{prop}-{L}-{C}-{H}  — sets all three axes explicitly
- *   e.g. bg-3-mhi-accent
+ * This plugin provides:
  *
- * Two-axis:   .{prop}-{L}-{C}      — sets L and C, inherits H from
- *   the cascade (set by hue-* or :root default)
- *   e.g. bg-3-mhi (pair with hue-accent on a parent)
+ * 1. Arbitrary value support (primary approach):
+ *    - hue-[180], bg-h-[280]       — exact hue in degrees
+ *    - chroma-[8], bg-c-[15]       — exact chroma (N/100)
+ *    - bg-lc-[80], text-lc-[25]    — exact luminance, auto-flips in dark mode
  *
- * Each shorthand sets the axis variables AND applies the resolved
- * color, so children can inherit and override single axes via
- * decomposed utilities (e.g. hover:bg-lc-8).
+ * 2. Named shorthand utilities (convenience):
+ *    - Two-axis:   .{prop}-{L}-{C}      — e.g. bg-3-mid (inherits hue)
+ *    - Three-axis: .{prop}-{L}-{C}-{H}  — e.g. bg-3-mhi-accent
+ *
+ * Each utility sets the axis variables AND applies the resolved
+ * color, so children can inherit and override single axes.
  *
  * Load via: @plugin "tailwind-oklch/plugin";
  */
