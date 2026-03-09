@@ -1,5 +1,5 @@
 import { Fragment, useState, useEffect, useCallback } from 'react'
-import { HUES, L_STOPS, C_STOPS, LU_RANGE_DARK, luValue } from '@/lib/color-config'
+import { HUES, L_STOPS_COMPACT, C_STOPS, LU_RANGE_DARK, luValue } from '@/lib/color-config'
 
 export default function ColorMatrix() {
 	const [, setTick] = useState(0)
@@ -52,7 +52,7 @@ export default function ColorMatrix() {
 								<div className="matrix-label" />
 
 								{/* Column headers — luminance (left=base, right=fore) */}
-								{L_STOPS.map((l) => (
+								{L_STOPS_COMPACT.map((l) => (
 									<div key={l.name} className="matrix-label col-label">
 										lc&#8209;{l.name}
 									</div>
@@ -62,10 +62,10 @@ export default function ColorMatrix() {
 								{[...C_STOPS].reverse().map((c) => (
 									<Fragment key={c.name}>
 										<div className="matrix-label">c&#8209;{c.name}</div>
-										{L_STOPS.map((l) => {
+										{L_STOPS_COMPACT.map((l) => {
 											// Use CSS vars for the cell color so it adapts to light/dark mode natively
 											const color = `oklch(var(--l-${l.name}) ${c.val} var(--hue-${hue.name}))`
-											const className = `bg-${l.name}-${c.name}-${hue.name}`
+											const className = `hue-${hue.name} bg-lc-${l.name} bg-c-${c.name}`
 											return (
 												<div
 													key={`${l.name}-${c.name}`}
@@ -99,9 +99,9 @@ export default function ColorMatrix() {
 				{preview && (
 					<>
 						<div className="swatch w-8 h-8 rounded-md" style={{ backgroundColor: preview.color }} />
-						<div>
-							<div className="text-fore-mhi-primary">{preview.className}</div>
-							<div className="text-5-lo-primary text-xs">{preview.oklch}</div>
+						<div className="hue-primary">
+							<div className="text-lc-fore chroma-mhi">{preview.className}</div>
+							<div className="text-lc-5 chroma-lo text-xs">{preview.oklch}</div>
 						</div>
 					</>
 				)}

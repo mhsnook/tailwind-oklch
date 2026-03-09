@@ -7,8 +7,27 @@ export const HUES = [
 	{ name: 'info', default: 220 },
 ] as const
 
-/** Representative luminance stops shown in the demo matrix. */
+/** Full luminance scale with half-steps at the extremes. */
 export const L_STOPS = [
+	{ name: '0', step: 0 },
+	{ name: '05', step: 0.5 },
+	{ name: '1', step: 1 },
+	{ name: '15', step: 1.5 },
+	{ name: '2', step: 2 },
+	{ name: '3', step: 3 },
+	{ name: '4', step: 4 },
+	{ name: '5', step: 5 },
+	{ name: '6', step: 6 },
+	{ name: '7', step: 7 },
+	{ name: '8', step: 8 },
+	{ name: '85', step: 8.5 },
+	{ name: '9', step: 9 },
+	{ name: '95', step: 9.5 },
+	{ name: '10', step: 10 },
+] as const
+
+/** Subset of L stops for compact demo grids. */
+export const L_STOPS_COMPACT = [
 	{ name: '0', step: 0 },
 	{ name: '2', step: 2 },
 	{ name: '5', step: 5 },

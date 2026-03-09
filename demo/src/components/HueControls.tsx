@@ -61,7 +61,7 @@ export default function HueControls() {
 	// ── Cross-reference state between H, L, and C strips ───────────────
 	const [selectedHue, setSelectedHue] = useState(HUES[0].name) // primary
 	const [selectedChroma, setSelectedChroma] = useState(C_STOPS[2]) // mid
-	const [selectedLStep, setSelectedLStep] = useState(L_STOPS[2]) // 5
+	const [selectedLStep, setSelectedLStep] = useState(L_STOPS.find((s) => s.name === '5')!) // 5
 
 	const lStopValues = L_STOPS.map((l) => ({
 		...l,

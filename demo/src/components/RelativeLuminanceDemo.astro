@@ -1,15 +1,15 @@
 ---
 const navbars = [
-  { hue: 'hue-primary', chroma: 'chroma-[12]', bg: 'bg-lc-[75]', text: 'text-lc-[15]', label: 'primary', items: ['Dashboard', 'Projects', 'Team'] },
-  { hue: 'hue-accent', chroma: 'chroma-[18]', bg: 'bg-lc-[68]', text: 'text-lc-[15]', label: 'accent', items: ['Browse', 'Trending', 'Library'] },
-  { hue: 'hue-success', chroma: 'chroma-[12]', bg: 'bg-lc-[75]', text: 'text-lc-[15]', label: 'success', items: ['Overview', 'Analytics', 'Reports'] },
-  { hue: 'hue-danger', chroma: 'chroma-[12]', bg: 'bg-lc-[88]', text: 'text-lc-[15]', label: 'danger', items: ['Alerts', 'Incidents', 'Escalations'] },
+  { hue: 'hue-primary', bg: 'bg-lc-2 chroma-mid', text: 'text-lc-fore', label: 'primary', items: ['Dashboard', 'Projects', 'Team'] },
+  { hue: 'hue-accent', bg: 'bg-lc-3 chroma-mhi', text: 'text-lc-fore', label: 'accent', items: ['Browse', 'Trending', 'Library'] },
+  { hue: 'hue-success', bg: 'bg-lc-2 chroma-mid', text: 'text-lc-fore', label: 'success', items: ['Overview', 'Analytics', 'Reports'] },
+  { hue: 'hue-danger', bg: 'bg-lc-1 chroma-mid', text: 'text-lc-fore', label: 'danger', items: ['Alerts', 'Incidents', 'Escalations'] },
 ]
 ---
 
 <div class="flex flex-col gap-4">
-  {navbars.map(({ hue, chroma, bg, text, label, items }) => (
-    <div class:list={[hue, chroma, bg, text, 'rounded-lg flex items-center gap-1 px-2 py-2 text-[0.75rem] sm:text-[0.82rem] font-medium']}>
+  {navbars.map(({ hue, bg, text, label, items }) => (
+    <div class:list={[hue, bg, text, 'rounded-lg flex items-center gap-1 px-2 py-2 text-[0.75rem] sm:text-[0.82rem] font-medium']}>
       <div class="flex-1 flex items-center gap-1 min-w-0 overflow-hidden">
         <div class="bg-lc-up-2 rounded px-2 sm:px-2.5 py-1.5 font-bold text-[0.75rem] sm:text-[0.8rem] mr-1 sm:mr-2 tracking-tight shrink-0">{label}</div>
         {items.map((itemLabel, i) => (
@@ -31,9 +31,9 @@ const navbars = [
       </div>
     </div>
   ))}
-  <p class="hue-neutral text-lc-[50] chroma-[2] text-[0.8rem] leading-relaxed mt-1">
-    Each navbar sets a single base color with <code class="hue-primary text-lc-[40] chroma-[16] font-mono text-[0.78rem]">hue-*</code> and <code class="hue-primary text-lc-[40] chroma-[16] font-mono text-[0.78rem]">chroma-[N]</code>. <code class="hue-primary text-lc-[40] chroma-[16] font-mono text-[0.78rem]">bg-lc-up-1</code> and
-    <code class="hue-primary text-lc-[40] chroma-[16] font-mono text-[0.78rem]">bg-lc-down-1</code> nudge luminance toward or away from the
+  <p class="hue-neutral text-lc-5 chroma-lo text-[0.8rem] leading-relaxed mt-1">
+    Each navbar sets a single hue with <code class="hue-primary text-lc-6 chroma-mhi font-mono text-[0.78rem]">hue-*</code> and a base color with <code class="hue-primary text-lc-6 chroma-mhi font-mono text-[0.78rem]">bg-lc-N chroma-mid</code>. <code class="hue-primary text-lc-6 chroma-mhi font-mono text-[0.78rem]">bg-lc-up-1</code> and
+    <code class="hue-primary text-lc-6 chroma-mhi font-mono text-[0.78rem]">bg-lc-down-1</code> nudge luminance toward or away from the
     viewer — the direction flips automatically in dark mode. Same utility classes, every hue.
   </p>
 </div>

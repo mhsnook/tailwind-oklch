@@ -49,7 +49,7 @@ export default function CodeViewerButton({ code }: { code: string }) {
 		<>
 			<button
 				onClick={() => setOpen(true)}
-				className="absolute top-2 right-2 p-1.5 rounded-md text-[0.7rem] font-mono leading-none opacity-40 hover:opacity-100 transition-opacity cursor-pointer bg-lc-0 chroma-[2] text-lc-fore"
+				className="absolute top-2 right-2 p-1.5 rounded-md text-[0.7rem] font-mono leading-none opacity-40 hover:opacity-100 transition-opacity cursor-pointer bg-lc-0 chroma-lo text-lc-fore"
 				title="View source"
 			>
 				&lt;/&gt;
@@ -58,7 +58,7 @@ export default function CodeViewerButton({ code }: { code: string }) {
 			<dialog
 				ref={dialogRef}
 				onClose={() => setOpen(false)}
-				className="mx-0 mb-0 mt-auto sm:m-auto max-w-full sm:max-w-[720px] w-full sm:w-[90vw] max-h-[85vh] sm:max-h-[80vh] rounded-t-xl sm:rounded-xl p-0 border hue-neutral border-lc-[50] chroma-[4] bg-transparent backdrop:bg-black/50 backdrop:backdrop-blur-sm"
+				className="mx-0 mb-0 mt-auto sm:m-auto max-w-full sm:max-w-[720px] w-full sm:w-[90vw] max-h-[85vh] sm:max-h-[80vh] rounded-t-xl sm:rounded-xl p-0 border hue-neutral border-lc-5 chroma-lo bg-transparent backdrop:bg-black/50 backdrop:backdrop-blur-sm"
 			>
 				<div className="code-block rounded-t-xl sm:rounded-xl overflow-hidden">
 					<div className="flex items-center justify-between px-4 py-2 border-b border-white/10">
