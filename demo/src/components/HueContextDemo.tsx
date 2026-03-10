@@ -27,8 +27,8 @@ export default function HueContextDemo() {
 						onClick={() => setActive(name)}
 						className={`${hueClass[name]} cursor-pointer rounded-lg px-4 py-2 text-[0.82rem] font-semibold transition-all duration-150 ${
 							active === name
-								? 'bg-lc-5 chroma-mhi text-lc-0 ring-2 ring-offset-2 ring-offset-transparent'
-								: 'bg-lc-2 chroma-mid text-lc-fore hover:bg-lc-3'
+								? 'bg-lum-6 chroma-mhi text-lum-12 ring-2 ring-offset-2 ring-offset-transparent'
+								: 'bg-lum-9 chroma-mid text-lum-1 hover:bg-lum-8'
 						}`}
 					>
 						{name}
@@ -37,40 +37,40 @@ export default function HueContextDemo() {
 			</div>
 
 			{/* Showcase container — hue class applied here */}
-			<div className={`${hueClass[active]} rounded-xl border border-lc-2 p-6`}>
+			<div className={`${hueClass[active]} rounded-xl border border-lum-9 p-6`}>
 				<div className="grid gap-6 sm:grid-cols-2">
 					{/* Card */}
-					<div className="flex flex-col gap-4 rounded-lg border border-lc-2 bg-lc-05 p-5">
+					<div className="flex flex-col gap-4 rounded-lg border border-lum-9 bg-lum-11 p-5">
 						<div>
-							<h4 className="text-lc-fore mb-1 text-[0.9rem] font-semibold">
+							<h4 className="text-lum-1 mb-1 text-[0.9rem] font-semibold">
 								Project Settings
 							</h4>
-							<p className="text-lc-5 chroma-lo text-[0.8rem] leading-relaxed">
+							<p className="text-lum-6 chroma-lo text-[0.8rem] leading-relaxed">
 								Manage your project configuration and team preferences.
 							</p>
 						</div>
 
 						{/* Input */}
 						<label className="flex flex-col gap-1.5">
-							<span className="text-lc-7 text-[0.78rem] font-medium">
+							<span className="text-lum-4 text-[0.78rem] font-medium">
 								Project name
 							</span>
 							<input
 								type="text"
 								defaultValue="tailwind-oklch"
-								className="bg-lc-0 border-lc-3 text-lc-8 placeholder:text-lc-4 rounded-md border px-3 py-2 text-[0.82rem] outline-none transition-colors focus:border-c-mid"
+								className="bg-lum-12 border-lum-8 text-lum-3 placeholder:text-lum-7 rounded-md border px-3 py-2 text-[0.82rem] outline-none transition-colors focus:border-c-mid"
 							/>
 						</label>
 
 						{/* Select-style dropdown (static) */}
 						<label className="flex flex-col gap-1.5">
-							<span className="text-lc-7 text-[0.78rem] font-medium">
+							<span className="text-lum-4 text-[0.78rem] font-medium">
 								Visibility
 							</span>
-							<div className="bg-lc-0 border-lc-3 text-lc-7 flex items-center justify-between rounded-md border px-3 py-2 text-[0.82rem]">
+							<div className="bg-lum-12 border-lum-8 text-lum-4 flex items-center justify-between rounded-md border px-3 py-2 text-[0.82rem]">
 								<span>Public</span>
 								<svg
-									className="text-lc-5"
+									className="text-lum-6"
 									xmlns="http://www.w3.org/2000/svg"
 									width="14"
 									height="14"
@@ -88,10 +88,10 @@ export default function HueContextDemo() {
 
 						{/* Buttons */}
 						<div className="flex gap-2 pt-1">
-							<button className="bg-lc-5 chroma-mhi text-lc-0 cursor-pointer rounded-md px-4 py-2 text-[0.8rem] font-semibold transition-colors hover:bg-lc-6">
+							<button className="bg-lum-6 chroma-mhi text-lum-12 cursor-pointer rounded-md px-4 py-2 text-[0.8rem] font-semibold transition-colors hover:bg-lum-5">
 								Save
 							</button>
-							<button className="border-lc-3 text-lc-7 cursor-pointer rounded-md border bg-transparent px-4 py-2 text-[0.8rem] font-medium transition-colors hover:bg-lc-05">
+							<button className="border-lum-8 text-lum-4 cursor-pointer rounded-md border bg-transparent px-4 py-2 text-[0.8rem] font-medium transition-colors hover:bg-lum-11">
 								Cancel
 							</button>
 						</div>
@@ -100,10 +100,10 @@ export default function HueContextDemo() {
 					{/* Right column — mixed elements */}
 					<div className="flex flex-col gap-4">
 						{/* Notification card */}
-						<div className="bg-lc-1 chroma-mlo flex items-start gap-3 rounded-lg p-4">
-							<div className="bg-lc-4 chroma-mhi mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
+						<div className="bg-lum-10 chroma-mlo flex items-start gap-3 rounded-lg p-4">
+							<div className="bg-lum-7 chroma-mhi mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
 								<svg
-									className="text-lc-fore"
+									className="text-lum-1"
 									xmlns="http://www.w3.org/2000/svg"
 									width="16"
 									height="16"
@@ -119,10 +119,10 @@ export default function HueContextDemo() {
 								</svg>
 							</div>
 							<div>
-								<p className="text-lc-9 text-[0.82rem] font-medium">
+								<p className="text-lum-2 text-[0.82rem] font-medium">
 									3 new notifications
 								</p>
-								<p className="text-lc-5 chroma-lo text-[0.75rem]">
+								<p className="text-lum-6 chroma-lo text-[0.75rem]">
 									You have unread messages from your team.
 								</p>
 							</div>
@@ -130,28 +130,28 @@ export default function HueContextDemo() {
 
 						{/* Badges */}
 						<div className="flex flex-wrap gap-2">
-							<span className="bg-lc-2 chroma-mid text-lc-9 rounded-full px-3 py-1 text-[0.72rem] font-semibold">
+							<span className="bg-lum-9 chroma-mid text-lum-2 rounded-full px-3 py-1 text-[0.72rem] font-semibold">
 								Active
 							</span>
-							<span className="bg-lc-1 chroma-mlo text-lc-7 rounded-full px-3 py-1 text-[0.72rem] font-medium">
+							<span className="bg-lum-10 chroma-mlo text-lum-4 rounded-full px-3 py-1 text-[0.72rem] font-medium">
 								Draft
 							</span>
-							<span className="border-lc-3 text-lc-6 chroma-mlo rounded-full border px-3 py-1 text-[0.72rem] font-medium">
+							<span className="border-lum-8 text-lum-5 chroma-mlo rounded-full border px-3 py-1 text-[0.72rem] font-medium">
 								Archived
 							</span>
 						</div>
 
 						{/* Toggle row */}
-						<div className="border-lc-2 flex items-center justify-between rounded-lg border p-4">
+						<div className="border-lum-9 flex items-center justify-between rounded-lg border p-4">
 							<div>
-								<p className="text-lc-9 text-[0.82rem] font-medium">
+								<p className="text-lum-2 text-[0.82rem] font-medium">
 									Email notifications
 								</p>
-								<p className="text-lc-5 chroma-lo text-[0.75rem]">
+								<p className="text-lum-6 chroma-lo text-[0.75rem]">
 									Receive updates about activity.
 								</p>
 							</div>
-							<div className="bg-lc-5 chroma-mhi relative h-6 w-11 rounded-full">
+							<div className="bg-lum-6 chroma-mhi relative h-6 w-11 rounded-full">
 								<div className="absolute top-1 left-[calc(100%-1.25rem-0.25rem)] h-4 w-5 rounded-full bg-white transition-all" />
 							</div>
 						</div>
@@ -165,12 +165,12 @@ export default function HueContextDemo() {
 							].map(({ label, value }) => (
 								<div
 									key={label}
-									className="bg-lc-05 border-lc-2 rounded-lg border p-3 text-center"
+									className="bg-lum-11 border-lum-9 rounded-lg border p-3 text-center"
 								>
-									<p className="text-lc-9 chroma-mhi text-[1rem] font-bold">
+									<p className="text-lum-2 chroma-mhi text-[1rem] font-bold">
 										{value}
 									</p>
-									<p className="text-lc-5 chroma-lo text-[0.72rem]">
+									<p className="text-lum-6 chroma-lo text-[0.72rem]">
 										{label}
 									</p>
 								</div>
@@ -181,17 +181,17 @@ export default function HueContextDemo() {
 			</div>
 
 			{/* Explainer */}
-			<p className="hue-neutral text-lc-5 chroma-lo text-[0.8rem] leading-relaxed">
+			<p className="hue-neutral text-lum-6 chroma-lo text-[0.8rem] leading-relaxed">
 				One{' '}
-				<code className="hue-primary text-lc-6 chroma-mhi font-mono text-[0.78rem]">
+				<code className="hue-primary text-lum-5 chroma-mhi font-mono text-[0.78rem]">
 					hue-{active}
 				</code>{' '}
 				class on the container. Every element inside uses{' '}
-				<code className="hue-primary text-lc-6 chroma-mhi font-mono text-[0.78rem]">
-					bg-lc-N
+				<code className="hue-primary text-lum-5 chroma-mhi font-mono text-[0.78rem]">
+					bg-lum-N
 				</code>{' '}
 				and{' '}
-				<code className="hue-primary text-lc-6 chroma-mhi font-mono text-[0.78rem]">
+				<code className="hue-primary text-lum-5 chroma-mhi font-mono text-[0.78rem]">
 					chroma-mid
 				</code>{' '}
 				&mdash; no hue suffix needed. Click a different hue above and the

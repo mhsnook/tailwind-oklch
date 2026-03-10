@@ -3,14 +3,14 @@
  *
  * The core named-stop API lives in index.css (@utility directives):
  *   hue-{name}     — cascading hue (set once on container)
- *   bg-lc-{N}      — luminance: 0, 05, 1, 15, 2–8, 85, 9, 95, 10
+ *   bg-lum-{N}     — luminance: 1–12 (bezier-distributed)
  *   bg-c-{stop}    — chroma: lo, mlo, mid, mhi, hi
  *   chroma-{stop}  — global chroma override
  *
  * This plugin adds arbitrary bracket values for all three axes:
  *   hue-[180]      — exact hue in degrees
  *   chroma-[8]     — exact chroma (N/100 → 0.08)
- *   bg-lc-[80]     — exact luminance, auto-flips in dark mode
+ *   bg-lum-[80]    — exact luminance, auto-flips in dark mode
  *
  * Load via: @plugin "tailwind-oklch/plugin";
  */
@@ -117,22 +117,22 @@ module.exports = function ({ matchUtilities }) {
   );
 
   // ── Arbitrary luminance (auto-flip) ───────────────────────────────────
-  // bg-lc-[60] → L=0.60 light, L=0.40 dark. Pure CSS via --lc-flip.
+  // bg-lum-[60] → L=0.60 light, L=0.40 dark. Pure CSS via --lum-flip.
   // Formula: L = v + flip × (1 − 2v)
 
-  const lcFlipValue = (value) => {
+  const lumFlipValue = (value) => {
     const v = Number(value) / 100;
     const delta = 1 - 2 * v;
     const vR = Math.round(v * 1e6) / 1e6;
     const dR = Math.round(delta * 1e6) / 1e6;
-    return `calc(${vR} + var(--lc-flip) * ${dR})`;
+    return `calc(${vR} + var(--lum-flip) * ${dR})`;
   };
 
   for (const prop of properties) {
     matchUtilities(
       {
-        [`${prop.prefix}-lc`]: (value) => ({
-          [prop.vars[0]]: lcFlipValue(value),
+        [`${prop.prefix}-lum`]: (value) => ({
+          [prop.vars[0]]: lumFlipValue(value),
           [prop.css]: `oklch(var(${prop.vars[0]}) var(${prop.vars[1]}) var(${prop.vars[2]}))`,
         }),
       },
@@ -142,18 +142,18 @@ module.exports = function ({ matchUtilities }) {
 
   matchUtilities(
     {
-      'from-lc': (value) => ({
-        '--gf-l': lcFlipValue(value),
+      'from-lum': (value) => ({
+        '--gf-l': lumFlipValue(value),
         '--tw-gradient-from': 'oklch(var(--gf-l) var(--gf-c) var(--gf-h))',
         '--tw-gradient-stops': stopsExpr,
       }),
-      'to-lc': (value) => ({
-        '--gt-l': lcFlipValue(value),
+      'to-lum': (value) => ({
+        '--gt-l': lumFlipValue(value),
         '--tw-gradient-to': 'oklch(var(--gt-l) var(--gt-c) var(--gt-h))',
         '--tw-gradient-stops': stopsExpr,
       }),
-      'shadow-lc': (value) => ({
-        '--sh-l': lcFlipValue(value),
+      'shadow-lum': (value) => ({
+        '--sh-l': lumFlipValue(value),
         '--tw-shadow-color': 'oklch(var(--sh-l) var(--sh-c) var(--sh-h))',
       }),
     },

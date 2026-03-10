@@ -2,86 +2,86 @@
 import CodeViewerButton from './CodeViewerButton'
 
 const sources = {
-  multiHue: `<div class="hue-primary bg-lc-05 text-lc-fore border-lc-1 rounded-xl p-6 border">
+  multiHue: `<div class="hue-primary bg-lum-11 text-lum-1 border-lum-10 rounded-xl p-6 border">
   <h4 class="text-[0.85rem] mb-3 font-semibold">Multi-Hue Composition</h4>
-  <p class="text-lc-6 text-[0.85rem] leading-normal mb-4">
+  <p class="text-lum-5 text-[0.85rem] leading-normal mb-4">
     hue-primary on the container. Badges swap hue — L and C stay identical.
   </p>
   <div class="flex flex-wrap gap-2 mt-2 *:px-3 *:py-1 *:rounded-full *:text-xs *:font-semibold">
-    <span class="hue-primary bg-lc-3 chroma-mid text-lc-fore">primary</span>
-    <span class="hue-accent bg-lc-3 chroma-mid text-lc-fore">accent</span>
-    <span class="hue-warning bg-lc-3 chroma-mid text-lc-fore">warning</span>
-    <span class="hue-success bg-lc-3 chroma-mid text-lc-fore">success</span>
-    <span class="hue-info bg-lc-3 chroma-mid text-lc-fore">info</span>
-    <span class="hue-danger bg-lc-3 chroma-mid text-lc-fore">danger</span>
+    <span class="hue-primary bg-lum-8 chroma-mid text-lum-1">primary</span>
+    <span class="hue-accent bg-lum-8 chroma-mid text-lum-1">accent</span>
+    <span class="hue-warning bg-lum-8 chroma-mid text-lum-1">warning</span>
+    <span class="hue-success bg-lum-8 chroma-mid text-lum-1">success</span>
+    <span class="hue-info bg-lum-8 chroma-mid text-lum-1">info</span>
+    <span class="hue-danger bg-lum-8 chroma-mid text-lum-1">danger</span>
   </div>
 </div>`,
-  cascade: `<div class="hue-accent chroma-mhi bg-lc-3 text-lc-fore border-lc-8 rounded-xl p-6 border">
+  cascade: `<div class="hue-accent chroma-mhi bg-lum-8 text-lum-1 border-lum-3 rounded-xl p-6 border">
   <h4 class="text-[0.85rem] mb-3 font-semibold">Cascade Override</h4>
   <p class="text-[0.85rem] leading-normal mb-4">
-    Parent sets hue-accent chroma-mhi bg-lc-3. Children override
+    Parent sets hue-accent chroma-mhi bg-lum-8. Children override
     only luminance — chroma + hue cascade down.
   </p>
   <div class="flex gap-2 font-mono font-semibold *:px-4 *:py-2 *:rounded-lg *:text-[0.75rem]">
-    <div class="bg-lc-0 text-lc-fore">bg-lc-0</div>
-    <div class="bg-lc-5 text-lc-95">bg-lc-5</div>
-    <div class="bg-lc-10 text-lc-05">bg-lc-10</div>
+    <div class="bg-lum-12 text-lum-1">bg-lum-12</div>
+    <div class="bg-lum-6 text-lum-2">bg-lum-6</div>
+    <div class="bg-lum-1 text-lum-11">bg-lum-1</div>
   </div>
 </div>`,
-  chroma: `<div class="hue-success bg-lc-0 text-lc-6 border-lc-5 rounded-xl p-6 border">
+  chroma: `<div class="hue-success bg-lum-12 text-lum-5 border-lum-6 rounded-xl p-6 border">
   <h4 class="chroma-mid text-[0.85rem] mb-3 font-semibold">Chroma for Activity</h4>
-  <p class="text-lc-5 chroma-lo text-[0.85rem] leading-normal mb-4">
+  <p class="text-lum-6 chroma-lo text-[0.85rem] leading-normal mb-4">
     On hover, these buttons increase chroma and get a little shadow.
   </p>
   <div class="flex gap-2 *:px-5 *:py-2 *:rounded-lg *:text-[0.8rem] *:font-semibold *:cursor-pointer *:transition-all *:duration-150 *:border *:hover:shadow">
-    <div class="bg-lc-3 chroma-mid text-lc-fore hover:chroma-mhi hover:border-c-mid">success</div>
-    <div class="bg-lc-0 text-lc-8 chroma-mhi border-lc-2 hover:bg-c-mlo hover:border-c-mhi">outline</div>
+    <div class="bg-lum-8 chroma-mid text-lum-1 hover:chroma-mhi hover:border-c-mid">success</div>
+    <div class="bg-lum-12 text-lum-3 chroma-mhi border-lum-9 hover:bg-c-mlo hover:border-c-mhi">outline</div>
   </div>
 </div>`,
-  luminance: `<div class="hue-primary chroma-mid bg-lc-0 text-lc-7 border-lc-3 rounded-xl p-6 border">
+  luminance: `<div class="hue-primary chroma-mid bg-lum-12 text-lum-4 border-lum-8 rounded-xl p-6 border">
   <h4 class="text-[0.85rem] mb-3 font-semibold">Luminance for Emphasis</h4>
-  <p class="text-lc-5 text-[0.85rem] leading-normal mb-4">
+  <p class="text-lum-6 text-[0.85rem] leading-normal mb-4">
     Every element uses the same chroma and hue. Only luminance varies.
     Excellent for accessibility.
   </p>
   <div class="flex gap-2 *:px-5 *:py-2 *:rounded-lg *:text-[0.8rem] *:font-semibold *:cursor-pointer *:transition-all *:duration-150 *:border *:shadow">
-    <div class="bg-lc-6 text-lc-05 border-lc-5 hover:bg-lc-5 hover:border-lc-4 hover:text-lc-0">primary</div>
-    <div class="border-lc-1 hover:text-lc-6 hover:bg-lc-1 hover:border-lc-3">outline</div>
+    <div class="bg-lum-5 text-lum-11 border-lum-6 hover:bg-lum-6 hover:border-lum-7 hover:text-lum-12">primary</div>
+    <div class="border-lum-10 hover:text-lum-5 hover:bg-lum-10 hover:border-lum-8">outline</div>
   </div>
 </div>`,
-  danger: `<div class="hue-danger chroma-mid bg-lc-1 text-lc-fore border-lc-3 rounded-xl p-6 border">
+  danger: `<div class="hue-danger chroma-mid bg-lum-10 text-lum-1 border-lum-8 rounded-xl p-6 border">
   <h4 class="text-[0.85rem] mb-3 font-semibold">Danger Alert</h4>
-  <p class="text-lc-8 chroma-mlo text-[0.85rem] leading-normal mb-4">
+  <p class="text-lum-3 chroma-mlo text-[0.85rem] leading-normal mb-4">
     hue-danger on the container — every child inherits the hue.
     Only L and C vary per element.
   </p>
   <div class="flex gap-2 *:px-5 *:py-2 *:rounded-lg *:text-[0.8rem] *:font-semibold *:border-0 *:cursor-pointer *:transition-all *:duration-150">
-    <div class="bg-lc-5 chroma-mhi text-lc-0">Acknowledge</div>
-    <div class="bg-lc-5 chroma-mhi text-lc-10">Cancel</div>
+    <div class="bg-lum-6 chroma-mhi text-lum-12">Acknowledge</div>
+    <div class="bg-lum-6 chroma-mhi text-lum-1">Cancel</div>
   </div>
 </div>`,
-  axis: `<div class="hue-primary bg-lc-1 chroma-mlo text-lc-fore border-lc-1 rounded-xl p-6 border">
+  axis: `<div class="hue-primary bg-lum-10 chroma-mlo text-lum-1 border-lum-10 rounded-xl p-6 border">
   <h4 class="text-[0.85rem] mb-3 font-semibold">Axis Inheritance</h4>
-  <p class="text-lc-5 chroma-lo text-[0.85rem] leading-normal mb-4">
+  <p class="text-lum-6 chroma-lo text-[0.85rem] leading-normal mb-4">
     Parent sets hue to primary. Children swap only the hue axis —
     luminance and chroma stay inherited.
   </p>
-  <div class="flex gap-2 mt-2 font-mono font-semibold *:bg-lc-3 *:chroma-mid *:text-center *:px-3 *:py-1.5 *:rounded-full *:text-xs">
-    <span class="bg-h-success text-lc-fore">bg-h-success</span>
-    <span class="bg-h-warning text-lc-fore">bg-h-warning</span>
-    <span class="bg-h-danger text-lc-fore">bg-h-danger</span>
+  <div class="flex gap-2 mt-2 font-mono font-semibold *:bg-lum-8 *:chroma-mid *:text-center *:px-3 *:py-1.5 *:rounded-full *:text-xs">
+    <span class="bg-h-success text-lum-1">bg-h-success</span>
+    <span class="bg-h-warning text-lum-1">bg-h-warning</span>
+    <span class="bg-h-danger text-lum-1">bg-h-danger</span>
   </div>
 </div>`,
-  arbitrary: `<div class="hue-[180] chroma-[15] bg-lc-[15] text-lc-[90] border-lc-[30] rounded-xl p-6 border">
+  arbitrary: `<div class="hue-[180] chroma-[15] bg-lum-[15] text-lum-[90] border-lum-[30] rounded-xl p-6 border">
   <h4 class="text-[0.85rem] mb-3 font-semibold">Arbitrary Values</h4>
-  <p class="text-lc-[65] text-[0.85rem] leading-normal mb-4">
+  <p class="text-lum-[65] text-[0.85rem] leading-normal mb-4">
     hue-[180] for a custom hue, chroma-[15] for exact chroma.
-    bg-lc-[N] auto-flips between light and dark mode.
+    bg-lum-[N] auto-flips between light and dark mode.
   </p>
   <div class="flex flex-wrap gap-2 mt-2 *:px-3 *:py-1 *:rounded-full *:text-xs *:font-semibold">
-    <span class="bg-lc-[30] text-lc-[90]">lc-[30]</span>
-    <span class="bg-lc-[50] text-lc-[95]">lc-[50]</span>
-    <span class="bg-lc-[70] text-lc-[15]">lc-[70]</span>
+    <span class="bg-lum-[30] text-lum-[90]">lum-[30]</span>
+    <span class="bg-lum-[50] text-lum-[95]">lum-[50]</span>
+    <span class="bg-lum-[70] text-lum-[15]">lum-[70]</span>
   </div>
 </div>`,
 }
@@ -89,116 +89,116 @@ const sources = {
 
 <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
     <!-- Multi-Hue Composition -->
-  <div class="relative hue-primary bg-lc-05 text-lc-fore border-lc-1 rounded-xl p-6 border">
+  <div class="relative hue-primary bg-lum-11 text-lum-1 border-lum-10 rounded-xl p-6 border">
     <CodeViewerButton client:load code={sources.multiHue} />
     <h4 class="text-[0.85rem] mb-3 font-semibold">Multi-Hue Composition</h4>
-    <p class="text-lc-6 text-[0.85rem] leading-normal mb-4">
+    <p class="text-lum-5 text-[0.85rem] leading-normal mb-4">
       hue-primary on the container. Badges swap hue — L and C stay identical:
     </p>
     <div class="flex flex-wrap gap-2 mt-2 *:px-3 *:py-1 *:rounded-full *:text-xs *:font-semibold">
-      <span class="hue-primary bg-lc-3 chroma-mid text-lc-fore">primary</span>
-      <span class="hue-accent bg-lc-3 chroma-mid text-lc-fore">accent</span>
-      <span class="hue-warning bg-lc-3 chroma-mid text-lc-fore">warning</span>
-      <span class="hue-success bg-lc-3 chroma-mid text-lc-fore">success</span>
-      <span class="hue-info bg-lc-3 chroma-mid text-lc-fore">info</span>
-      <span class="hue-danger bg-lc-3 chroma-mid text-lc-fore">danger</span>
+      <span class="hue-primary bg-lum-8 chroma-mid text-lum-1">primary</span>
+      <span class="hue-accent bg-lum-8 chroma-mid text-lum-1">accent</span>
+      <span class="hue-warning bg-lum-8 chroma-mid text-lum-1">warning</span>
+      <span class="hue-success bg-lum-8 chroma-mid text-lum-1">success</span>
+      <span class="hue-info bg-lum-8 chroma-mid text-lum-1">info</span>
+      <span class="hue-danger bg-lum-8 chroma-mid text-lum-1">danger</span>
     </div>
   </div>
 
   <!-- Cascade Demo -->
-  <div class="relative hue-accent chroma-mhi bg-lc-3 text-lc-fore border-lc-8 rounded-xl p-6 border">
+  <div class="relative hue-accent chroma-mhi bg-lum-8 text-lum-1 border-lum-3 rounded-xl p-6 border">
     <CodeViewerButton client:load code={sources.cascade} />
     <h4 class="text-[0.85rem] mb-3 font-semibold">Cascade Override</h4>
     <p class="text-[0.85rem] leading-normal mb-4">
-      Parent sets hue-accent chroma-mhi bg-lc-3. Children inherit chroma + hue, override only
+      Parent sets hue-accent chroma-mhi bg-lum-8. Children inherit chroma + hue, override only
       luminance — no need to redeclare the full color.
     </p>
     <div class="flex gap-2 font-mono font-semibold *:px-4 *:py-2 *:rounded-lg *:text-[0.75rem]">
-      <div class="bg-lc-0 text-lc-fore">bg-lc-0</div>
-      <div class="bg-lc-5 text-lc-95">bg-lc-5</div>
-      <div class="bg-lc-10 text-lc-05">bg-lc-10</div>
+      <div class="bg-lum-12 text-lum-1">bg-lum-12</div>
+      <div class="bg-lum-6 text-lum-2">bg-lum-6</div>
+      <div class="bg-lum-1 text-lum-11">bg-lum-1</div>
     </div>
   </div>
 
   <!-- Chroma Card Success -->
-  <div class="relative hue-success bg-lc-0 text-lc-6 border-lc-5 rounded-xl p-6 border">
+  <div class="relative hue-success bg-lum-12 text-lum-5 border-lum-6 rounded-xl p-6 border">
     <CodeViewerButton client:load code={sources.chroma} />
     <h4 class="chroma-mid text-[0.85rem] mb-3 font-semibold">Chroma for Activity</h4>
-    <p class="text-lc-5 chroma-lo text-[0.85rem] leading-normal mb-4">
+    <p class="text-lum-6 chroma-lo text-[0.85rem] leading-normal mb-4">
       On hover, these buttons increase chroma and get a little shadow. Subtle, pleasing, unlikely to distract.
     </p>
     <div class="flex gap-2 *:px-5 *:py-2 *:rounded-lg *:text-[0.8rem] *:font-semibold *:cursor-pointer *:transition-all *:duration-150 *:border *:hover:shadow">
-      <div class="bg-lc-3 chroma-mid text-lc-fore hover:chroma-mhi hover:border-c-mid">
+      <div class="bg-lum-8 chroma-mid text-lum-1 hover:chroma-mhi hover:border-c-mid">
         success
       </div>
-      <div class="bg-lc-0 text-lc-8 chroma-mhi border-lc-2 hover:bg-c-mlo hover:border-c-mhi">
+      <div class="bg-lum-12 text-lum-3 chroma-mhi border-lum-9 hover:bg-c-mlo hover:border-c-mhi">
         outline
       </div>
     </div>
   </div>
 
   <!-- Luminance Card Primary -->
-  <div class="relative hue-primary chroma-mid bg-lc-0 text-lc-7 border-lc-3 rounded-xl p-6 border">
+  <div class="relative hue-primary chroma-mid bg-lum-12 text-lum-4 border-lum-8 rounded-xl p-6 border">
     <CodeViewerButton client:load code={sources.luminance} />
     <h4 class="text-[0.85rem] mb-3 font-semibold">Luminance for Emphasis</h4>
-    <p class="text-lc-5 text-[0.85rem] leading-normal mb-4">
+    <p class="text-lum-6 text-[0.85rem] leading-normal mb-4">
       Every element in this card uses the same chroma and hue. Only luminance varies. Excellent for accessibility.
     </p>
     <div class="flex gap-2 *:px-5 *:py-2 *:rounded-lg *:text-[0.8rem] *:font-semibold *:cursor-pointer *:transition-all *:duration-150 *:border *:shadow">
-      <div class="bg-lc-6 text-lc-05 border-lc-5 hover:bg-lc-5 hover:border-lc-4 hover:text-lc-0">
+      <div class="bg-lum-5 text-lum-11 border-lum-6 hover:bg-lum-6 hover:border-lum-7 hover:text-lum-12">
         primary
       </div>
-      <div class="border-lc-1 hover:text-lc-6 hover:bg-lc-1 hover:border-lc-3">
+      <div class="border-lum-10 hover:text-lum-5 hover:bg-lum-10 hover:border-lum-8">
         outline
       </div>
     </div>
   </div>
 
   <!-- Danger Alert -->
-  <div class="relative hue-danger chroma-mid bg-lc-1 text-lc-fore border-lc-3 rounded-xl p-6 border">
+  <div class="relative hue-danger chroma-mid bg-lum-10 text-lum-1 border-lum-8 rounded-xl p-6 border">
     <CodeViewerButton client:load code={sources.danger} />
     <h4 class="text-[0.85rem] mb-3 font-semibold">Danger Alert</h4>
-    <p class="text-lc-8 chroma-mlo text-[0.85rem] leading-normal mb-4">
+    <p class="text-lum-3 chroma-mlo text-[0.85rem] leading-normal mb-4">
       hue-danger on the container — every child inherits the hue.
       Only L and C vary per element.
     </p>
     <div class="flex gap-2 *:px-5 *:py-2 *:rounded-lg *:text-[0.8rem] *:font-semibold *:border-0 *:cursor-pointer *:transition-all *:duration-150">
-      <div class="bg-lc-5 chroma-mhi text-lc-0">
+      <div class="bg-lum-6 chroma-mhi text-lum-12">
         Acknowledge
       </div>
-      <div class="bg-lc-5 chroma-mhi text-lc-10">
+      <div class="bg-lum-6 chroma-mhi text-lum-1">
         Cancel
       </div>
     </div>
   </div>
 
   <!-- Axis Inheritance -->
-  <div class="relative hue-primary bg-lc-1 chroma-mlo text-lc-fore border-lc-1 rounded-xl p-6 border">
+  <div class="relative hue-primary bg-lum-10 chroma-mlo text-lum-1 border-lum-10 rounded-xl p-6 border">
     <CodeViewerButton client:load code={sources.axis} />
     <h4 class="text-[0.85rem] mb-3 font-semibold">Axis Inheritance</h4>
-    <p class="text-lc-5 chroma-lo text-[0.85rem] leading-normal mb-4">
+    <p class="text-lum-6 chroma-lo text-[0.85rem] leading-normal mb-4">
       Parent sets hue to primary. Children swap only the hue axis — luminance
       and chroma stay inherited.
     </p>
-    <div class="flex gap-2 mt-2 font-mono font-semibold *:bg-lc-3 *:chroma-mid *:text-center *:px-3 *:py-1.5 *:rounded-full *:text-xs">
-      <span class="bg-h-success text-lc-fore">bg-h-success</span>
-      <span class="bg-h-warning text-lc-fore">bg-h-warning</span>
-      <span class="bg-h-danger text-lc-fore">bg-h-danger</span>
+    <div class="flex gap-2 mt-2 font-mono font-semibold *:bg-lum-8 *:chroma-mid *:text-center *:px-3 *:py-1.5 *:rounded-full *:text-xs">
+      <span class="bg-h-success text-lum-1">bg-h-success</span>
+      <span class="bg-h-warning text-lum-1">bg-h-warning</span>
+      <span class="bg-h-danger text-lum-1">bg-h-danger</span>
     </div>
   </div>
 
   <!-- Arbitrary Values -->
-  <div class="relative hue-[180] chroma-[15] bg-lc-[15] text-lc-[90] border-lc-[30] rounded-xl p-6 border">
+  <div class="relative hue-[180] chroma-[15] bg-lum-[15] text-lum-[90] border-lum-[30] rounded-xl p-6 border">
     <CodeViewerButton client:load code={sources.arbitrary} />
     <h4 class="text-[0.85rem] mb-3 font-semibold">Arbitrary Values</h4>
-    <p class="text-lc-[65] text-[0.85rem] leading-normal mb-4">
+    <p class="text-lum-[65] text-[0.85rem] leading-normal mb-4">
       hue-[180] for a custom hue, chroma-[15] for exact chroma.
-      bg-lc-[N] auto-flips between light and dark mode.
+      bg-lum-[N] auto-flips between light and dark mode.
     </p>
     <div class="flex flex-wrap gap-2 mt-2 *:px-3 *:py-1 *:rounded-full *:text-xs *:font-semibold">
-      <span class="bg-lc-[30] text-lc-[90]">lc-[30]</span>
-      <span class="bg-lc-[50] text-lc-[95]">lc-[50]</span>
-      <span class="bg-lc-[70] text-lc-[15]">lc-[70]</span>
+      <span class="bg-lum-[30] text-lum-[90]">lum-[30]</span>
+      <span class="bg-lum-[50] text-lum-[95]">lum-[50]</span>
+      <span class="bg-lum-[70] text-lum-[15]">lum-[70]</span>
     </div>
   </div>
 </div>

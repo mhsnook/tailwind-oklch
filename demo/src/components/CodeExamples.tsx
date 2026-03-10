@@ -15,13 +15,13 @@ const CODE_EXAMPLES = {
 /* That's it. You now have:
 
    HUE        hue-primary          cascading, set once on container
-   LUMINANCE  bg-lc-05, bg-lc-5    the workhorse — 15 stops + [0-100]
+   LUMINANCE  bg-lum-11, bg-lum-6  the workhorse — 12 stops + [0-100]
    CHROMA     chroma-mid           sensible defaults, rarely override
 
-   Luminance scale (denser at extremes):
-     0, 05, 1, 15, 2, 3, 4, 5, 6, 7, 8, 85, 9, 95, 10
-     base = 0 (blends with page)
-     fore = 10 (high contrast, like text)
+   Luminance scale (bezier-distributed, 1=darkest, 12=lightest):
+     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+     none = pure black (light) / pure white (dark)
+     full = pure white (light) / pure black (dark)
 
    To customize hues, override in your own @theme block: */
 
@@ -48,32 +48,26 @@ const CODE_EXAMPLES = {
    you need more or less saturation. -->
 
 <!-- Parent sets hue, children vary luminance -->
-<div class="hue-accent bg-lc-3 chroma-mhi text-lc-fore p-6 rounded-xl">
+<div class="hue-accent bg-lum-8 chroma-mhi text-lum-1 p-6 rounded-xl">
 
   <!-- Child overrides ONLY luminance on hover -->
-  <button class="hover:bg-lc-up-1 px-4 py-2 rounded">
+  <button class="hover:bg-lum-up-1 px-4 py-2 rounded">
     Lighter on hover
   </button>
 
   <!-- Another child drops to page-level luminance -->
-  <footer class="bg-lc-base p-4 rounded">
+  <footer class="bg-lum-12 p-4 rounded">
     Page-level footer, same chroma + hue as parent
   </footer>
 </div>
 
 <!-- Three levels deep, each overriding one axis -->
-<div class="hue-primary bg-lc-1">
+<div class="hue-primary bg-lum-10">
   <div class="bg-h-success">              <!-- swap hue -->
-    <div class="bg-lc-fore">              <!-- swap luminance -->
+    <div class="bg-lum-1">                <!-- swap luminance -->
       Pure CSS inheritance. No JS. No re-renders.
     </div>
   </div>
-</div>
-
-<!-- Half-steps at the extremes for subtle backgrounds -->
-<div class="hue-primary bg-lc-05 border border-lc-15 p-4 rounded-lg">
-  Just off-white in light mode, just off-black in dark mode.
-  The 05 and 15 stops give you finer control near the page color.
 </div>
 
 <!-- Re-theme the entire tree via JS -->
@@ -86,51 +80,39 @@ const CODE_EXAMPLES = {
 		lang: 'html',
 		code: `<!-- ── SET HUE ONCE, VARY LUMINANCE ─────────────────────────
    The recommended pattern. Almost everything is just
-   hue-* + bg-lc-N. Chroma defaults handle the rest. -->
+   hue-* + bg-lum-N. Chroma defaults handle the rest. -->
 
 <div class="hue-primary">
-  <div class="bg-lc-05 rounded-xl p-6">
-    <h2 class="text-lc-fore text-xl font-bold">Dashboard</h2>
-    <p class="text-lc-5">Muted body text</p>
-    <button class="hue-accent bg-lc-5 chroma-mhi text-lc-0 px-4 py-2 rounded">
+  <div class="bg-lum-11 rounded-xl p-6">
+    <h2 class="text-lum-1 text-xl font-bold">Dashboard</h2>
+    <p class="text-lum-6">Muted body text</p>
+    <button class="hue-accent bg-lum-6 chroma-mhi text-lum-12 px-4 py-2 rounded">
       Action
     </button>
   </div>
-</div>
-
-<!-- ── HALF-STEPS AT THE EXTREMES ───────────────────────────
-   The 05/15/85/95 stops fill the gap where whole steps
-   are too far apart — near the page color and near text. -->
-
-<div class="hue-primary bg-lc-05 border border-lc-15 rounded-lg p-4">
-  Subtle card — just one half-step off the page.
-</div>
-
-<div class="hue-primary bg-lc-95 text-lc-05 rounded-lg p-4">
-  Near-text-color background with near-page-color text.
 </div>
 
 <!-- ── CHROMA FOR EMPHASIS ──────────────────────────────────
    Named chroma stops: lo, mlo, mid, mhi, hi.
    Backgrounds default to lo. Bump up for emphasis. -->
 
-<div class="hue-danger bg-lc-1 chroma-mid text-lc-fore border border-lc-3 rounded-lg p-4">
+<div class="hue-danger bg-lum-10 chroma-mid text-lum-1 border border-lum-8 rounded-lg p-4">
   Danger alert — chroma-mid makes it feel more urgent.
 </div>
 
 <!-- ── RELATIVE LUMINANCE BUMPS ────────────────────────────
-   bg-lc-up-1 / bg-lc-down-1 — shift relative to parent.
+   bg-lum-up-1 / bg-lum-down-1 — shift relative to parent.
    Perfect for hover states. -->
 
-<button class="hue-primary bg-lc-5 chroma-mhi text-lc-0
-  hover:bg-lc-up-1 active:bg-lc-down-1">
+<button class="hue-primary bg-lum-6 chroma-mhi text-lum-12
+  hover:bg-lum-up-1 active:bg-lum-down-1">
   Hover brightens, press darkens
 </button>
 
 <!-- ── ARBITRARY VALUES (escape hatch) ─────────────────────
    When named stops aren't precise enough. -->
 
-<div class="hue-[180] chroma-[15] bg-lc-[22] text-lc-[88] rounded-lg p-4">
+<div class="hue-[180] chroma-[15] bg-lum-[22] text-lum-[88] rounded-lg p-4">
   Exact control. Auto-flips in dark mode.
 </div>`,
 	},
@@ -140,26 +122,20 @@ const CODE_EXAMPLES = {
 		code: `/* ── WHAT THE UTILITIES ACTUALLY DO ──────────────────────────
 
    Every setter both updates its axis variable AND applies the
-   resolved oklch() color. This is why a single bg-lc-5 works
+   resolved oklch() color. This is why a single bg-lum-6 works
    — the other two axes cascade from :root defaults. */
 
 /* Named luminance utility (from index.css) */
-.bg-lc-5 {
-  --bg-l: var(--l-5);                    /* set the axis     */
+.bg-lum-6 {
+  --bg-l: var(--lum-6);                   /* set the axis     */
   background-color: oklch(                /* apply the color  */
     var(--bg-l) var(--bg-c) var(--bg-h)
   );
 }
 
-/* Half-step — same pattern, finer granularity */
-.bg-lc-05 {
-  --bg-l: var(--l-05);                   /* 0.91 light, 0.16 dark */
-  background-color: oklch(var(--bg-l) var(--bg-c) var(--bg-h));
-}
-
 /* Arbitrary luminance — auto-flips in dark mode */
-.bg-lc-\\[80\\] {
-  --bg-l: calc(0.8 + var(--lc-flip) * -0.6);
+.bg-lum-\\[80\\] {
+  --bg-l: calc(0.8 + var(--lum-flip) * -0.6);
   background-color: oklch(var(--bg-l) var(--bg-c) var(--bg-h));
 }
 
@@ -179,23 +155,22 @@ const CODE_EXAMPLES = {
      --bd-c: 0.06  (mlo)  borders are visible
      --ac-c: 0.18  (mhi)  accents stand out
 
-   So bg-lc-5 is already a valid, nice-looking color.
+   So bg-lum-6 is already a valid, nice-looking color.
    You only set chroma when you want MORE than the default. */
 
 /* ── THE LUMINANCE SCALE ────────────────────────────────────
 
-   15 stops with half-steps at the extremes:
+   12 stops from a cubic bezier curve:
 
-   0  05  1  15  2   3   4   5   6   7   8  85  9  95  10
-   ╰──── 0.04 ────╯   ╰── 0.08 ──╯   ╰──── 0.04 ────╯
+   1   2   3   4   5   6   7   8   9  10  11  12
+   .13 .18 .24 .31 .39 .49 .59 .69 .78 .85 .91 .96
 
-   Dense at the edges where subtle differences matter most
-   (card backgrounds, near-text elements). Coarser in the
-   middle where the eye is more forgiving.
+   Dense at the dark end, sparser at the light end.
+   Shaped by a bezier curve for perceptually even spacing.
 
    The direction flips in dark mode:
-   Light: 0→0.95, 05→0.91, ... 10→0.15
-   Dark:  0→0.12, 05→0.16, ... 10→0.92 */`,
+   Light: 1→0.13, 6→0.49, 12→0.96
+   Dark:  1→0.96, 6→0.59, 12→0.13 */`,
 	},
 	arbitrary: {
 		label: 'Arbitrary Values',
@@ -206,25 +181,25 @@ const CODE_EXAMPLES = {
 
 <!-- Arbitrary hue + chroma -->
 <div class="hue-[180] chroma-[12]">
-  <div class="bg-lc-1 text-lc-fore">
+  <div class="bg-lum-10 text-lum-1">
     Teal card — hue 180°, chroma 0.12
   </div>
 </div>
 
 <!-- Per-property arbitrary values -->
-<div class="bg-h-[280] bg-c-[20] bg-lc-5">
+<div class="bg-h-[280] bg-c-[20] bg-lum-6">
   Purple background — hue 280°, chroma 0.20
 </div>
 
 <!-- ── AUTO-FLIP LUMINANCE ───────────────────────────────
-   bg-lc-[N] auto-flips for dark mode.
-   bg-lc-[80] → L=0.80 in light, L=0.20 in dark. -->
+   bg-lum-[N] auto-flips for dark mode.
+   bg-lum-[80] → L=0.80 in light, L=0.20 in dark. -->
 
 <div class="hue-[180] chroma-[12]">
-  <div class="bg-lc-[15] text-lc-[90]">Near-page bg, high-contrast text</div>
-  <span class="bg-lc-[30]">Subtle chip</span>
-  <span class="bg-lc-[50]">Mid-range chip</span>
-  <span class="bg-lc-[70]">Prominent chip</span>
+  <div class="bg-lum-[15] text-lum-[90]">Near-page bg, high-contrast text</div>
+  <span class="bg-lum-[30]">Subtle chip</span>
+  <span class="bg-lum-[50]">Mid-range chip</span>
+  <span class="bg-lum-[70]">Prominent chip</span>
 </div>
 
 <!-- ── MIXING NAMED + ARBITRARY ─────────────────────────
@@ -232,19 +207,18 @@ const CODE_EXAMPLES = {
    Mix freely — they're the same underlying system. -->
 
 <div class="hue-danger chroma-mid">
-  <div class="bg-lc-1 text-lc-fore border border-lc-3">
+  <div class="bg-lum-10 text-lum-1 border border-lum-8">
     Named stops everywhere
   </div>
-  <button class="bg-lc-[42] chroma-[22] text-lc-0">
+  <button class="bg-lum-[42] chroma-[22] text-lum-12">
     Precise button that doesn't hit a named stop
   </button>
 </div>
 
 <!-- ── WHEN TO USE WHAT ─────────────────────────────────
-   Named scale (bg-lc-3):     90% of the time
-   Half-steps (bg-lc-05):     subtle near-page elements
-   Arbitrary (bg-lc-[42]):    when no named stop fits
-   Relative (bg-lc-up-1):     hover/focus states -->`,
+   Named scale (bg-lum-8):     90% of the time
+   Arbitrary (bg-lum-[42]):    when no named stop fits
+   Relative (bg-lum-up-1):     hover/focus states -->`,
 	},
 } as const
 
