@@ -5,17 +5,28 @@
  *   @import "tailwind-oklch";
  *   @plugin "tailwind-oklch/plugin";
  *
- * Every setter utility (bg-lc-*, bg-c-*, bg-h-*) both updates its
- * axis variable AND applies the resolved oklch() color. Defaults
- * cascade from :root, so a single class like `bg-lc-5` immediately
- * produces a visible color — no helper class needed.
+ * Recommended pattern — set hue globally, vary luminance per-element:
  *
- * Luminance contrast scale: 0–10.
- *   0 / base  = close to the page color (blends in)
- *   10 / fore = high contrast with the page (stands out, like text)
- *   1–9       = evenly distributed between those endpoints
- *   none      = absolute minimum (pure white or pure black, per mode)
- *   full      = absolute maximum (pure black or pure white, per mode)
+ *   <div class="hue-primary">
+ *     <div class="bg-lum-11 text-lum-1 border-lum-9 rounded-lg p-4">
+ *       <p class="text-lum-5">Muted text</p>
+ *       <button class="bg-lum-6 chroma-mhi text-lum-12 hover:bg-lum-up-1">
+ *         Action
+ *       </button>
+ *     </div>
+ *   </div>
+ *
+ * The three axes:
+ *   Hue:       hue-primary (cascading, set once on container)
+ *   Chroma:    sensible per-property defaults; override with chroma-mid etc.
+ *   Luminance: the workhorse — 1–12 scale (bezier-distributed),
+ *              arbitrary [0–100], relative bumps (lum-up/lum-down)
+ *
+ * Luminance scale (1 = darkest themed, 12 = lightest themed):
+ *   none, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, full
+ *   Language is always light-mode: lum-1 = dark, lum-12 = light.
+ *   Dark mode auto-flips the entire scale.
+ *   [N] = precise 0–100, auto-flips in dark mode
  */
 
 @theme {
@@ -29,39 +40,35 @@
   --hue-info: 220;
   --hue-neutral: 260;
 
-  /* ── Luminance Contrast Range ─────────────────────────────────────
-     Defines the OKLCH lightness values at 0 (base) and 10 (fore).
-     Light mode (default): base is near white, fore is near black.
-     Dark mode flips them (see .dark below).
-     Override --lc-range-start and --lc-range-end to shift the range. */
-  --lc-range-start: 0.95;
-  --lc-range-end: 0.15;
+  /* ── Luminance Range ────────────────────────────────────────────────
+     The bezier curve maps stops 1–12 between these two endpoints.
+     These values are mode-independent — dark mode reverses which
+     stop gets which value, not the range itself. */
+  --lum-min: 0.12;
+  --lum-max: 0.96;
 
-  /* ── 0–10 Luminance Contrast Scale ────────────────────────────────
-     Computed: step N = start + (end - start) × (N / 10)
-     Light mode (default): 0→0.95, 5→0.55, 10→0.15
-     Dark mode (override): 0→0.12, 5→0.52, 10→0.92 */
-  --l-0: 0.95;
-  --l-1: 0.87;
-  --l-2: 0.79;
-  --l-3: 0.71;
-  --l-4: 0.63;
-  --l-5: 0.55;
-  --l-6: 0.47;
-  --l-7: 0.39;
-  --l-8: 0.31;
-  --l-9: 0.23;
-  --l-10: 0.15;
-
-  /* Semantic aliases */
-  --l-base: 0.95;
-  --l-fore: 0.15;
+  /* ── Luminance Scale ────────────────────────────────────────────────
+     12 stops generated from a cubic bezier curve, plus none/full.
+     Light mode (default): lum-1=0.12 (darkest), lum-12=0.96 (lightest)
+     Default bezier: cubic-bezier(0.35, 0.24, 0.68, 0.93) */
+  --lum-1: 0.12;
+  --lum-2: 0.18;
+  --lum-3: 0.26;
+  --lum-4: 0.34;
+  --lum-5: 0.44;
+  --lum-6: 0.53;
+  --lum-7: 0.63;
+  --lum-8: 0.72;
+  --lum-9: 0.81;
+  --lum-10: 0.88;
+  --lum-11: 0.93;
+  --lum-12: 0.96;
 
   /* Absolute extremes — escape the configured range entirely.
-     none = beyond base (pure white in light, pure black in dark).
-     full = beyond fore (pure black in light, pure white in dark). */
-  --l-none: 1;
-  --l-full: 0;
+     none = pure black in light mode (pure white in dark).
+     full = pure white in light mode (pure black in dark). */
+  --lum-none: 0;
+  --lum-full: 1;
 
   /* ── Named Chroma Stops ──────────────────────────────────────────────
      OKLCH chroma: practical range 0–0.25 */
@@ -71,83 +78,90 @@
   --c-mhi: 0.18;
   --c-hi: 0.25;
 
-  /* ── LC Adjustment Steps ───────────────────────────────────────────
-     Each step ≈ one position on the 0–10 scale (~0.08 OKLCH L). */
-  --lc-adj-1: 0.08;
-  --lc-adj-2: 0.16;
-  --lc-adj-3: 0.24;
-  --lc-adj-4: 0.32;
-  --lc-adj-5: 0.40;
+  /* ── Luminance Adjustment Steps ──────────────────────────────────────
+     Each step ≈ one position on the 1–12 scale. */
+  --lum-adj-1: 0.08;
+  --lum-adj-2: 0.16;
+  --lum-adj-3: 0.24;
+  --lum-adj-4: 0.32;
+  --lum-adj-5: 0.40;
 }
 
-/* ── Dark-mode luminance contrast range ──────────────────────────────
-   In dark mode the scale flips: 0/base is near black (blends with
-   the page), 10/fore is near white (high contrast, like text). */
+/* ── Dark-mode luminance ────────────────────────────────────────────
+   The bezier curve produces the same 12 lightness values in both modes.
+   Dark mode reads from the other end of the list: lum-1 gets the value
+   that was lum-12 in light mode, and vice versa. --lum-min and --lum-max
+   stay the same (they define the curve range, not the mode). */
 
 .dark {
-  --lc-dir: 1;
-  --lc-flip: 1;
-  --lc-range-start: 0.12;
-  --lc-range-end: 0.92;
+  --lum-dir: 1;
+  --lum-flip: 1;
 
-  --l-0: 0.12;
-  --l-1: 0.20;
-  --l-2: 0.28;
-  --l-3: 0.36;
-  --l-4: 0.44;
-  --l-5: 0.52;
-  --l-6: 0.60;
-  --l-7: 0.68;
-  --l-8: 0.76;
-  --l-9: 0.84;
-  --l-10: 0.92;
+  --lum-1: 0.96;
+  --lum-2: 0.93;
+  --lum-3: 0.88;
+  --lum-4: 0.81;
+  --lum-5: 0.72;
+  --lum-6: 0.63;
+  --lum-7: 0.53;
+  --lum-8: 0.44;
+  --lum-9: 0.34;
+  --lum-10: 0.26;
+  --lum-11: 0.18;
+  --lum-12: 0.12;
 
-  --l-base: 0.12;
-  --l-fore: 0.92;
-
-  --l-none: 0;
-  --l-full: 1;
+  --lum-none: 1;
+  --lum-full: 0;
 }
 
 /* ── Cascade Defaults ────────────────────────────────────────────────────
-   Sensible fallbacks so any single-axis setter immediately resolves.
-   These inherit down the DOM tree, so a parent's bg-h-accent
-   naturally flows to children that only set bg-lc-* or bg-c-*. */
+   Sensible per-property fallbacks so you rarely need to set chroma
+   per-element. Backgrounds and text default to subtle; borders and
+   accents are more chromatic so they're visible.
+   These inherit down the DOM, so hue-accent on a parent flows to
+   children that only set bg-lum-* etc. */
 
 :root {
-  --lc-dir: -1;
-  --lc-flip: 0;
+  --lum-dir: -1;
+  --lum-flip: 0;
 
-  --bg-l: var(--l-5);
+  /* background: subtle tint */
+  --bg-l: var(--lum-6);
   --bg-c: var(--c-lo);
   --bg-h: var(--hue-primary);
 
-  --tx-l: var(--l-fore);
+  /* text: subtle, readable */
+  --tx-l: var(--lum-1);
   --tx-c: var(--c-lo);
   --tx-h: var(--hue-primary);
 
-  --bd-l: var(--l-3);
-  --bd-c: var(--c-lo);
+  /* border: slightly more chroma so it reads as a boundary */
+  --bd-l: var(--lum-8);
+  --bd-c: var(--c-mlo);
   --bd-h: var(--hue-primary);
 
-  --ac-l: var(--l-5);
-  --ac-c: var(--c-mid);
+  /* accent: meant to stand out */
+  --ac-l: var(--lum-6);
+  --ac-c: var(--c-mhi);
   --ac-h: var(--hue-primary);
 
-  --gf-l: var(--l-5);
+  /* gradients: moderate chroma */
+  --gf-l: var(--lum-6);
   --gf-c: var(--c-mid);
   --gf-h: var(--hue-primary);
 
-  --gt-l: var(--l-5);
+  --gt-l: var(--lum-6);
   --gt-c: var(--c-mid);
   --gt-h: var(--hue-primary);
 
-  --sh-l: var(--l-5);
+  /* shadow: subtle */
+  --sh-l: var(--lum-6);
   --sh-c: var(--c-lo);
   --sh-h: var(--hue-primary);
 
-  --bdb-l: var(--l-3);
-  --bdb-c: var(--c-lo);
+  /* border-bottom: same as border */
+  --bdb-l: var(--lum-8);
+  --bdb-c: var(--c-mlo);
   --bdb-h: var(--hue-primary);
 }
 
@@ -185,8 +199,8 @@
 
 /* ── Background ──────────────────────────────────────────────────────── */
 
-@utility bg-lc-* {
-  --bg-l: --value(--l-*);
+@utility bg-lum-* {
+  --bg-l: --value(--lum-*);
   background-color: oklch(var(--bg-l) var(--bg-c) var(--bg-h));
 }
 
@@ -200,24 +214,24 @@
   background-color: oklch(var(--bg-l) var(--bg-c) var(--bg-h));
 }
 
-/* ── Background LC Adjustments ───────────────────────────────────────
+/* ── Background Luminance Adjustments ─────────────────────────────────
    Nudge background luminance up (more contrast) or down (less contrast)
    relative to the current --bg-l, without changing --bg-l itself. */
 
-@utility bg-lc-up-* {
-  --bg-l-adj: --value(--lc-adj-*);
-  background-color: oklch(clamp(0, calc(var(--bg-l) + var(--lc-dir) * var(--bg-l-adj)), 1) var(--bg-c) var(--bg-h));
+@utility bg-lum-up-* {
+  --bg-l-adj: --value(--lum-adj-*);
+  background-color: oklch(clamp(0, calc(var(--bg-l) + var(--lum-dir) * var(--bg-l-adj)), 1) var(--bg-c) var(--bg-h));
 }
 
-@utility bg-lc-down-* {
-  --bg-l-adj: --value(--lc-adj-*);
-  background-color: oklch(clamp(0, calc(var(--bg-l) - var(--lc-dir) * var(--bg-l-adj)), 1) var(--bg-c) var(--bg-h));
+@utility bg-lum-down-* {
+  --bg-l-adj: --value(--lum-adj-*);
+  background-color: oklch(clamp(0, calc(var(--bg-l) - var(--lum-dir) * var(--bg-l-adj)), 1) var(--bg-c) var(--bg-h));
 }
 
 /* ── Text ────────────────────────────────────────────────────────────── */
 
-@utility text-lc-* {
-  --tx-l: --value(--l-*);
+@utility text-lum-* {
+  --tx-l: --value(--lum-*);
   color: oklch(var(--tx-l) var(--tx-c) var(--tx-h));
 }
 
@@ -231,24 +245,24 @@
   color: oklch(var(--tx-l) var(--tx-c) var(--tx-h));
 }
 
-/* ── Text LC Adjustments ─────────────────────────────────────────────
+/* ── Text Luminance Adjustments ───────────────────────────────────────
    Nudge text luminance up (more contrast) or down (less contrast)
    relative to the current --tx-l, without changing --tx-l itself. */
 
-@utility text-lc-up-* {
-  --tx-l-adj: --value(--lc-adj-*);
-  color: oklch(clamp(0, calc(var(--tx-l) + var(--lc-dir) * var(--tx-l-adj)), 1) var(--tx-c) var(--tx-h));
+@utility text-lum-up-* {
+  --tx-l-adj: --value(--lum-adj-*);
+  color: oklch(clamp(0, calc(var(--tx-l) + var(--lum-dir) * var(--tx-l-adj)), 1) var(--tx-c) var(--tx-h));
 }
 
-@utility text-lc-down-* {
-  --tx-l-adj: --value(--lc-adj-*);
-  color: oklch(clamp(0, calc(var(--tx-l) - var(--lc-dir) * var(--tx-l-adj)), 1) var(--tx-c) var(--tx-h));
+@utility text-lum-down-* {
+  --tx-l-adj: --value(--lum-adj-*);
+  color: oklch(clamp(0, calc(var(--tx-l) - var(--lum-dir) * var(--tx-l-adj)), 1) var(--tx-c) var(--tx-h));
 }
 
 /* ── Border ──────────────────────────────────────────────────────────── */
 
-@utility border-lc-* {
-  --bd-l: --value(--l-*);
+@utility border-lum-* {
+  --bd-l: --value(--lum-*);
   border-color: oklch(var(--bd-l) var(--bd-c) var(--bd-h));
 }
 
@@ -264,8 +278,8 @@
 
 /* ── Accent Color ────────────────────────────────────────────────────── */
 
-@utility accent-lc-* {
-  --ac-l: --value(--l-*);
+@utility accent-lum-* {
+  --ac-l: --value(--lum-*);
   accent-color: oklch(var(--ac-l) var(--ac-c) var(--ac-h));
 }
 
@@ -281,8 +295,8 @@
 
 /* ── Gradient From ───────────────────────────────────────────────────── */
 
-@utility from-lc-* {
-  --gf-l: --value(--l-*);
+@utility from-lum-* {
+  --gf-l: --value(--lum-*);
   --tw-gradient-from: oklch(var(--gf-l) var(--gf-c) var(--gf-h));
   --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
@@ -301,8 +315,8 @@
 
 /* ── Gradient To ─────────────────────────────────────────────────────── */
 
-@utility to-lc-* {
-  --gt-l: --value(--l-*);
+@utility to-lum-* {
+  --gt-l: --value(--lum-*);
   --tw-gradient-to: oklch(var(--gt-l) var(--gt-c) var(--gt-h));
   --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
@@ -321,8 +335,8 @@
 
 /* ── Shadow Color ────────────────────────────────────────────────────── */
 
-@utility shadow-lc-* {
-  --sh-l: --value(--l-*);
+@utility shadow-lum-* {
+  --sh-l: --value(--lum-*);
   --tw-shadow-color: oklch(var(--sh-l) var(--sh-c) var(--sh-h));
 }
 
@@ -338,8 +352,8 @@
 
 /* ── Border Bottom ───────────────────────────────────────────────────── */
 
-@utility border-b-lc-* {
-  --bdb-l: --value(--l-*);
+@utility border-b-lum-* {
+  --bdb-l: --value(--lum-*);
   border-bottom-color: oklch(var(--bdb-l) var(--bdb-c) var(--bdb-h));
 }
 

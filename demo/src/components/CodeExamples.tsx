@@ -14,30 +14,20 @@ const CODE_EXAMPLES = {
 
 /* That's it. You now have:
 
-   SHORTHAND    bg-5-hi-primary          one class, full color
-   DECOMPOSED   bg-lc-5 bg-c-hi bg-h-primary   per-axis control
-   CASCADING    parent sets color, child overrides one axis
+   HUE        hue-primary          cascading, set once on container
+   LUMINANCE  bg-lum-11, bg-lum-6  the workhorse — 12 stops + [0-100]
+   CHROMA     chroma-mid           sensible defaults, rarely override
 
-   Luminance contrast 0–10 scale:
-     0 / base  = close to the page color (blends in)
-     10 / fore = high contrast with the page (stands out)
-     1–9       = evenly distributed increments
+   Luminance scale (bezier-distributed, 1=darkest, 12=lightest):
+     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+     none = pure black (light) / pure white (dark)
+     full = pure white (light) / pure black (dark)
 
    To customize hues, override in your own @theme block: */
 
 @theme {
-  --hue-primary: 180;  /* teal instead of purple */
-  --hue-accent:  320;  /* pink instead of orange */
-}
-
-/* To shift the luminance contrast range: */
-:root {
-  --lc-range-start: 0.95;  /* light-mode base/0 */
-  --lc-range-end:   0.15;  /* light-mode fore/10 */
-}
-.dark {
-  --lc-range-start: 0.12;  /* dark-mode base/0 */
-  --lc-range-end:   0.92;  /* dark-mode fore/10 */
+  --hue-primary: 180;  /* teal instead of blue */
+  --hue-accent:  320;  /* pink instead of red */
 }`,
 	},
 	cascade: {
@@ -45,44 +35,40 @@ const CODE_EXAMPLES = {
 		lang: 'html',
 		code: `<!-- ── THE KEY IDEA ─────────────────────────────────────────
 
-   Every color utility — shorthand or decomposed — sets CSS
-   custom properties (--bg-l, --bg-c, --bg-h) that cascade
-   through the DOM. Children inherit all three axes and can
-   override any single one.
+   Set hue-* on a container. Children inherit hue + chroma
+   and only vary luminance — usually all you need.
 
-   This means you NEVER need to redeclare the full color
-   just to change one channel. -->
+   Chroma has sensible per-property defaults:
+     bg: lo (0.02)    — subtle tint
+     text: lo (0.02)  — readable
+     border: mlo (0.06) — visible boundary
+     accent: mhi (0.18) — stands out
 
-<!-- Parent sets the full color via shorthand -->
-<div class="bg-5-hi-accent p-6 rounded-xl">
+   Override chroma with chroma-mid, chroma-mhi, etc. when
+   you need more or less saturation. -->
 
-  <!-- Child overrides ONLY luminance — inherits chroma + hue -->
-  <button class="hover:bg-lc-8 px-4 py-2 rounded">
+<!-- Parent sets hue, children vary luminance -->
+<div class="hue-accent bg-lum-8 chroma-mhi text-lum-1 p-6 rounded-xl">
+
+  <!-- Child overrides ONLY luminance on hover -->
+  <button class="hover:bg-lum-up-1 px-4 py-2 rounded">
     Lighter on hover
   </button>
 
   <!-- Another child drops to page-level luminance -->
-  <footer class="bg-lc-base p-4 rounded">
+  <footer class="bg-lum-12 p-4 rounded">
     Page-level footer, same chroma + hue as parent
   </footer>
 </div>
 
-<!-- Works across nesting levels too -->
-<div class="bg-1-mlo-primary">              <!-- L:1 C:mlo H:primary -->
-  <div class="bg-h-success">              <!-- swap hue, keep L+C -->
-    <div class="bg-lc-fore">                <!-- swap luminance, keep C+H -->
-      Three levels deep, each overriding one axis.
+<!-- Three levels deep, each overriding one axis -->
+<div class="hue-primary bg-lum-11">
+  <div class="bg-h-success">              <!-- swap hue -->
+    <div class="bg-lum-1">                <!-- swap luminance -->
+      Pure CSS inheritance. No JS. No re-renders.
     </div>
   </div>
 </div>
-
-<!-- Hover/focus only changes what matters -->
-<button class="
-  bg-5-hi-primary text-fore-lo-primary
-  hover:bg-lc-8                only luminance shifts
-  active:bg-lc-3               darker on press
-  focus:bg-c-mhi               more saturated on focus
-">Interactive</button>
 
 <!-- Re-theme the entire tree via JS -->
 <script>
@@ -92,53 +78,42 @@ const CODE_EXAMPLES = {
 	usage: {
 		label: 'Usage Patterns',
 		lang: 'html',
-		code: `<!-- ── SHORTHAND ────────────────────────────────────────────
-   Pattern: {property}-{luminance}-{chroma}-{hue}
-   Luminance contrast: 0–10 (or base/fore aliases)
-   Best for: setting a complete color in one class. -->
+		code: `<!-- ── SET HUE ONCE, VARY LUMINANCE ─────────────────────────
+   The recommended pattern. Almost everything is just
+   hue-* + bg-lum-N. Chroma defaults handle the rest. -->
 
-<div class="bg-fore-lo-primary rounded-xl p-6">
-  <h2 class="text-1-hi-primary text-xl font-bold">Dashboard</h2>
-  <p class="text-3-mlo-primary">Muted body text</p>
-  <button class="bg-5-hi-accent text-fore-lo-accent px-4 py-2 rounded">
-    Action
-  </button>
+<div class="hue-primary">
+  <div class="bg-lum-11 rounded-xl p-6">
+    <h2 class="text-lum-1 text-xl font-bold">Dashboard</h2>
+    <p class="text-lum-6">Muted body text</p>
+    <button class="hue-accent bg-lum-6 chroma-mhi text-lum-12 px-4 py-2 rounded">
+      Action
+    </button>
+  </div>
 </div>
 
-<!-- ── DECOMPOSED ──────────────────────────────────────────
-   Pattern: bg-lc-{L} bg-c-{C} bg-h-{H}
-   Best for: overriding a single axis on hover, or when a
-   parent already set the other two axes. -->
+<!-- ── CHROMA FOR EMPHASIS ──────────────────────────────────
+   Named chroma stops: lo, mlo, mid, mhi, hi.
+   Backgrounds default to lo. Bump up for emphasis. -->
 
-<button class="
-  bg-lc-5 bg-c-hi bg-h-primary
-  hover:bg-lc-8
-">Only luminance changes on hover</button>
-
-<!-- ── SEMANTIC ALIASES ──────────────────────────────────────
-   base = 0 (blends with page), fore = 10 (high contrast).
-   The same class works in both light and dark mode. -->
-
-<div class="bg-lc-base bg-c-lo bg-h-primary">
-  Blends with the page in any mode.
-</div>
-<div class="bg-lc-fore bg-c-lo bg-h-primary">
-  Maximum contrast in any mode.
+<div class="hue-danger bg-lum-11 chroma-mid text-lum-1 border border-lum-8 rounded-lg p-4">
+  Danger alert — chroma-mid makes it feel more urgent.
 </div>
 
-<!-- ── MENTAL MODEL ───────────────────────────────────────
-   "My card bg is lc-1, my border is lc-3"
-   = 2 stops of visible difference, in both modes. -->
+<!-- ── RELATIVE LUMINANCE BUMPS ────────────────────────────
+   bg-lum-up-1 / bg-lum-down-1 — shift relative to parent.
+   Perfect for hover states. -->
 
-<div class="bg-1-lo-primary border border-3-lo-primary rounded-lg p-4">
-  Predictable contrast increments.
-</div>
+<button class="hue-primary bg-lum-6 chroma-mhi text-lum-12
+  hover:bg-lum-up-1 active:bg-lum-down-1">
+  Hover brightens, press darkens
+</button>
 
-<!-- ── SEMANTIC ALERTS ─────────────────────────────────────
-   Swap the hue for instant semantic meaning. -->
+<!-- ── ARBITRARY VALUES (escape hatch) ─────────────────────
+   When named stops aren't precise enough. -->
 
-<div class="bg-fore-mlo-danger text-1-mid-danger border-8-mid-danger border rounded-lg p-4">
-  Something went wrong
+<div class="hue-[180] chroma-[15] bg-lum-[22] text-lum-[88] rounded-lg p-4">
+  Exact control. Auto-flips in dark mode.
 </div>`,
 	},
 	how: {
@@ -146,130 +121,104 @@ const CODE_EXAMPLES = {
 		lang: 'css',
 		code: `/* ── WHAT THE UTILITIES ACTUALLY DO ──────────────────────────
 
-   Every setter both updates its axis AND applies the resolved
-   color. This is why a single bg-lc-5 works — the other two
-   axes are already defined at :root. */
+   Every setter both updates its axis variable AND applies the
+   resolved oklch() color. This is why a single bg-lum-6 works
+   — the other two axes cascade from :root defaults. */
 
-/* Decomposed utility (from index.css) */
-.bg-lc-5 {
-  --bg-l: var(--l-5);                    /* set the axis     */
+/* Named luminance utility (from index.css) */
+.bg-lum-6 {
+  --bg-l: var(--lum-6);                   /* set the axis     */
   background-color: oklch(                /* apply the color  */
     var(--bg-l) var(--bg-c) var(--bg-h)
   );
 }
 
-/* Shorthand utility (from plugin.js) */
-.bg-5-hi-primary {
-  --bg-l: var(--l-5);                    /* set all 3 axes   */
-  --bg-c: var(--c-hi);
-  --bg-h: var(--hue-primary);
-  background-color: oklch(                /* apply the color  */
-    var(--bg-l) var(--bg-c) var(--bg-h)
-  );
+/* Arbitrary luminance — auto-flips in dark mode */
+.bg-lum-\\[80\\] {
+  --bg-l: calc(0.8 + var(--lum-flip) * -0.6);
+  background-color: oklch(var(--bg-l) var(--bg-c) var(--bg-h));
 }
 
-/* Root defaults — the reason single-axis classes work */
-:root {
-  --bg-l: var(--l-5);
-  --bg-c: var(--c-lo);
+/* Global hue — sets ALL hue properties at once */
+.hue-primary {
   --bg-h: var(--hue-primary);
-  /* ...same for text, border, gradient, etc. */
+  --tx-h: var(--hue-primary);
+  --bd-h: var(--hue-primary);
+  /* ...and gradient, shadow, accent, etc. */
 }
 
-/* ── THE 0–10 CONTRAST SCALE ──────────────────────────────
+/* ── PER-PROPERTY CHROMA DEFAULTS ──────────────────────────
 
-   0 / base = close to the page color (blends in)
-   10 / fore = high contrast with the page (stands out)
+   The :root sets sensible chroma per property type:
+     --bg-c: 0.02  (lo)   backgrounds are subtle
+     --tx-c: 0.02  (lo)   text is readable
+     --bd-c: 0.06  (mlo)  borders are visible
+     --ac-c: 0.18  (mhi)  accents stand out
 
-   The range flips between modes:
+   So bg-lum-6 is already a valid, nice-looking color.
+   You only set chroma when you want MORE than the default. */
 
-   Light mode: 0→0.95, 5→0.55, 10→0.15
-   Dark mode:  0→0.12, 5→0.52, 10→0.92
+/* ── THE LUMINANCE SCALE ────────────────────────────────────
 
-   So "lc-3" always means "3 stops from the page" —
-   a subtle, low-contrast element in either mode. */
+   12 stops from a cubic bezier curve:
 
-/* ── THE CASCADE IN ACTION ──────────────────────────────────
+   1   2   3   4   5   6   7   8   9  10  11  12
+   .12 .18 .26 .34 .44 .53 .63 .72 .81 .88 .93 .96
 
-   Parent:  bg-5-hi-accent
-     └─ sets --bg-l: var(--l-5), --bg-c: hi, --bg-h: accent
+   Shaped by cubic-bezier(0.35, 0.24, 0.68, 0.93) for
+   perceptually even spacing across the scale.
 
-   Child:   bg-lc-8
-     └─ overrides --bg-l: var(--l-8)
-     └─ --bg-c and --bg-h INHERIT from parent
-     └─ result: brighter accent at same chroma
-
-   This is pure CSS inheritance. No JS, no context providers,
-   no re-renders. The browser does the work. */
-
-/* ── COMPARISON ─────────────────────────────────────────────
-
-   Opacity-based (old):
-     bg-primary/30            depends on what's behind it
-     hover:bg-primary/20      washes out over other colors
-
-   OKLCH composed (new):
-     bg-fore-lo-primary         absolute color, portable
-     hover:bg-lc-8               single-axis shift, no blending
-
-   The color is the SAME regardless of what sits behind it.
-   No stacking-context surprises. No blending artifacts. */`,
+   The direction flips in dark mode:
+   Light: 1→0.12, 6→0.53, 12→0.96
+   Dark:  1→0.96, 6→0.63, 12→0.12 */`,
 	},
 	arbitrary: {
 		label: 'Arbitrary Values',
 		lang: 'html',
-		code: `<!-- ── ARBITRARY HUE & CHROMA ─────────────────────────────
-   Use bracket syntax for exact values outside the preset stops.
-   hue-[degrees] and chroma-[value] work globally or per-property.
-   All bracket values use integer scales: hue 0–360, chroma and
-   luminance 0–100 (divided by 100 internally). -->
+		code: `<!-- ── WHEN NAMED STOPS AREN'T ENOUGH ─────────────────────
+   Bracket syntax for all three axes. Integer scales:
+   hue 0–360, chroma 0–100, luminance 0–100. -->
 
-<!-- Global: sets hue for ALL properties on this subtree -->
-<div class="hue-[180] chroma-[15]">
-  <div class="bg-3-mid">Teal card — hue 180°, chroma 15 (=0.15)</div>
+<!-- Arbitrary hue + chroma -->
+<div class="hue-[180] chroma-[12]">
+  <div class="bg-lum-11 text-lum-1">
+    Teal card — hue 180°, chroma 0.12
+  </div>
 </div>
 
-<!-- Per-property: only affects one channel -->
-<div class="bg-h-[280] bg-c-[20] bg-lc-5">
-  Purple background — hue 280°, chroma 20 (=0.20)
+<!-- Per-property arbitrary values -->
+<div class="bg-h-[280] bg-c-[20] bg-lum-6">
+  Purple background — hue 280°, chroma 0.20
 </div>
 
 <!-- ── AUTO-FLIP LUMINANCE ───────────────────────────────
-   bg-lc-[N] takes a 0–100 value and auto-flips for dark mode.
-   Light mode uses the value directly.
-   Dark mode reflects it: dark = 100 − light.
+   bg-lum-[N] auto-flips for dark mode.
+   bg-lum-[80] → L=0.80 in light, L=0.20 in dark. -->
 
-   This means bg-lc-[70] → L 0.70 in light, L 0.30 in dark.
-   Toggle the theme to see it in action. -->
-
-<div class="hue-[180] chroma-[15]">
-  <!-- These luminance values flip automatically -->
-  <div class="bg-lc-[15] text-lc-[90]">
-    Near-page bg, high-contrast text
-  </div>
-  <span class="bg-lc-[30]">Subtle chip</span>
-  <span class="bg-lc-[50]">Mid-range chip</span>
-  <span class="bg-lc-[70]">Prominent chip</span>
+<div class="hue-[180] chroma-[12]">
+  <div class="bg-lum-[15] text-lum-[90]">Near-page bg, high-contrast text</div>
+  <span class="bg-lum-[30]">Subtle chip</span>
+  <span class="bg-lum-[50]">Mid-range chip</span>
+  <span class="bg-lum-[70]">Prominent chip</span>
 </div>
 
-<!-- Works with all properties and pseudo-states -->
-<button class="
-  bg-lc-[25] text-lc-[85] border-lc-[35]
-  hover:bg-lc-[30] hover:border-lc-[40]
-">Auto-flip button</button>
+<!-- ── MIXING NAMED + ARBITRARY ─────────────────────────
+   Named stops for quick work, brackets for precision.
+   Mix freely — they're the same underlying system. -->
 
-<!-- ── HOW IT WORKS ──────────────────────────────────────
-   The CSS uses a --lc-flip variable (0 in light, 1 in dark)
-   to compute the luminance at runtime:
+<div class="hue-danger chroma-mid">
+  <div class="bg-lum-11 text-lum-1 border border-lum-8">
+    Named stops everywhere
+  </div>
+  <button class="bg-lum-[42] chroma-[22] text-lum-12">
+    Precise button that doesn't hit a named stop
+  </button>
+</div>
 
-   L = value/100 + --lc-flip × (1 − 2 × value/100)
-
-   Light (flip=0): L = value/100          → use as-is
-   Dark  (flip=1): L = 1 − value/100      → reflected
-
-   Named classes like bg-lc-5 are UNCHANGED — they still
-   use the semantic 0–10 scale with automatic mode support.
-   Bracket syntax is for when you need exact control. -->`,
+<!-- ── WHEN TO USE WHAT ─────────────────────────────────
+   Named scale (bg-lum-8):     90% of the time
+   Arbitrary (bg-lum-[42]):    when no named stop fits
+   Relative (bg-lum-up-1):     hover/focus states -->`,
 	},
 } as const
 
