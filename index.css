@@ -41,10 +41,9 @@
   --hue-neutral: 260;
 
   /* ── Luminance Range ────────────────────────────────────────────────
-     Defines the OKLCH lightness values at the themed endpoints.
-     lum-min = darkest themed stop (lum-1 in light mode).
-     lum-max = lightest themed stop (lum-12 in light mode).
-     Dark mode flips them (see .dark below). */
+     The bezier curve maps stops 1–12 between these two endpoints.
+     These values are mode-independent — dark mode reverses which
+     stop gets which value, not the range itself. */
   --lum-min: 0.13;
   --lum-max: 0.96;
 
@@ -88,15 +87,15 @@
   --lum-adj-5: 0.40;
 }
 
-/* ── Dark-mode luminance range ──────────────────────────────────────
-   In dark mode the scale flips: lum-1 becomes lightest (blends with
-   page), lum-12 becomes darkest (high contrast). */
+/* ── Dark-mode luminance ────────────────────────────────────────────
+   The bezier curve produces the same 12 lightness values in both modes.
+   Dark mode reads from the other end of the list: lum-1 gets the value
+   that was lum-12 in light mode, and vice versa. --lum-min and --lum-max
+   stay the same (they define the curve range, not the mode). */
 
 .dark {
   --lum-dir: 1;
   --lum-flip: 1;
-  --lum-min: 0.96;
-  --lum-max: 0.13;
 
   --lum-1: 0.96;
   --lum-2: 0.91;

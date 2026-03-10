@@ -1,5 +1,5 @@
 import { Fragment, useState, useEffect, useCallback } from 'react'
-import { HUES, LUM_STOPS_COMPACT, C_STOPS, LUM_RANGE_DARK, lumValue } from '@/lib/color-config'
+import { HUES, LUM_STOPS_COMPACT, C_STOPS, LUM_RANGE, lumValue } from '@/lib/color-config'
 
 export default function ColorMatrix() {
 	const [, setTick] = useState(0)
@@ -24,11 +24,11 @@ export default function ColorMatrix() {
 	}, [])
 
 	const getLumRange = useCallback(() => {
-		if (typeof window === 'undefined') return LUM_RANGE_DARK
+		if (typeof window === 'undefined') return LUM_RANGE
 		const style = getComputedStyle(document.documentElement)
 		const min = parseFloat(style.getPropertyValue('--lum-min').trim())
 		const max = parseFloat(style.getPropertyValue('--lum-max').trim())
-		if (isNaN(min) || isNaN(max)) return LUM_RANGE_DARK
+		if (isNaN(min) || isNaN(max)) return LUM_RANGE
 		return { min, max }
 	}, [])
 

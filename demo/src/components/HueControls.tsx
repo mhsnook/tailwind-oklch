@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { SliderControl, RangeSliderControl } from '@/components/ui/slider'
-import { HUES, LUM_STOPS, C_STOPS, LUM_RANGE_DARK, LUM_RANGE_LIGHT, lumValue, DEFAULT_BEZIER, generateLumScale } from '@/lib/color-config'
+import { HUES, LUM_STOPS, C_STOPS, LUM_RANGE, lumValue, DEFAULT_BEZIER, generateLumScale } from '@/lib/color-config'
 
 export default function HueControls() {
 	// ── Hue state ───────────────────────────────────────────────────────
@@ -15,15 +15,19 @@ export default function HueControls() {
 	}, [])
 
 	// ── Luminance range state ───────────────────────────────────────────
+	// The range is mode-independent — the bezier curve always maps between
+	// min and max. Dark mode reverses the stop assignments.
 	const [isDark, setIsDark] = useState(true)
-	const [lumRange, setLumRange] = useState(LUM_RANGE_DARK)
+	const [lumRange, setLumRange] = useState(LUM_RANGE)
 
-	const applyLumRange = useCallback((range: { min: number; max: number }) => {
+	const applyLumRange = useCallback((range: { min: number; max: number }, dark: boolean) => {
 		document.documentElement.style.setProperty('--lum-min', String(range.min))
 		document.documentElement.style.setProperty('--lum-max', String(range.max))
 		const scale = generateLumScale(range.min, range.max, DEFAULT_BEZIER)
+		// Dark mode reads from the other end of the list
+		const assigned = dark ? [...scale].reverse() : scale
 		for (let i = 0; i < 12; i++) {
-			document.documentElement.style.setProperty(`--lum-${i + 1}`, String(scale[i].toFixed(4)))
+			document.documentElement.style.setProperty(`--lum-${i + 1}`, String(assigned[i].toFixed(4)))
 		}
 		window.dispatchEvent(new CustomEvent('hue-change'))
 	}, [])
@@ -32,26 +36,21 @@ export default function HueControls() {
 		const sync = () => {
 			const dark = document.documentElement.classList.contains('dark')
 			setIsDark(dark)
-			const defaults = dark ? LUM_RANGE_DARK : LUM_RANGE_LIGHT
-			setLumRange(defaults)
-			applyLumRange(defaults)
+			applyLumRange(lumRange, dark)
 		}
 		sync()
 		const observer = new MutationObserver(sync)
 		observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
 		return () => observer.disconnect()
-	}, [applyLumRange])
+	}, [applyLumRange, lumRange])
 
-	// Range slider always works in [low, high] order; we map back to min/max based on mode
-	const rangeValue: [number, number] = isDark
-		? [lumRange.max, lumRange.min]
-		: [lumRange.min, lumRange.max]
+	const rangeValue: [number, number] = [lumRange.min, lumRange.max]
 
 	const updateLumRangeFromSlider = useCallback(
 		([low, high]: [number, number]) => {
-			const next = isDark ? { min: high, max: low } : { min: low, max: high }
+			const next = { min: low, max: high }
 			setLumRange(next)
-			applyLumRange(next)
+			applyLumRange(next, isDark)
 		},
 		[isDark, applyLumRange],
 	)
@@ -61,11 +60,15 @@ export default function HueControls() {
 	const [selectedChroma, setSelectedChroma] = useState(C_STOPS[2]) // mid
 	const [selectedLStop, setSelectedLStop] = useState(LUM_STOPS.find((s) => s.name === '6')!) // 6
 
-	const lStopValues = LUM_STOPS.map((l) => ({
+	// Generate the curve values (mode-independent), then reverse for dark
+	const curveScale = generateLumScale(lumRange.min, lumRange.max, DEFAULT_BEZIER)
+	const assignedScale = isDark ? [...curveScale].reverse() : curveScale
+
+	const lStopValues = LUM_STOPS.map((l, i) => ({
 		...l,
-		value: lumValue(l.stop, lumRange),
+		value: assignedScale[i],
 	}))
-	const selectedLValue = lumValue(selectedLStop.stop, lumRange)
+	const selectedLValue = assignedScale[Number(selectedLStop.name) - 1]
 
 	return (
 		<div className="hue-primary chroma-[2] space-y-6">

@@ -35,9 +35,10 @@ export const LUM_STOPS_COMPACT = [
 /** Default bezier control points: cubic-bezier(0.3, 0.0, 0.7, 1.0) */
 export const DEFAULT_BEZIER: [number, number, number, number] = [0.3, 0.0, 0.7, 1.0]
 
-/** Default luminance range endpoints. */
-export const LUM_RANGE_LIGHT = { min: 0.13, max: 0.96 }
-export const LUM_RANGE_DARK = { min: 0.96, max: 0.13 }
+/** Default luminance range endpoints (mode-independent).
+ *  The bezier curve always maps between min and max.
+ *  Dark mode reverses which stop gets which value. */
+export const LUM_RANGE = { min: 0.13, max: 0.96 }
 
 function cubicBezierY(t: number, _x1: number, y1: number, _x2: number, y2: number): number {
 	const mt = 1 - t

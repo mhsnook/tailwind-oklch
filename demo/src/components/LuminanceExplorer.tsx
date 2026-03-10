@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { DEFAULT_BEZIER, generateLumScale, LUM_RANGE_LIGHT, LUM_RANGE_DARK } from '@/lib/color-config'
+import { DEFAULT_BEZIER, generateLumScale, LUM_RANGE } from '@/lib/color-config'
 import { SliderControl } from '@/components/ui/slider'
 
 type Point = { x: number; y: number }
@@ -41,14 +41,10 @@ export default function LuminanceExplorer() {
 	const [dragging, setDragging] = useState<1 | 2 | null>(null)
 	const svgRef = useRef<SVGSVGElement>(null)
 
-	// Sync dark mode
+	// Sync dark mode (range is mode-independent; only isDark changes)
 	useEffect(() => {
 		const sync = () => {
-			const dark = document.documentElement.classList.contains('dark')
-			setIsDark(dark)
-			const range = dark ? LUM_RANGE_DARK : LUM_RANGE_LIGHT
-			setLumMin(range.min)
-			setLumMax(range.max)
+			setIsDark(document.documentElement.classList.contains('dark'))
 		}
 		sync()
 		const observer = new MutationObserver(sync)
@@ -57,6 +53,8 @@ export default function LuminanceExplorer() {
 	}, [])
 
 	const scale = generateLumScale(lumMin, lumMax, bezier)
+	// Dark mode reverses which stop gets which value
+	const assigned = isDark ? [...scale].reverse() : scale
 
 	// Push changes to document
 	useEffect(() => {
@@ -64,10 +62,10 @@ export default function LuminanceExplorer() {
 		root.setProperty('--lum-min', String(lumMin))
 		root.setProperty('--lum-max', String(lumMax))
 		for (let i = 0; i < 12; i++) {
-			root.setProperty(`--lum-${i + 1}`, String(scale[i].toFixed(4)))
+			root.setProperty(`--lum-${i + 1}`, String(assigned[i].toFixed(4)))
 		}
 		window.dispatchEvent(new CustomEvent('hue-change'))
-	}, [scale, lumMin, lumMax])
+	}, [assigned, lumMin, lumMax])
 
 	// SVG coordinate helpers
 	const toSvg = useCallback((nx: number, ny: number): Point => ({
@@ -234,9 +232,6 @@ export default function LuminanceExplorer() {
 								document.documentElement.classList.toggle('dark', next)
 								localStorage.setItem('theme', next ? 'dark' : 'light')
 								setIsDark(next)
-								const range = next ? LUM_RANGE_DARK : LUM_RANGE_LIGHT
-								setLumMin(range.min)
-								setLumMax(range.max)
 							}}
 							className="text-[0.75rem] font-mono px-3 py-1.5 rounded-lg bg-lum-9 text-lum-1 cursor-pointer hover:bg-lum-8 transition-colors"
 						>
@@ -265,8 +260,8 @@ export default function LuminanceExplorer() {
 						</div>
 					))}
 
-					{/* Swatch row */}
-					{[0, ...scale, 1].map((lum, i) => {
+					{/* Swatch row — uses assigned (mode-aware) values */}
+					{[isDark ? 1 : 0, ...assigned, isDark ? 0 : 1].map((lum, i) => {
 						const labels = ['none', ...Array.from({ length: 12 }, (_, j) => String(j + 1)), 'full']
 						const whiteRatio = contrastRatio(lum, 1)
 						const blackRatio = contrastRatio(lum, 0)
@@ -292,7 +287,7 @@ export default function LuminanceExplorer() {
 					})}
 
 					{/* Lightness value row */}
-					{[0, ...scale, 1].map((lum, i) => {
+					{[isDark ? 1 : 0, ...assigned, isDark ? 0 : 1].map((lum, i) => {
 						const labels = ['none', ...Array.from({ length: 12 }, (_, j) => String(j + 1)), 'full']
 						return (
 							<div key={`v-${labels[i]}`} className="text-[0.5rem] font-mono text-lum-[50] text-center pt-1">
