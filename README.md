@@ -83,7 +83,7 @@ Arbitrary values (`bg-lum-[72]`) auto-flip in dark mode too.
 ```html
 <!-- Named hue on a container — all children inherit -->
 <div class="hue-danger">
-  <div class="bg-lum-10 text-lum-1 border border-lum-8 rounded-lg p-4">
+  <div class="bg-lum-11 text-lum-1 border border-lum-8 rounded-lg p-4">
     <h4>Alert</h4>
     <p class="text-lum-6">Something went wrong.</p>
     <button class="bg-lum-6 chroma-mhi text-lum-12">Acknowledge</button>
@@ -94,7 +94,7 @@ Arbitrary values (`bg-lum-[72]`) auto-flip in dark mode too.
 <div class="hue-[180]">Teal everything</div>
 
 <!-- Per-property override when one element differs -->
-<div class="hue-primary bg-lum-10">
+<div class="hue-primary bg-lum-11">
   <span class="bg-h-success bg-lum-8 chroma-mid">Success badge</span>
 </div>
 ```

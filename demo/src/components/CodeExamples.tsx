@@ -62,7 +62,7 @@ const CODE_EXAMPLES = {
 </div>
 
 <!-- Three levels deep, each overriding one axis -->
-<div class="hue-primary bg-lum-10">
+<div class="hue-primary bg-lum-11">
   <div class="bg-h-success">              <!-- swap hue -->
     <div class="bg-lum-1">                <!-- swap luminance -->
       Pure CSS inheritance. No JS. No re-renders.
@@ -96,7 +96,7 @@ const CODE_EXAMPLES = {
    Named chroma stops: lo, mlo, mid, mhi, hi.
    Backgrounds default to lo. Bump up for emphasis. -->
 
-<div class="hue-danger bg-lum-10 chroma-mid text-lum-1 border border-lum-8 rounded-lg p-4">
+<div class="hue-danger bg-lum-11 chroma-mid text-lum-1 border border-lum-8 rounded-lg p-4">
   Danger alert — chroma-mid makes it feel more urgent.
 </div>
 
@@ -163,14 +163,14 @@ const CODE_EXAMPLES = {
    12 stops from a cubic bezier curve:
 
    1   2   3   4   5   6   7   8   9  10  11  12
-   .13 .18 .24 .31 .39 .49 .59 .69 .78 .85 .91 .96
+   .12 .18 .26 .34 .44 .53 .63 .72 .81 .88 .93 .96
 
-   Dense at the dark end, sparser at the light end.
-   Shaped by a bezier curve for perceptually even spacing.
+   Shaped by cubic-bezier(0.35, 0.24, 0.68, 0.93) for
+   perceptually even spacing across the scale.
 
    The direction flips in dark mode:
-   Light: 1→0.13, 6→0.49, 12→0.96
-   Dark:  1→0.96, 6→0.59, 12→0.13 */`,
+   Light: 1→0.12, 6→0.53, 12→0.96
+   Dark:  1→0.96, 6→0.63, 12→0.12 */`,
 	},
 	arbitrary: {
 		label: 'Arbitrary Values',
@@ -181,7 +181,7 @@ const CODE_EXAMPLES = {
 
 <!-- Arbitrary hue + chroma -->
 <div class="hue-[180] chroma-[12]">
-  <div class="bg-lum-10 text-lum-1">
+  <div class="bg-lum-11 text-lum-1">
     Teal card — hue 180°, chroma 0.12
   </div>
 </div>
@@ -207,7 +207,7 @@ const CODE_EXAMPLES = {
    Mix freely — they're the same underlying system. -->
 
 <div class="hue-danger chroma-mid">
-  <div class="bg-lum-10 text-lum-1 border border-lum-8">
+  <div class="bg-lum-11 text-lum-1 border border-lum-8">
     Named stops everywhere
   </div>
   <button class="bg-lum-[42] chroma-[22] text-lum-12">

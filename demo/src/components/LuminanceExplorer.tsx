@@ -34,7 +34,7 @@ function ratingLabel(ratio: number): { label: string; color: string } {
 
 export default function LuminanceExplorer() {
 	const [bezier, setBezier] = useState<[number, number, number, number]>([...DEFAULT_BEZIER])
-	const [lumMin, setLumMin] = useState(0.13)
+	const [lumMin, setLumMin] = useState(0.12)
 	const [lumMax, setLumMax] = useState(0.96)
 	const [isDark, setIsDark] = useState(true)
 	const [hue, setHue] = useState(233)
@@ -128,7 +128,7 @@ export default function LuminanceExplorer() {
 		<div className="hue-primary chroma-[2] space-y-6">
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 				{/* ── Bezier Curve Editor ─────────────────────── */}
-				<div className="p-5 rounded-xl border border-lum-9 bg-lum-10">
+				<div className="p-5 rounded-xl border border-lum-9 bg-lum-11">
 					<h3 className="text-xs uppercase tracking-[0.08em] text-lum-[50] font-semibold mb-3">
 						Bezier Curve Editor
 					</h3>
@@ -199,7 +199,7 @@ export default function LuminanceExplorer() {
 				</div>
 
 				{/* ── Theme Controls ──────────────────────────── */}
-				<div className="p-5 rounded-xl border border-lum-9 bg-lum-10 space-y-4">
+				<div className="p-5 rounded-xl border border-lum-9 bg-lum-11 space-y-4">
 					<h3 className="text-xs uppercase tracking-[0.08em] text-lum-[50] font-semibold">
 						Theme Controls
 					</h3>
@@ -248,7 +248,7 @@ export default function LuminanceExplorer() {
 			</div>
 
 			{/* ── Color Sample Grid ──────────────────────────── */}
-			<div className="p-5 rounded-xl border border-lum-9 bg-lum-10">
+			<div className="p-5 rounded-xl border border-lum-9 bg-lum-11">
 				<h3 className="text-xs uppercase tracking-[0.08em] text-lum-[50] font-semibold mb-3">
 					Luminance Swatches &amp; Contrast
 				</h3>

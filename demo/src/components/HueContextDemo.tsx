@@ -100,7 +100,7 @@ export default function HueContextDemo() {
 					{/* Right column — mixed elements */}
 					<div className="flex flex-col gap-4">
 						{/* Notification card */}
-						<div className="bg-lum-10 chroma-mlo flex items-start gap-3 rounded-lg p-4">
+						<div className="bg-lum-11 chroma-mlo flex items-start gap-3 rounded-lg p-4">
 							<div className="bg-lum-7 chroma-mhi mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
 								<svg
 									className="text-lum-1"
@@ -133,7 +133,7 @@ export default function HueContextDemo() {
 							<span className="bg-lum-9 chroma-mid text-lum-2 rounded-full px-3 py-1 text-[0.72rem] font-semibold">
 								Active
 							</span>
-							<span className="bg-lum-10 chroma-mlo text-lum-4 rounded-full px-3 py-1 text-[0.72rem] font-medium">
+							<span className="bg-lum-11 chroma-mlo text-lum-4 rounded-full px-3 py-1 text-[0.72rem] font-medium">
 								Draft
 							</span>
 							<span className="border-lum-8 text-lum-5 chroma-mlo rounded-full border px-3 py-1 text-[0.72rem] font-medium">

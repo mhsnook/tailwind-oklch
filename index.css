@@ -44,24 +44,24 @@
      The bezier curve maps stops 1–12 between these two endpoints.
      These values are mode-independent — dark mode reverses which
      stop gets which value, not the range itself. */
-  --lum-min: 0.13;
+  --lum-min: 0.12;
   --lum-max: 0.96;
 
   /* ── Luminance Scale ────────────────────────────────────────────────
      12 stops generated from a cubic bezier curve, plus none/full.
-     Light mode (default): lum-1=0.13 (darkest), lum-12=0.96 (lightest)
-     Default bezier: cubic-bezier(0.3, 0.0, 0.7, 1.0) */
-  --lum-1: 0.13;
+     Light mode (default): lum-1=0.12 (darkest), lum-12=0.96 (lightest)
+     Default bezier: cubic-bezier(0.35, 0.24, 0.68, 0.93) */
+  --lum-1: 0.12;
   --lum-2: 0.18;
-  --lum-3: 0.24;
-  --lum-4: 0.31;
-  --lum-5: 0.39;
-  --lum-6: 0.49;
-  --lum-7: 0.59;
-  --lum-8: 0.69;
-  --lum-9: 0.78;
-  --lum-10: 0.85;
-  --lum-11: 0.91;
+  --lum-3: 0.26;
+  --lum-4: 0.34;
+  --lum-5: 0.44;
+  --lum-6: 0.53;
+  --lum-7: 0.63;
+  --lum-8: 0.72;
+  --lum-9: 0.81;
+  --lum-10: 0.88;
+  --lum-11: 0.93;
   --lum-12: 0.96;
 
   /* Absolute extremes — escape the configured range entirely.
@@ -98,17 +98,17 @@
   --lum-flip: 1;
 
   --lum-1: 0.96;
-  --lum-2: 0.91;
-  --lum-3: 0.85;
-  --lum-4: 0.78;
-  --lum-5: 0.69;
-  --lum-6: 0.59;
-  --lum-7: 0.49;
-  --lum-8: 0.39;
-  --lum-9: 0.31;
-  --lum-10: 0.24;
+  --lum-2: 0.93;
+  --lum-3: 0.88;
+  --lum-4: 0.81;
+  --lum-5: 0.72;
+  --lum-6: 0.63;
+  --lum-7: 0.53;
+  --lum-8: 0.44;
+  --lum-9: 0.34;
+  --lum-10: 0.26;
   --lum-11: 0.18;
-  --lum-12: 0.13;
+  --lum-12: 0.12;
 
   --lum-none: 1;
   --lum-full: 0;

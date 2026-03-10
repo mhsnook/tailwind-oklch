@@ -73,7 +73,7 @@ export default function HueControls() {
 	return (
 		<div className="hue-primary chroma-[2] space-y-6">
 			{/* ── Hue Sliders ──────────────────────────────────────── */}
-			<div className="p-5 bg-lum-10 rounded-xl border border-lum-9">
+			<div className="p-5 bg-lum-11 rounded-xl border border-lum-9">
 				<h3 className="text-xs uppercase tracking-[0.08em] text-lum-[50] font-semibold mb-3">
 					Hues
 				</h3>
@@ -113,7 +113,7 @@ export default function HueControls() {
 			{/* ── Luminance + Chroma ──────────────────────────────── */}
 			<div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-6">
 				{/* Luminance Range */}
-				<div className="p-5 rounded-xl border border-lum-9 bg-lum-10">
+				<div className="p-5 rounded-xl border border-lum-9 bg-lum-11">
 					<h3 className="text-xs uppercase tracking-[0.08em] text-lum-[50] font-semibold mb-4">
 						Luminance Range
 						<span className="normal-case tracking-normal font-normal ml-2 opacity-70">
@@ -164,7 +164,7 @@ export default function HueControls() {
 				</div>
 
 				{/* Chroma Stops */}
-				<div className="p-5 rounded-xl border border-lum-9 bg-lum-10">
+				<div className="p-5 rounded-xl border border-lum-9 bg-lum-11">
 					<h3 className="text-xs uppercase tracking-[0.08em] text-lum-[50] font-semibold mb-4">
 						Chroma Stops
 					</h3>
@@ -201,7 +201,7 @@ export default function HueControls() {
 			</div>
 
 			{/* ── Selected Color Classes ─────────────────────────── */}
-			<div className="p-5 rounded-xl border border-lum-9 bg-lum-10">
+			<div className="p-5 rounded-xl border border-lum-9 bg-lum-11">
 				{/* Hero: full LCH class */}
 				<div className="flex items-center gap-4 mb-4">
 					<div

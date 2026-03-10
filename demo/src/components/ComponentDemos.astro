@@ -2,7 +2,7 @@
 import CodeViewerButton from './CodeViewerButton'
 
 const sources = {
-  multiHue: `<div class="hue-primary bg-lum-11 text-lum-1 border-lum-10 rounded-xl p-6 border">
+  multiHue: `<div class="hue-primary bg-lum-11 text-lum-1 border-lum-11 rounded-xl p-6 border">
   <h4 class="text-[0.85rem] mb-3 font-semibold">Multi-Hue Composition</h4>
   <p class="text-lum-5 text-[0.85rem] leading-normal mb-4">
     hue-primary on the container. Badges swap hue — L and C stay identical.
@@ -46,10 +46,10 @@ const sources = {
   </p>
   <div class="flex gap-2 *:px-5 *:py-2 *:rounded-lg *:text-[0.8rem] *:font-semibold *:cursor-pointer *:transition-all *:duration-150 *:border *:shadow">
     <div class="bg-lum-5 text-lum-11 border-lum-6 hover:bg-lum-6 hover:border-lum-7 hover:text-lum-12">primary</div>
-    <div class="border-lum-10 hover:text-lum-5 hover:bg-lum-10 hover:border-lum-8">outline</div>
+    <div class="border-lum-11 hover:text-lum-5 hover:bg-lum-11 hover:border-lum-8">outline</div>
   </div>
 </div>`,
-  danger: `<div class="hue-danger chroma-mid bg-lum-10 text-lum-1 border-lum-8 rounded-xl p-6 border">
+  danger: `<div class="hue-danger chroma-mid bg-lum-11 text-lum-1 border-lum-8 rounded-xl p-6 border">
   <h4 class="text-[0.85rem] mb-3 font-semibold">Danger Alert</h4>
   <p class="text-lum-3 chroma-mlo text-[0.85rem] leading-normal mb-4">
     hue-danger on the container — every child inherits the hue.
@@ -60,7 +60,7 @@ const sources = {
     <div class="bg-lum-6 chroma-mhi text-lum-1">Cancel</div>
   </div>
 </div>`,
-  axis: `<div class="hue-primary bg-lum-10 chroma-mlo text-lum-1 border-lum-10 rounded-xl p-6 border">
+  axis: `<div class="hue-primary bg-lum-11 chroma-mlo text-lum-1 border-lum-11 rounded-xl p-6 border">
   <h4 class="text-[0.85rem] mb-3 font-semibold">Axis Inheritance</h4>
   <p class="text-lum-6 chroma-lo text-[0.85rem] leading-normal mb-4">
     Parent sets hue to primary. Children swap only the hue axis —
@@ -89,7 +89,7 @@ const sources = {
 
 <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
     <!-- Multi-Hue Composition -->
-  <div class="relative hue-primary bg-lum-11 text-lum-1 border-lum-10 rounded-xl p-6 border">
+  <div class="relative hue-primary bg-lum-11 text-lum-1 border-lum-11 rounded-xl p-6 border">
     <CodeViewerButton client:load code={sources.multiHue} />
     <h4 class="text-[0.85rem] mb-3 font-semibold">Multi-Hue Composition</h4>
     <p class="text-lum-5 text-[0.85rem] leading-normal mb-4">
@@ -148,14 +148,14 @@ const sources = {
       <div class="bg-lum-5 text-lum-11 border-lum-6 hover:bg-lum-6 hover:border-lum-7 hover:text-lum-12">
         primary
       </div>
-      <div class="border-lum-10 hover:text-lum-5 hover:bg-lum-10 hover:border-lum-8">
+      <div class="border-lum-11 hover:text-lum-5 hover:bg-lum-11 hover:border-lum-8">
         outline
       </div>
     </div>
   </div>
 
   <!-- Danger Alert -->
-  <div class="relative hue-danger chroma-mid bg-lum-10 text-lum-1 border-lum-8 rounded-xl p-6 border">
+  <div class="relative hue-danger chroma-mid bg-lum-11 text-lum-1 border-lum-8 rounded-xl p-6 border">
     <CodeViewerButton client:load code={sources.danger} />
     <h4 class="text-[0.85rem] mb-3 font-semibold">Danger Alert</h4>
     <p class="text-lum-3 chroma-mlo text-[0.85rem] leading-normal mb-4">
@@ -173,7 +173,7 @@ const sources = {
   </div>
 
   <!-- Axis Inheritance -->
-  <div class="relative hue-primary bg-lum-10 chroma-mlo text-lum-1 border-lum-10 rounded-xl p-6 border">
+  <div class="relative hue-primary bg-lum-11 chroma-mlo text-lum-1 border-lum-11 rounded-xl p-6 border">
     <CodeViewerButton client:load code={sources.axis} />
     <h4 class="text-[0.85rem] mb-3 font-semibold">Axis Inheritance</h4>
     <p class="text-lum-6 chroma-lo text-[0.85rem] leading-normal mb-4">
