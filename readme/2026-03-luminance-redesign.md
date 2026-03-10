@@ -1,89 +1,106 @@
-# Plan: Luminance Scale Redesign (LC → LUM)
+# Upgrade Guide: v0.4/v0.5 → v0.6
 
-## Summary
+## What Changed
 
-Replace the linear 0-10 "luminance contrast" scale with a perceptually-tuned 1-12 luminance scale. Language is always anchored in light-mode terms (lum-1 = darkest, lum-12 = lightest). Dark mode auto-flips the values. A new interactive Luminance Explorer on the demo page provides a draggable bezier curve editor to shape the distribution, theme toggle, and legibility preview.
+v0.6 replaces the linear `lc-*` (luminance contrast) system with a new `lum-*` (luminance) system:
 
-## Scale Design
+- **Scale**: 0–10 linear → 1–12 bezier-distributed
+- **Prefix**: `lc-*` → `lum-*` (all utilities)
+- **Direction**: Always anchored in light-mode terms — `lum-1` = darkest, `lum-12` = lightest
+- **Dark mode**: The entire scale auto-flips (lum-1 becomes the lightest value)
+- **Curve**: `cubic-bezier(0.35, 0.24, 0.68, 0.93)` shapes the stop distribution
+- **Range**: `--lum-min: 0.12`, `--lum-max: 0.96` (mode-independent)
 
-- **none** = 0 (pure black in light mode, pure white in dark)
-- **lum-1** = theme-min (default 0.13) — darkest themed stop
-- **lum-2 through lum-11** — 10 interior stops from cubic bezier curve
-- **lum-12** = theme-max (default 0.96) — lightest themed stop
-- **full** = 1.0 (pure white in light mode, pure black in dark)
+## Rename Cheatsheet
 
-Dark mode: lum-1 flips to 0.96 (lightest), lum-12 flips to 0.13 (darkest). The whole scale reverses.
+Every `lc-*` utility becomes `lum-*`:
 
-Default bezier produces values ≈: 13, 18, 24, 31, 39, 49, 59, 69, 78, 85, 91, 96
-
-## Phase 1: Core CSS (`index.css`)
-
-1. Replace `--lc-*` variables with `--lum-*`:
-   - `--lum-flip: 0` (light) / `1` (dark)
-   - `--lum-dir: -1` (light) / `1` (dark)
-   - `--lum-min: 0.13` / `--lum-max: 0.96` (light defaults)
-   - `--lum-1` through `--lum-12` (bezier-generated values)
-   - `--lum-none: 0` / `--lum-full: 1`
-   - `--lum-adj-1` through `--lum-adj-5` (relative offsets)
-2. Dark mode block: reverse all `--lum-N` values (lum-1 gets lum-12's light value, etc.)
-3. Rename all `@utility` directives: `bg-lc-*` → `bg-lum-*`, etc.
-4. Update cascade defaults: `--bg-l`, `--tx-l`, `--bd-l`, etc.
-
-## Phase 2: Plugin (`plugin.js`)
-
-1. Rename `lc` → `lum` in all matchUtilities calls
-2. Update flip formula to reference `--lum-flip` instead of `--lc-flip`
-3. Update comments
-
-## Phase 3: Demo Config (`color-config.ts`)
-
-1. New `LUM_STOPS` array (1-12)
-2. `generateLumScale(min, max, bezier)` — cubic bezier interpolation
-3. New range constants
-4. Export bezier defaults
-
-## Phase 4: Update All Demo Components
-
-Rename every `lc-*` class to `lum-*` with correct stop mapping:
-- Old 0 (lightest) → new 12; old 10 (darkest) → new 1
-- `ColorMatrix.tsx`, `HueControls.tsx`, `ComponentDemos.astro`, `HueContextDemo.tsx`, `RelativeLuminanceDemo.astro`, `CodeExamples.tsx`, `ThemeToggle.tsx`, `global.css`, `index.astro`
-
-## Phase 5: New `LuminanceExplorer.tsx` Component
-
-### A. Bezier Curve Editor (SVG)
-- SVG canvas showing the mapping curve: X axis = stop index (1-12), Y axis = OKLCH lightness (min→max)
-- Two draggable control points for the cubic bezier
-- Dots on the curve showing where each of the 12 stops lands
-- Real-time update as user drags control points
-- Display the bezier values (e.g., `cubic-bezier(0.3, 0.0, 0.7, 1.0)`)
-
-### B. Theme Controls
-- Sliders for theme-min and theme-max
-- Light/dark toggle
-- Hue picker (to color the swatches)
-
-### C. Color Sample Grid
-- 14 swatches (none + 1-12 + full)
-- Each swatch: colored background at that luminance, mid chroma, current hue
-- "Aa" text in white overlaid + "Aa" text in black overlaid
-- WCAG contrast ratio for each pairing
-- Green/yellow/red indicator (≥4.5:1 AA / ≥3:1 AA-large / fail)
-
-### D. CSS Variable Sync
-- Changes push to `document.documentElement.style` so the rest of the page updates live
-- Dispatch `hue-change` events for other components
+| Old (v0.4/v0.5) | New (v0.6) |
+|---|---|
+| `bg-lc-5` | `bg-lum-6` |
+| `text-lc-*` | `text-lum-*` |
+| `border-lc-*` | `border-lum-*` |
+| `accent-lc-*` | `accent-lum-*` |
+| `shadow-lc-*` | `shadow-lum-*` |
+| `from-lc-*` | `from-lum-*` |
+| `to-lc-*` | `to-lum-*` |
+| `bg-lc-up-*` | `bg-lum-up-*` |
+| `bg-lc-down-*` | `bg-lum-down-*` |
+| `text-lc-up-*` | `text-lum-up-*` |
+| `text-lc-down-*` | `text-lum-down-*` |
+| `chroma-*` | `chroma-*` (unchanged) |
+| `hue-*` | `hue-*` (unchanged) |
 
 ## Stop Mapping (old → new)
 
-| Old | New | Light L |
-|-----|-----|---------|
-| lc-0/base (0.95) | lum-12 (0.96) | lightest |
-| lc-1 (0.87) | lum-10 (~0.85) | |
-| lc-2 (0.79) | lum-9 (~0.78) | |
-| lc-3 (0.71) | lum-8 (~0.69) | |
-| lc-5 (0.55) | lum-6 (~0.49) | midpoint |
-| lc-7 (0.39) | lum-4 (~0.31) | |
-| lc-8 (0.31) | lum-3 (~0.24) | |
-| lc-10/fore (0.15) | lum-1 (0.13) | darkest |
-| lc-none (1.0) | lum-full (1.0) | |
-| lc-full (0.0) | lum-none (0.0) | |
+The old linear 0–10 scale maps roughly to these new bezier-distributed stops:
+
+| Old Stop | Old L (light) | → | New Stop | New L (light) |
+|---|---|---|---|---|
+| `lc-0` / `lc-base` | 0.95 | → | `lum-12` | 0.96 |
+| `lc-1` | 0.87 | → | `lum-10` | 0.88 |
+| `lc-2` | 0.79 | → | `lum-9` | 0.81 |
+| `lc-3` | 0.71 | → | `lum-8` | 0.72 |
+| `lc-4` | 0.63 | → | `lum-7` | 0.63 |
+| `lc-5` | 0.55 | → | `lum-6` | 0.53 |
+| `lc-6` | 0.47 | → | `lum-5` | 0.44 |
+| `lc-7` | 0.39 | → | `lum-4` | 0.34 |
+| `lc-8` | 0.31 | → | `lum-3` | 0.26 |
+| `lc-9` | 0.23 | → | `lum-2` | 0.18 |
+| `lc-10` / `lc-fore` | 0.15 | → | `lum-1` | 0.12 |
+| `lc-none` | 1.0 | → | `lum-full` | 1.0 |
+| `lc-full` | 0.0 | → | `lum-none` | 0.0 |
+
+> **Note**: `none` and `full` swapped names. In v0.6, `lum-none` = 0 (black in light mode) and `lum-full` = 1 (white in light mode). Both auto-flip in dark mode.
+
+## CSS Variable Changes
+
+| Old Variable | New Variable |
+|---|---|
+| `--lc-flip` | `--lum-flip` |
+| `--lc-dir` | `--lum-dir` |
+| `--l-base` / `--l-0` … `--l-10` | `--lum-1` … `--lum-12` |
+| `--l-min` / `--l-max` | `--lum-min` / `--lum-max` |
+
+## Dark Mode Behavior
+
+The dark mode model changed:
+
+**v0.4/v0.5**: Different min/max range for light vs dark mode.
+
+**v0.6**: The bezier curve produces **one fixed set of lightness values**. Both modes use the same min (0.12) and max (0.96). Dark mode simply reverses which stop gets which value — `lum-1` gets the lightest value and `lum-12` gets the darkest.
+
+This means you write your markup in "light-mode language" and dark mode just works:
+
+```html
+<!-- lum-1 = darkest text, lum-11 = light background — in BOTH modes -->
+<div class="bg-lum-11 text-lum-1">Always readable</div>
+```
+
+## The New Luminance Scale
+
+12 stops generated by `cubic-bezier(0.35, 0.24, 0.68, 0.93)`:
+
+```
+Stop:  1     2     3     4     5     6     7     8     9     10    11    12
+Light: 0.12  0.18  0.26  0.34  0.44  0.53  0.63  0.72  0.81  0.88  0.93  0.96
+Dark:  0.96  0.93  0.88  0.81  0.72  0.63  0.53  0.44  0.34  0.26  0.18  0.12
+```
+
+Plus `none` (0 in light, 1 in dark) and `full` (1 in light, 0 in dark).
+
+## Quick Migration
+
+1. **Find and replace** `lc-` → `lum-` across your codebase
+2. **Remap stop numbers** using the table above (the old scale ran light→dark, the new one runs dark→light)
+3. **Swap `lc-none`/`lc-full`** → `lum-full`/`lum-none` (the names flipped)
+4. **Update any JS** referencing `--lc-*` CSS variables to `--lum-*`
+5. **Test dark mode** — it should just work since the scale auto-flips
+
+## New Features in v0.6
+
+- **Bezier-shaped distribution**: Stops are perceptually spaced instead of linear
+- **12 stops instead of 11**: More granularity at the light end of the scale
+- **Arbitrary values**: `bg-lum-[42]` for precise lightness (auto-flips in dark mode)
+- **Relative adjustments**: `bg-lum-up-1` / `bg-lum-down-1` for hover states (direction-aware)
+- **Interactive Luminance Explorer**: Drag bezier control points to reshape the scale live
