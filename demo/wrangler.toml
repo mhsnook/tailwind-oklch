@@ -1,5 +1,11 @@
 name = "tailwind-oklch"
 compatibility_date = "2026-02-28"
 
+# Build from the monorepo root so the pnpm workspace (and the
+# `tailwind-oklch` workspace dep) resolves correctly.
+[build]
+cwd = ".."
+command = "pnpm install --frozen-lockfile && pnpm --filter tailwind-oklch-demo build"
+
 [assets]
 directory = "./dist"
