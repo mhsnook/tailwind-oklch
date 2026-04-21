@@ -6,7 +6,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "deploy:cf": "astro build && wrangler deploy"
+    "deploy:cf": "wrangler deploy"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
