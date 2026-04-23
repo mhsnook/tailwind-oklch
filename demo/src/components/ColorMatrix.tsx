@@ -1,5 +1,5 @@
 import { Fragment, useState, useEffect, useCallback } from 'react'
-import { HUES, L_STOPS, C_STOPS, LU_RANGE_DARK, luValue } from '@/lib/color-config'
+import { HUES, LUM_STOPS_COMPACT, C_STOPS, LUM_RANGE, lumValue } from '@/lib/color-config'
 
 export default function ColorMatrix() {
 	const [, setTick] = useState(0)
@@ -23,13 +23,13 @@ export default function ColorMatrix() {
 		return val || String(HUES.find((h) => h.name === name)?.default ?? 260)
 	}, [])
 
-	const getLuRange = useCallback(() => {
-		if (typeof window === 'undefined') return LU_RANGE_DARK
+	const getLumRange = useCallback(() => {
+		if (typeof window === 'undefined') return LUM_RANGE
 		const style = getComputedStyle(document.documentElement)
-		const start = parseFloat(style.getPropertyValue('--lc-range-start').trim())
-		const end = parseFloat(style.getPropertyValue('--lc-range-end').trim())
-		if (isNaN(start) || isNaN(end)) return LU_RANGE_DARK
-		return { start, end }
+		const min = parseFloat(style.getPropertyValue('--lum-min').trim())
+		const max = parseFloat(style.getPropertyValue('--lum-max').trim())
+		if (isNaN(min) || isNaN(max)) return LUM_RANGE
+		return { min, max }
 	}, [])
 
 	return (
@@ -42,7 +42,7 @@ export default function ColorMatrix() {
 							<h3
 								className="text-[0.85rem] font-semibold mb-3 font-mono tracking-[-0.01em]"
 								style={{
-									color: `oklch(var(--l-7) var(--c-mlo) var(--hue-${hue.name}))`,
+									color: `oklch(var(--lum-4) var(--c-mlo) var(--hue-${hue.name}))`,
 								}}
 							>
 								{hue.name} ({hueVal}°)
@@ -51,10 +51,10 @@ export default function ColorMatrix() {
 								{/* Top-left empty corner */}
 								<div className="matrix-label" />
 
-								{/* Column headers — luminance (left=base, right=fore) */}
-								{L_STOPS.map((l) => (
+								{/* Column headers — luminance (left=darkest, right=lightest) */}
+								{LUM_STOPS_COMPACT.map((l) => (
 									<div key={l.name} className="matrix-label col-label">
-										lc&#8209;{l.name}
+										lum&#8209;{l.name}
 									</div>
 								))}
 
@@ -62,18 +62,17 @@ export default function ColorMatrix() {
 								{[...C_STOPS].reverse().map((c) => (
 									<Fragment key={c.name}>
 										<div className="matrix-label">c&#8209;{c.name}</div>
-										{L_STOPS.map((l) => {
-											// Use CSS vars for the cell color so it adapts to light/dark mode natively
-											const color = `oklch(var(--l-${l.name}) ${c.val} var(--hue-${hue.name}))`
-											const className = `bg-${l.name}-${c.name}-${hue.name}`
+										{LUM_STOPS_COMPACT.map((l) => {
+											const color = `oklch(var(--lum-${l.name}) ${c.val} var(--hue-${hue.name}))`
+											const className = `hue-${hue.name} bg-lum-${l.name} bg-c-${c.name}`
 											return (
 												<div
 													key={`${l.name}-${c.name}`}
 													className="matrix-cell aspect-square rounded-md min-w-8 min-h-8 cursor-pointer transition-[transform,box-shadow] duration-150 relative"
 													style={{ backgroundColor: color }}
 													onMouseEnter={() => {
-														const range = getLuRange()
-														const lVal = luValue(l.step, range)
+														const range = getLumRange()
+														const lVal = lumValue(l.stop, range)
 														setPreview({
 															color,
 															className,
@@ -99,9 +98,9 @@ export default function ColorMatrix() {
 				{preview && (
 					<>
 						<div className="swatch w-8 h-8 rounded-md" style={{ backgroundColor: preview.color }} />
-						<div>
-							<div className="text-fore-mhi-primary">{preview.className}</div>
-							<div className="text-5-lo-primary text-xs">{preview.oklch}</div>
+						<div className="hue-primary">
+							<div className="text-lum-1 chroma-mhi">{preview.className}</div>
+							<div className="text-lum-6 chroma-lo text-xs">{preview.oklch}</div>
 						</div>
 					</>
 				)}
