@@ -13,7 +13,8 @@
  * Luminance contrast scale: 0–10.
  *   0 / base  = close to the page color (blends in)
  *   10 / fore = high contrast with the page (stands out, like text)
- *   1–9       = evenly distributed between those endpoints
+ *   1–9       = S-curved between those endpoints (1/2 stay close to
+ *               base, biggest jumps fall in the middle of the scale)
  *   none      = absolute minimum (pure white or pure black, per mode)
  *   full      = absolute maximum (pure black or pure white, per mode)
  */
@@ -38,19 +39,22 @@
   --lc-range-end: 0.15;
 
   /* ── 0–10 Luminance Contrast Scale ────────────────────────────────
-     Computed: step N = start + (end - start) × (N / 10)
+     Computed: step N = start + (end − start) × smoothstep(N / 10)
+     where smoothstep(t) = 3t² − 2t³. The S-curve keeps lc-1/lc-2
+     close to lc-0 (low contrast) and concentrates the bigger jumps
+     in the middle of the scale.
      Light mode (default): 0→0.95, 5→0.55, 10→0.15
      Dark mode (override): 0→0.12, 5→0.52, 10→0.92 */
   --l-0: 0.95;
-  --l-1: 0.87;
-  --l-2: 0.79;
-  --l-3: 0.71;
-  --l-4: 0.63;
+  --l-1: 0.93;
+  --l-2: 0.87;
+  --l-3: 0.78;
+  --l-4: 0.67;
   --l-5: 0.55;
-  --l-6: 0.47;
-  --l-7: 0.39;
-  --l-8: 0.31;
-  --l-9: 0.23;
+  --l-6: 0.43;
+  --l-7: 0.32;
+  --l-8: 0.23;
+  --l-9: 0.17;
   --l-10: 0.15;
 
   /* Semantic aliases */
@@ -91,15 +95,15 @@
   --lc-range-end: 0.92;
 
   --l-0: 0.12;
-  --l-1: 0.20;
-  --l-2: 0.28;
-  --l-3: 0.36;
-  --l-4: 0.44;
+  --l-1: 0.14;
+  --l-2: 0.20;
+  --l-3: 0.29;
+  --l-4: 0.40;
   --l-5: 0.52;
-  --l-6: 0.60;
-  --l-7: 0.68;
-  --l-8: 0.76;
-  --l-9: 0.84;
+  --l-6: 0.64;
+  --l-7: 0.75;
+  --l-8: 0.84;
+  --l-9: 0.90;
   --l-10: 0.92;
 
   --l-base: 0.12;
