@@ -46,7 +46,7 @@ The 0–10 scale measures contrast with the page — not absolute lightness:
 
 - **0 / `base`** = close to the page color (blends in)
 - **10 / `fore`** = high contrast with the page (stands out, like text)
-- **1–9** = evenly distributed between those endpoints
+- **1–9** = S-curved between those endpoints, so `1` and `2` sit close to the page (subtle) and the bigger contrast jumps land in the middle of the scale
 
 This means `bg-lc-3` is always "3 steps from the page" — a subtle, low-contrast element in either light or dark mode.
 
@@ -279,15 +279,15 @@ document.documentElement.style.setProperty('--hue-primary', '180');
 | Stop | Light Mode | Dark Mode |
 |---|---|---|
 | `0` / `base` | 0.95 | 0.12 |
-| `1` | 0.87 | 0.20 |
-| `2` | 0.79 | 0.28 |
-| `3` | 0.71 | 0.36 |
-| `4` | 0.63 | 0.44 |
+| `1` | 0.93 | 0.14 |
+| `2` | 0.87 | 0.20 |
+| `3` | 0.78 | 0.29 |
+| `4` | 0.67 | 0.40 |
 | `5` | 0.55 | 0.52 |
-| `6` | 0.47 | 0.60 |
-| `7` | 0.39 | 0.68 |
-| `8` | 0.31 | 0.76 |
-| `9` | 0.23 | 0.84 |
+| `6` | 0.43 | 0.64 |
+| `7` | 0.32 | 0.75 |
+| `8` | 0.23 | 0.84 |
+| `9` | 0.17 | 0.90 |
 | `10` / `fore` | 0.15 | 0.92 |
 
 ### Named Chroma Stops
