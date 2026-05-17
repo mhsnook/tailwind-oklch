@@ -38,18 +38,22 @@
   --lc-range-end: 0.15;
 
   /* ── 0–10 Luminance Contrast Scale ────────────────────────────────
-     Computed: step N = start + (end - start) × (N / 10)
-     Light mode (default): 0→0.95, 5→0.55, 10→0.15
-     Dark mode (override): 0→0.12, 5→0.52, 10→0.92 */
+     Light mode uses a power curve (p≈1.3): smaller steps near the
+     high-luminance base, growing toward the fore. Perception is
+     more sensitive to differences near white, so subtle surfaces
+     need finer L deltas there.
+     Computed: step N = start + (end − start) × (N / 10)^1.3
+     Light mode (default): 0→0.95, 1→0.91, 5→0.63, 10→0.15
+     Dark mode stays linear (see .dark): 0→0.12, 5→0.52, 10→0.92 */
   --l-0: 0.95;
-  --l-1: 0.87;
-  --l-2: 0.79;
-  --l-3: 0.71;
-  --l-4: 0.63;
-  --l-5: 0.55;
-  --l-6: 0.47;
-  --l-7: 0.39;
-  --l-8: 0.31;
+  --l-1: 0.91;
+  --l-2: 0.85;
+  --l-3: 0.78;
+  --l-4: 0.71;
+  --l-5: 0.63;
+  --l-6: 0.54;
+  --l-7: 0.44;
+  --l-8: 0.34;
   --l-9: 0.23;
   --l-10: 0.15;
 
