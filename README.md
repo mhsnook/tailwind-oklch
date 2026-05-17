@@ -279,16 +279,21 @@ document.documentElement.style.setProperty('--hue-primary', '180');
 | Stop | Light Mode | Dark Mode |
 |---|---|---|
 | `0` / `base` | 0.95 | 0.12 |
-| `1` | 0.87 | 0.20 |
-| `2` | 0.79 | 0.28 |
-| `3` | 0.71 | 0.36 |
-| `4` | 0.63 | 0.44 |
-| `5` | 0.55 | 0.52 |
-| `6` | 0.47 | 0.60 |
-| `7` | 0.39 | 0.68 |
-| `8` | 0.31 | 0.76 |
+| `1` | 0.91 | 0.20 |
+| `2` | 0.85 | 0.28 |
+| `3` | 0.78 | 0.36 |
+| `4` | 0.71 | 0.44 |
+| `5` | 0.63 | 0.52 |
+| `6` | 0.54 | 0.60 |
+| `7` | 0.44 | 0.68 |
+| `8` | 0.34 | 0.76 |
 | `9` | 0.23 | 0.84 |
 | `10` / `fore` | 0.15 | 0.92 |
+
+Light mode uses a power curve (p≈1.3) so steps near the high-luminance
+base are smaller — small luminance differences are very perceptible
+against a near-white surface, so `lc-1` needs a gentler delta than the
+linear 0.08 would give. Dark mode stays linear.
 
 ### Named Chroma Stops
 
