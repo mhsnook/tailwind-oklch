@@ -156,12 +156,12 @@ scale automatically.
 
 | Hue       | Degrees | `--cscale-*` |
 | --------- | ------- | ------------ |
-| `primary` | 233     | 0.72         |
-| `info`    | 220     | 0.68         |
-| `accent`  | 350     | 0.76         |
-| `danger`  | 15      | 0.95         |
+| `primary` | 233     | 0.86         |
+| `info`    | 220     | 0.88         |
+| `accent`  | 350     | 0.90         |
+| `danger`  | 15      | 0.93         |
 | `success` | 145     | 1.00         |
-| `warning` | 55      | 1.05         |
+| `warning` | 55      | 1.00         |
 
 These are calibrated by eye and easy to retune — override any `--cscale-*` in a
 `@theme` block. Arbitrary hues (`hue-[280]`) use a scale of `1` since their

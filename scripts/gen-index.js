@@ -13,8 +13,8 @@ const HUES = [
 // Per-hue chroma multipliers. Blue reaches perceived saturation at lower chroma
 // (so it scales down); green is the ~1.0 reference. Calibrated by eye.
 const CSCALE = {
-  primary: 0.72, accent: 0.76, success: 1.0,
-  warning: 1.05, danger: 0.95, info: 0.68,
+  primary: 0.86, accent: 0.90, success: 1.0,
+  warning: 1.0, danger: 0.93, info: 0.88,
 };
 // Luminance scale: 0 = pure white (light) / pure black (dark); 10 = the opposite.
 // Front-loaded near the page: 1–2 hug the page surface, steps open up lower down.
