@@ -8,9 +8,10 @@ but it is pre-1.0 so we are informal and almost everything gets a minor version 
 
 ## [0.7.0] - 2026-07-24
 
-A cascade-first slim-down. The system is now pure CSS with no JavaScript plugin,
-and the API leads with single-axis composition: seed hue and chroma once near a
-component's root, speak only luminance inside.
+A cascade-first overhaul: pure CSS, a re-cut luminance scale, and per-hue chroma.
+Breaking throughout — the concepts carry over, but the API surface, the scale,
+and the naming all changed. Still pre-1.0; the API isn't settled yet, so expect
+further churn.
 
 ### Removed
 
@@ -22,6 +23,9 @@ component's root, speak only luminance inside.
   `bg-3-mhi`, `bg-3-mhi-accent`). They re-pinned all three axes on every leaf,
   working against the cascade. Split them into axes and hoist hue/chroma to a
   `hue-*` / `chroma-*` seeder.
+- **The `none` / `base` / `fore` / `full` luminance aliases.** The scale is just
+  `0`–`10`, with `0`/`10` as the pure extremes. Replace `base` → `1`,
+  `fore` → `9`/`10`, `none` → `0`, `full` → `10`.
 
 ### Changed
 
@@ -29,11 +33,25 @@ component's root, speak only luminance inside.
   and `{prop}-h-*` → `{prop}-hue-*` (e.g. `bg-c-mid` → `bg-chroma-mid`,
   `text-h-info` → `text-hue-info`). The global seeders `hue-*` and `chroma-*`
   are unchanged.
+- **Luminance scale reindexed to a plain white→black ramp.** `lc-0` is now pure
+  white (light) / pure black (dark) — the page-ward extreme — instead of the old
+  near-page 0.95. Everyday surfaces shift down: a near-page background is `lc-1`,
+  a card `lc-2`. The low end is finely graded (0→1→2 are small steps) and opens
+  up toward the dark end, matching where the eye is sensitive.
 - README and docs rewritten around the character-vs-emphasis model.
+
+### Added
+
+- **Per-hue chroma normalization.** Each hue carries a `--cscale-*` multiplier and
+  every color resolves chroma as `calc(base × scale)`, so a given `chroma-*` stop
+  looks about equally saturated across hues (blue no longer reads hotter than
+  green). Override `--cscale-*` in `@theme` to retune.
+- `scripts/gen-index.js` generates `index.css`, keeping every painting utility's
+  `oklch()` expression identical.
 
 ### Migration
 
-See the "Migrating from 0.6.x" section in the README.
+See the "Migrating to 0.7" section in the README.
 
 ## [0.6.0] - 2026-05-21
 

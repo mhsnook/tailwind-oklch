@@ -51,12 +51,14 @@ No cascade inheritance of the offset — purely local to the element.
 
 ### Naming note
 
-The luminance contrast scale now uses `lc-` prefix (e.g., `bg-lc-5`) with
-`none` and `full` as absolute extremes:
-- `lc-none` = blends completely (pure white in light, pure black in dark)
-- `lc-full` = maximum contrast (pure black in light, pure white in dark)
-- `lc-base` / `lc-0` = near page surface
-- `lc-fore` / `lc-10` = high contrast foreground
+The luminance contrast scale uses the `lc-` prefix (e.g., `bg-lc-5`) and is a
+plain white→black ramp from `0` to `10` that auto-flips in dark mode:
+- `lc-0` = pure white (light) / pure black (dark) — the page-ward extreme
+- `lc-1` = blends with the page (lightest usable surface)
+- `lc-10` = pure black (light) / pure white (dark) — maximum foreground contrast
+
+As of 0.7 there are no `none`/`base`/`fore`/`full` aliases; `0` and `10` are the
+pure extremes and the numbers cover everything between.
 
 ## Dynamic Text Contrast from Background (text-contrast-*)
 
