@@ -3,15 +3,18 @@
 // Emits readable, commented CSS. Every color-painting utility resolves chroma
 // as calc(var(--X-c) * var(--X-cs)) so per-hue normalization applies uniformly.
 
+// Named hues map to real hue angles. There is deliberately no "neutral" — a
+// neutral is the absence of chroma (chroma-lo, or chroma-[0] for a flat gray),
+// not a hue. Keeping the axes decomposed means neutrality lives on chroma.
 const HUES = [
   ['primary', 233], ['accent', 350], ['success', 145],
-  ['warning', 55], ['danger', 15], ['info', 220], ['neutral', 260],
+  ['warning', 55], ['danger', 15], ['info', 220],
 ];
-// Per-hue chroma multipliers. Starting points — blue/purple reach perceived
-// saturation at lower chroma, so they scale down; green is the ~1.0 reference.
+// Per-hue chroma multipliers. Blue reaches perceived saturation at lower chroma
+// (so it scales down); green is the ~1.0 reference. Calibrated by eye.
 const CSCALE = {
-  primary: 0.72, accent: 0.90, success: 1.0,
-  warning: 1.05, danger: 0.95, info: 0.74, neutral: 0.78,
+  primary: 0.72, accent: 0.76, success: 1.0,
+  warning: 1.05, danger: 0.95, info: 0.68,
 };
 // Luminance scale: 0 = pure white (light) / pure black (dark); 10 = the opposite.
 // Front-loaded near the page: 1–2 hug the page surface, steps open up lower down.

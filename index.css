@@ -43,16 +43,14 @@
   --hue-warning: 55;
   --hue-danger: 15;
   --hue-info: 220;
-  --hue-neutral: 260;
 
   /* ── Per-hue chroma scale — perceptual normalization multipliers ───── */
   --cscale-primary: 0.72;
-  --cscale-accent: 0.9;
+  --cscale-accent: 0.76;
   --cscale-success: 1;
   --cscale-warning: 1.05;
   --cscale-danger: 0.95;
-  --cscale-info: 0.74;
-  --cscale-neutral: 0.78;
+  --cscale-info: 0.68;
 
   /* ── Luminance scale (light): 0 = white … 10 = black ──────────────── */
   --l-0: 1;
