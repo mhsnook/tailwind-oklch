@@ -1,153 +1,127 @@
 @import "tailwindcss";
 @import "tailwind-oklch";
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark, .dark *));
-@plugin "tailwind-oklch/plugin";
 
 @theme {
-  --font-sans: "DM Sans", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Demo-only: a raw color wheel to illustrate per-hue chroma. The library
+     itself ships semantic hues (primary/danger/…); these named colors exist
+     only so the calibration swatches can walk the whole wheel. */
+  --hue-blue: 245;
+  --hue-purple: 300;
+  --hue-pink: 350;
+  --hue-red: 25;
+  --hue-orange: 55;
+  --hue-yellow: 100;
+  --hue-green: 145;
+  --hue-bluegreen: 195;
+
+  --cscale-blue: 0.85;
+  --cscale-purple: 0.86;
+  --cscale-pink: 0.9;
+  --cscale-red: 0.95;
+  --cscale-orange: 1;
+  --cscale-yellow: 1.1;
+  --cscale-green: 1;
+  --cscale-bluegreen: 0.92;
 }
 
-/* Force theme variables into the build that aren't auto-detected from source.
-   The matrix explorer reads these CSS custom properties via JS inline styles. */
-@source inline("bg-h-warning bg-h-info bg-h-neutral bg-lc-0 bg-lc-1 bg-lc-2 bg-lc-3 bg-lc-4 bg-lc-5 bg-lc-6 bg-lc-7 bg-lc-8 bg-lc-9 bg-lc-10 bg-lc-base bg-lc-fore");
+/* The looped swatches build their hue/chroma class names dynamically, so
+   Tailwind can't see them in source — safelist the combinations. */
+@source inline("hue-{blue,purple,pink,red,orange,yellow,green,bluegreen}");
+@source inline("chroma-{lo,mlo,mid,mhi,hi}");
 
-/* ── shadcn theme tokens ──────────────────────────────────────────── */
-
-@theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-}
-
+/* ── Page chrome ─────────────────────────────────────────────────────────
+   A deliberately quiet neutral so the showcased colors carry the page. */
 :root {
-  --radius: 0.625rem;
-  --background: oklch(0.965 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(0.985 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(0.985 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.606 0.25 292.717);
-  --primary-foreground: oklch(0.969 0.016 293.756);
-  --secondary: oklch(0.9 0.006 286.033);
-  --secondary-foreground: oklch(0.145 0 0);
-  --muted: oklch(0.92 0 0);
-  --muted-foreground: oklch(0.4 0 0);
-  --accent: oklch(0.606 0.25 292.717);
-  --accent-foreground: oklch(0.969 0.016 293.756);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(0 0 0 / 10%);
-  --input: oklch(0 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --page: oklch(0.985 0.003 260);
+  --ink: oklch(0.27 0.012 260);
+  --muted: oklch(0.52 0.012 260);
+  --line: oklch(0.9 0.008 260);
+  --chip: oklch(0.955 0.008 260);
+  --accent: oklch(0.55 0.15 265);
 }
-
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.606 0.25 292.717);
-  --primary-foreground: oklch(0.969 0.016 293.756);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.606 0.25 292.717);
-  --accent-foreground: oklch(0.969 0.016 293.756);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --page: oklch(0.155 0.01 260);
+  --ink: oklch(0.92 0.008 260);
+  --muted: oklch(0.64 0.012 260);
+  --line: oklch(0.3 0.012 260);
+  --chip: oklch(0.22 0.014 260);
+  --accent: oklch(0.74 0.13 265);
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
+body {
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  /* text + surface helpers keyed to the page-chrome tokens */
+  .muted { color: var(--muted); }
+  .accent-ink { color: var(--accent); }
+  .hairline { border-color: var(--line); }
+  .kbd {
+    font-family: var(--font-mono);
+    background: var(--chip);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 0.05em 0.35em;
+    font-size: 0.85em;
   }
-  body {
-    @apply text-foreground font-sans;
+  .toggle {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--chip); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 550; cursor: pointer;
   }
-}
 
-/* ── Demo-specific styles ─────────────────────────────────────────── */
+  /* ── The "item" component — owns its luminance; caller passes character ── */
+  .card {
+    @apply bg-lc-2 border-lc-3 flex flex-col gap-2 rounded-2xl border p-5;
+    box-shadow: 0 1px 2px oklch(0 0 0 / 0.04), 0 14px 34px -26px oklch(0 0 0 / 0.35);
+  }
+  .card-eyebrow {
+    @apply text-lc-6 font-mono text-xs font-semibold uppercase;
+    letter-spacing: 0.13em;
+  }
+  .card-title { @apply text-lc-9 text-lg font-bold tracking-tight; }
+  .card-body { @apply text-lc-7 text-sm leading-relaxed; }
+  .card-link { @apply text-lc-6 font-semibold underline underline-offset-2; }
+  .card-foot {
+    @apply border-lc-3 mt-1.5 flex items-center justify-between gap-3 border-t pt-3;
+  }
+  .card-meta { @apply text-lc-6 inline-flex items-center gap-1.5 text-sm; }
+  .card-btn {
+    @apply bg-lc-6 text-lc-0 rounded-lg px-3.5 py-2 text-sm font-semibold;
+    transition: background-color 0.15s;
+  }
+  .card-btn:hover { @apply bg-lc-up-1; }
 
-/* Matrix cells — generated in tight JS loops, CSS more efficient */
-.matrix-label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.65rem;
-  font-family: var(--font-mono);
-  color: oklch(var(--l-5) var(--c-lo) var(--hue-primary));
-  padding: 0.25rem;
-  min-height: 2rem;
-}
-
-.matrix-label.col-label {
-  min-width: 3rem;
-}
-
-.matrix-cell:hover {
-  transform: scale(1.15);
-  z-index: 10;
-  box-shadow: 0 4px 20px oklch(0 0 0 / 0.4);
-}
-
-/* Preview toast — visibility toggled by JS */
-.class-preview {
-  background: oklch(var(--l-0) var(--c-lo) var(--hue-primary));
-  border: 1px solid oklch(var(--l-1) var(--c-mlo) var(--hue-primary));
-  box-shadow: 0 8px 32px oklch(0 0 0 / 0.12);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.class-preview.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.class-preview .swatch {
-  border: 1px solid oklch(var(--l-2) var(--c-lo) var(--hue-primary));
-}
-
-/* Code blocks — always dark, even in light mode */
-.code-block {
-  background: oklch(0.10 var(--c-lo) var(--hue-primary));
-  border: 1px solid oklch(0.25 var(--c-lo) var(--hue-primary));
-}
-
-.dark .class-preview {
-  background: oklch(var(--l-0) var(--c-lo) var(--hue-primary));
-  border-color: oklch(var(--l-2) var(--c-mlo) var(--hue-primary));
-  box-shadow: 0 8px 32px oklch(0 0 0 / 0.5);
-}
-
-.dark .class-preview .swatch {
-  border-color: oklch(var(--l-3) var(--c-lo) var(--hue-primary));
+  /* ── Calibration swatches ───────────────────────────────────────────── */
+  .swatch {
+    @apply rounded-lg;
+    min-height: 3.25rem;
+    box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.08);
+  }
+  .dark .swatch { box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.12); }
+  .chip-cell {
+    @apply bg-lc-2 flex items-center justify-center rounded-lg;
+    min-height: 3.25rem;
+    box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.06);
+  }
+  .dark .chip-cell { box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.1); }
+  .grid-head {
+    @apply flex items-center justify-center text-center font-mono text-xs font-semibold;
+    color: var(--muted);
+  }
+  .row-label {
+    @apply flex flex-col items-end justify-center pr-2 text-right leading-tight;
+  }
+  .row-label b { font-size: 0.85rem; }
+  .row-label span { font-family: var(--font-mono); font-size: 0.66rem; color: var(--muted); }
 }
