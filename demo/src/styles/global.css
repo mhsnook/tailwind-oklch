@@ -32,7 +32,7 @@
 /* The looped swatches build their hue/chroma class names dynamically, so
    Tailwind can't see them in source — safelist the combinations. */
 @source inline("hue-{blue,purple,pink,red,orange,yellow,green,bluegreen}");
-@source inline("chroma-{lo,mlo,mid,mhi,hi}");
+@source inline("chr-{lo,mlo,mid,mhi,hi}");
 
 /* ── Page chrome ─────────────────────────────────────────────────────────
    A deliberately quiet neutral so the showcased colors carry the page. */
@@ -64,7 +64,6 @@ body {
   /* text + surface helpers keyed to the page-chrome tokens */
   .muted { color: var(--muted); }
   .accent-ink { color: var(--accent); }
-  .hairline { border-color: var(--line); }
   .kbd {
     font-family: var(--font-mono);
     background: var(--chip);
@@ -80,48 +79,75 @@ body {
     padding: 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 550; cursor: pointer;
   }
 
+  /* ── The three-axes playground (the main character) ──────────────────── */
+  .pg { display: grid; gap: 1rem; }
+  @media (min-width: 640px) {
+    .pg { grid-template-columns: 240px 1fr; align-items: stretch; }
+  }
+  .pg-preview {
+    border-radius: 1rem; min-height: 168px;
+    display: flex; flex-direction: column; justify-content: center; gap: 0.35rem;
+    padding: 1.25rem;
+    box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.1);
+  }
+  .pg-preview .t { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.01em; }
+  .pg-preview .v { font-family: var(--font-mono); font-size: 0.8rem; opacity: 0.85; }
+  .pg-controls { display: flex; flex-direction: column; justify-content: center; gap: 0.85rem; }
+  .pg-row { display: grid; grid-template-columns: 6.5rem 1fr; align-items: center; gap: 0.85rem; }
+  .pg-row > label { font-weight: 600; font-size: 0.9rem; }
+  .pg-row > label small { color: var(--muted); font-weight: 500; }
+  .pg-row input[type="range"] { width: 100%; accent-color: var(--accent); }
+  .pg-out {
+    font-family: var(--font-mono); font-size: 0.82rem;
+    background: var(--chip); border: 1px solid var(--line); border-radius: 8px;
+    padding: 0.55rem 0.7rem; overflow-x: auto; white-space: nowrap;
+  }
+  .pg-out b { color: var(--accent); font-weight: 600; }
+
   /* ── The "item" component — owns its luminance; caller passes character ── */
   .card {
-    @apply bg-lc-2 border-lc-3 flex flex-col gap-2 rounded-2xl border p-5;
+    @apply bg-lum-2 border-lum-3 flex flex-col gap-2 rounded-2xl border p-5;
     box-shadow: 0 1px 2px oklch(0 0 0 / 0.04), 0 14px 34px -26px oklch(0 0 0 / 0.35);
   }
   .card-eyebrow {
-    @apply text-lc-6 font-mono text-xs font-semibold uppercase;
+    @apply text-lum-6 font-mono text-xs font-semibold uppercase;
     letter-spacing: 0.13em;
   }
-  .card-title { @apply text-lc-9 text-lg font-bold tracking-tight; }
-  .card-body { @apply text-lc-7 text-sm leading-relaxed; }
-  .card-link { @apply text-lc-6 font-semibold underline underline-offset-2; }
+  .card-title { @apply text-lum-9 text-lg font-bold tracking-tight; }
+  .card-body { @apply text-lum-7 text-sm leading-relaxed; }
+  .card-link { @apply text-lum-6 font-semibold underline underline-offset-2; }
   .card-foot {
-    @apply border-lc-3 mt-1.5 flex items-center justify-between gap-3 border-t pt-3;
+    @apply border-lum-3 mt-1.5 flex items-center justify-between gap-3 border-t pt-3;
   }
-  .card-meta { @apply text-lc-6 inline-flex items-center gap-1.5 text-sm; }
+  .card-meta { @apply text-lum-6 inline-flex items-center gap-1.5 text-sm; }
   .card-btn {
-    @apply bg-lc-6 text-lc-0 rounded-lg px-3.5 py-2 text-sm font-semibold;
+    @apply bg-lum-6 text-lum-0 rounded-lg px-3.5 py-2 text-sm font-semibold;
     transition: background-color 0.15s;
   }
-  .card-btn:hover { @apply bg-lc-up-1; }
+  .card-btn:hover { @apply bg-lum-up-1; }
 
-  /* ── Calibration swatches ───────────────────────────────────────────── */
+  /* ── Calibration swatches (kept compact) ────────────────────────────── */
   .swatch {
-    @apply rounded-lg;
-    min-height: 3.25rem;
+    @apply rounded-md;
+    min-height: 2rem;
     box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.08);
   }
   .dark .swatch { box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.12); }
   .chip-cell {
-    @apply bg-lc-2 flex items-center justify-center rounded-lg;
-    min-height: 3.25rem;
+    @apply bg-lum-2 flex items-center justify-center rounded-md;
+    min-height: 2rem;
     box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.06);
   }
   .dark .chip-cell { box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.1); }
   .grid-head {
-    @apply flex items-center justify-center text-center font-mono text-xs font-semibold;
+    @apply flex items-center justify-center text-center font-mono font-semibold;
+    font-size: 0.66rem;
     color: var(--muted);
   }
   .row-label {
-    @apply flex flex-col items-end justify-center pr-2 text-right leading-tight;
+    @apply flex flex-col items-end justify-center pr-2 text-right;
+    line-height: 1.05;
   }
-  .row-label b { font-size: 0.85rem; }
-  .row-label span { font-family: var(--font-mono); font-size: 0.66rem; color: var(--muted); }
+  .row-label b { font-size: 0.78rem; }
+  .row-label span { font-family: var(--font-mono); font-size: 0.6rem; color: var(--muted); }
 }

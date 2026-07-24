@@ -38,29 +38,100 @@ const semantic = [
       <button id="theme-toggle" class="toggle shrink-0" type="button">☀ Light</button>
     </header>
 
-    <p class="muted mt-5 max-w-[62ch] text-lg leading-relaxed">
-      Compose colors from three independent axes — <b class="accent-ink">luminance</b>,
-      <b class="accent-ink">chroma</b>, and <b class="accent-ink">hue</b> — instead of
-      hand-picking tokens. Each class states one fact about one axis; hue and chroma
-      cascade, so most elements only ever state their luminance. Pure CSS, one
-      <span class="kbd">@import</span>, no plugin.
+    <p class="muted mt-5 max-w-[64ch] text-lg leading-relaxed">
+      Atomic utility classes for OKLCH color. Set a full color, or change one axis
+      at a time — no opacity hacks. Every color is composed from three independent
+      axes, each its own utility class or CSS variable:
+    </p>
+    <ul class="muted mt-3 max-w-[64ch] space-y-1.5 text-[0.98rem] leading-relaxed">
+      <li>
+        <b class="accent-ink">luminance</b> (<span class="kbd">lum</span>) — how far
+        from the page color, on a 0–10 white→black ramp that auto-flips for dark mode
+      </li>
+      <li>
+        <b class="accent-ink">chroma</b> (<span class="kbd">chr</span>) — how saturated
+      </li>
+      <li>
+        <b class="accent-ink">hue</b> (<span class="kbd">hue</span>) — which color
+      </li>
+    </ul>
+    <p class="muted mt-3 max-w-[64ch] text-[0.98rem] leading-relaxed">
+      Hue and chroma <b>cascade</b> down the DOM, so you seed a component's character
+      once near its root and most elements inside only ever state their luminance.
+      Pure CSS, one <span class="kbd">@import</span>, no plugin.
     </p>
 
-    <!-- ── Hero: one item, three characters ──────────────────────────── -->
-    <section class="mt-16">
-      <h2 class="text-xl font-semibold tracking-tight">One item, three characters</h2>
+    <!-- ── The three axes, live ──────────────────────────────────────── -->
+    <section class="mt-14">
+      <h2 class="text-xl font-semibold tracking-tight">Play with the three axes</h2>
       <p class="muted mt-1 max-w-[64ch] text-sm leading-relaxed">
-        Same component, same class skeleton. The interior speaks only luminance
-        (<span class="kbd">text-lc-9</span>, <span class="kbd">bg-lc-6</span>,
-        <span class="kbd">border-lc-3</span>); its character — which hue, how loud —
+        Drag each slider to see what its axis does. The class that would produce this
+        color is shown below — arbitrary values here, but the named stops
+        (<span class="kbd">lum-5</span>, <span class="kbd">chr-mid</span>,
+        <span class="kbd">hue-primary</span>) are just friendly aliases for the same three numbers.
+      </p>
+
+      <div class="pg mt-5">
+        <div class="pg-preview" id="pgPreview">
+          <div class="t" id="pgText">Compose, don't pick.</div>
+          <div class="v" id="pgVal">oklch(…)</div>
+        </div>
+        <div class="pg-controls">
+          <div class="pg-row">
+            <label>Luminance <small id="lLbl">63</small></label>
+            <input type="range" id="sL" min="0" max="100" value="63" />
+          </div>
+          <div class="pg-row">
+            <label>Chroma <small id="cLbl">9</small></label>
+            <input type="range" id="sC" min="0" max="25" value="9" />
+          </div>
+          <div class="pg-row">
+            <label>Hue <small id="hLbl">233</small></label>
+            <input type="range" id="sH" min="0" max="360" value="233" />
+          </div>
+          <div class="pg-out" id="pgOut"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Example: one item component, 3 ways ───────────────────────── -->
+    <section class="mt-16">
+      <h2 class="text-xl font-semibold tracking-tight">
+        Example: one item component, used three ways
+      </h2>
+      <p class="muted mt-1 max-w-[64ch] text-sm leading-relaxed">
+        Just an example of the payoff — the same <span class="kbd">.card</span>, same
+        class skeleton. Its interior speaks only luminance
+        (<span class="kbd">text-lum-9</span>, <span class="kbd">bg-lum-6</span>,
+        <span class="kbd">border-lum-3</span>); its character — which hue, how loud —
         is seeded once on the wrapper with two words and cascades down.
       </p>
 
       <div class="mt-6 grid gap-4 sm:grid-cols-3">
+        <!-- success, bright -->
+        <div class="flex flex-col gap-2">
+          <div class="kbd self-start">hue-success chr-hi</div>
+          <article class="card hue-success chr-hi">
+            <div class="card-eyebrow">Milestone</div>
+            <h3 class="card-title">Practice complete!</h3>
+            <p class="card-body">
+              Every card in “Core 200” came back to you today. Nice work — this deck
+              is on track. <a class="card-link" href="#">Read more ›</a>
+            </p>
+            <div class="card-foot">
+              <span class="card-meta">
+                <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6.3"></circle><line x1="8" y1="7.2" x2="8" y2="11.2"></line><circle cx="8" cy="4.8" r="0.55" fill="currentColor" stroke="none"></circle></svg>
+                100% recall
+              </span>
+              <button class="card-btn" type="button">See summary</button>
+            </div>
+          </article>
+        </div>
+
         <!-- primary, middling -->
         <div class="flex flex-col gap-2">
-          <div class="kbd self-start">hue-primary chroma-mid</div>
-          <article class="card hue-primary chroma-mid">
+          <div class="kbd self-start">hue-primary chr-mid</div>
+          <article class="card hue-primary chr-mid">
             <div class="card-eyebrow">Today</div>
             <h3 class="card-title">Continue your lesson</h3>
             <p class="card-body">
@@ -79,13 +150,13 @@ const semantic = [
 
         <!-- warning, subtle -->
         <div class="flex flex-col gap-2">
-          <div class="kbd self-start">hue-warning chroma-lo</div>
-          <article class="card hue-warning chroma-lo">
+          <div class="kbd self-start">hue-warning chr-lo</div>
+          <article class="card hue-warning chr-lo">
             <div class="card-eyebrow">Heads up</div>
             <h3 class="card-title">Your streak is winding down</h3>
             <p class="card-body">
-              No pressure — a two-minute review before midnight keeps your 18-day run
-              alive. <a class="card-link" href="#">Read more ›</a>
+              Even a few cards is a good time — pop in whenever you have a minute and
+              keep the run alive. <a class="card-link" href="#">Read more ›</a>
             </p>
             <div class="card-foot">
               <span class="card-meta">
@@ -96,34 +167,14 @@ const semantic = [
             </div>
           </article>
         </div>
-
-        <!-- success, bright -->
-        <div class="flex flex-col gap-2">
-          <div class="kbd self-start">hue-success chroma-hi</div>
-          <article class="card hue-success chroma-hi">
-            <div class="card-eyebrow">Milestone</div>
-            <h3 class="card-title">Deck mastered!</h3>
-            <p class="card-body">
-              Every card in “Core 200” hit full recall. This one’s graduated from your
-              daily queue. <a class="card-link" href="#">Read more ›</a>
-            </p>
-            <div class="card-foot">
-              <span class="card-meta">
-                <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6.3"></circle><line x1="8" y1="7.2" x2="8" y2="11.2"></line><circle cx="8" cy="4.8" r="0.55" fill="currentColor" stroke="none"></circle></svg>
-                100% recall
-              </span>
-              <button class="card-btn" type="button">See summary</button>
-            </div>
-          </article>
-        </div>
       </div>
 
       <p class="muted mt-4 max-w-[64ch] text-sm leading-relaxed">
-        The <span class="kbd">card</span> component bakes in <span class="kbd">bg-lc-2</span>
-        and <span class="kbd">border-lc-3</span>; the three articles differ only by their
-        two seeder words. Toggle the theme — every <span class="kbd">lc</span> value
-        inverts while keeping its relationship to the page. No <span class="kbd">dark:</span>
-        classes anywhere.
+        The <span class="kbd">card</span> bakes in <span class="kbd">bg-lum-2</span> and
+        <span class="kbd">border-lum-3</span>; the three articles differ only by their
+        two seeder words. Toggle the theme — every <span class="kbd">lum</span> value
+        inverts while keeping its relationship to the page. No
+        <span class="kbd">dark:</span> classes anywhere.
       </p>
     </section>
 
@@ -131,30 +182,30 @@ const semantic = [
     <section class="mt-16">
       <h2 class="text-xl font-semibold tracking-tight">Per-hue chroma</h2>
       <p class="muted mt-1 max-w-[68ch] text-sm leading-relaxed">
-        Hues don't reach perceived saturation at the same chroma — blue looks vivid at a
-        low chroma, yellow needs much more. So each hue carries a
-        <span class="kbd">--cscale-*</span> multiplier, and every color resolves its chroma
-        as <span class="kbd">calc(base × scale)</span>. A given chroma stop then looks about
-        equally saturated all the way around the wheel. The rows below are raw colors;
-        the library maps semantic tokens onto angles like these.
+        Hues don't reach perceived saturation at the same chroma — blue looks vivid at
+        a low chroma, yellow needs much more. So each hue carries a
+        <span class="kbd">--cscale-*</span> multiplier and resolves chroma as
+        <span class="kbd">calc(base × scale)</span>, so a stop looks about equally
+        saturated all the way around the wheel. (Raw colors below; the library maps
+        semantic tokens onto angles like these.)
       </p>
 
-      <h3 class="muted mt-8 font-mono text-xs font-semibold tracking-wide uppercase">
-        Mid-luminance fills — bg-lc-5
+      <h3 class="muted mt-6 font-mono text-[0.7rem] font-semibold tracking-wide uppercase">
+        Mid-luminance fills — bg-lum-5
       </h3>
-      <div class="mt-3 overflow-x-auto">
-        <div class="grid min-w-[560px] grid-cols-[6rem_repeat(5,minmax(0,1fr))] gap-1.5">
+      <div class="mt-2 overflow-x-auto">
+        <div class="grid min-w-[520px] grid-cols-[6.5rem_repeat(5,minmax(0,1fr))] gap-1">
           <div></div>
-          {stops.map((s) => <div class="grid-head">chroma-{s}</div>)}
+          {stops.map((s) => <div class="grid-head">chr-{s}</div>)}
           {
             wheel.map((w) => (
               <Fragment>
                 <div class="row-label">
                   <b>{w.name}</b>
-                  <span>{w.deg}° · ×{w.cs}</span>
+                  <span>{w.deg}° ×{w.cs}</span>
                 </div>
                 {stops.map((s) => (
-                  <div class={`swatch hue-${w.name} chroma-${s} bg-lc-5`} />
+                  <div class={`swatch hue-${w.name} chr-${s} bg-lum-5`} />
                 ))}
               </Fragment>
             ))
@@ -162,23 +213,23 @@ const semantic = [
         </div>
       </div>
 
-      <h3 class="muted mt-8 font-mono text-xs font-semibold tracking-wide uppercase">
-        As a surface — bg-lc-2 with text-lc-8
+      <h3 class="muted mt-6 font-mono text-[0.7rem] font-semibold tracking-wide uppercase">
+        As a surface — bg-lum-2 with text-lum-8
       </h3>
-      <div class="mt-3 overflow-x-auto">
-        <div class="grid min-w-[560px] grid-cols-[6rem_repeat(5,minmax(0,1fr))] gap-1.5">
+      <div class="mt-2 overflow-x-auto">
+        <div class="grid min-w-[520px] grid-cols-[6.5rem_repeat(5,minmax(0,1fr))] gap-1">
           <div></div>
-          {stops.map((s) => <div class="grid-head">chroma-{s}</div>)}
+          {stops.map((s) => <div class="grid-head">chr-{s}</div>)}
           {
             wheel.map((w) => (
               <Fragment>
                 <div class="row-label">
                   <b>{w.name}</b>
-                  <span>{w.deg}° · ×{w.cs}</span>
+                  <span>{w.deg}° ×{w.cs}</span>
                 </div>
                 {stops.map((s) => (
-                  <div class={`chip-cell hue-${w.name} chroma-${s} bg-lc-2`}>
-                    <span class="text-lc-8 font-semibold">Aa gv 24</span>
+                  <div class={`chip-cell hue-${w.name} chr-${s} bg-lum-2`}>
+                    <span class="text-lum-8 text-xs font-semibold">Aa 24</span>
                   </div>
                 ))}
               </Fragment>
@@ -187,15 +238,7 @@ const semantic = [
         </div>
       </div>
 
-      <h3 class="muted mt-10 font-mono text-xs font-semibold tracking-wide uppercase">
-        The library's semantic hues
-      </h3>
-      <p class="muted mt-1 max-w-[64ch] text-sm leading-relaxed">
-        Read off the wheel by angle. These are the multipliers baked into
-        <span class="kbd">index.css</span> — override any <span class="kbd">--cscale-*</span>
-        in a <span class="kbd">@theme</span> block to retune.
-      </p>
-      <div class="mt-3 flex flex-wrap gap-2">
+      <div class="mt-5 flex flex-wrap gap-2">
         {
           semantic.map((h) => (
             <span class="kbd">
@@ -206,4 +249,37 @@ const semantic = [
       </div>
     </section>
   </main>
+
+  <script is:inline>
+    (function () {
+      var sL = document.getElementById("sL");
+      var sC = document.getElementById("sC");
+      var sH = document.getElementById("sH");
+      if (!sL) return;
+      var pv = document.getElementById("pgPreview");
+      var txt = document.getElementById("pgText");
+      var val = document.getElementById("pgVal");
+      var out = document.getElementById("pgOut");
+      var lLbl = document.getElementById("lLbl");
+      var cLbl = document.getElementById("cLbl");
+      var hLbl = document.getElementById("hLbl");
+      function upd() {
+        var L = +sL.value, C = +sC.value, H = +sH.value;
+        var l = (L / 100).toFixed(3), c = (C / 100).toFixed(3);
+        var bg = "oklch(" + l + " " + c + " " + H + ")";
+        pv.style.background = bg;
+        var ink = L > 55 ? "oklch(0.18 " + c + " " + H + ")" : "oklch(0.98 " + c + " " + H + ")";
+        txt.style.color = ink;
+        val.style.color = ink;
+        val.textContent = bg;
+        lLbl.textContent = L;
+        cLbl.textContent = C;
+        hLbl.textContent = H;
+        out.innerHTML =
+          "bg-lum-<b>[" + L + "]</b> bg-chr-<b>[" + C + "]</b> bg-hue-<b>[" + H + "]</b>";
+      }
+      [sL, sC, sH].forEach(function (s) { s.addEventListener("input", upd); });
+      upd();
+    })();
+  </script>
 </Layout>

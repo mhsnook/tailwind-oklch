@@ -14,18 +14,18 @@ read the current `--bg-l` value and apply `calc()` offsets — without modifying
 A hover state on a surface should "move away from the surface" — which means +L
 in dark mode, -L in light mode.
 
-Solution: a `--lc-dir` multiplier:
+Solution: a `--lum-dir` multiplier:
 
 ```css
-:root       { --lc-dir: -1; }   /* light mode: away from surface = decrease L */
-:root.dark  { --lc-dir:  1; }   /* dark mode:  away from surface = increase L */
+:root       { --lum-dir: -1; }   /* light mode: away from surface = decrease L */
+:root.dark  { --lum-dir:  1; }   /* dark mode:  away from surface = increase L */
 ```
 
 Then a utility like `bg-emphasis-1` computes:
 
 ```css
 background-color: oklch(
-  calc(var(--bg-l) + var(--lc-dir) * 0.08)
+  calc(var(--bg-l) + var(--lum-dir) * 0.08)
   var(--bg-c)
   var(--bg-h)
 );
@@ -51,11 +51,11 @@ No cascade inheritance of the offset — purely local to the element.
 
 ### Naming note
 
-The luminance contrast scale uses the `lc-` prefix (e.g., `bg-lc-5`) and is a
+The luminance contrast scale uses the `lum-` prefix (e.g., `bg-lum-5`) and is a
 plain white→black ramp from `0` to `10` that auto-flips in dark mode:
-- `lc-0` = pure white (light) / pure black (dark) — the page-ward extreme
-- `lc-1` = blends with the page (lightest usable surface)
-- `lc-10` = pure black (light) / pure white (dark) — maximum foreground contrast
+- `lum-0` = pure white (light) / pure black (dark) — the page-ward extreme
+- `lum-1` = blends with the page (lightest usable surface)
+- `lum-10` = pure black (light) / pure white (dark) — maximum foreground contrast
 
 As of 0.7 there are no `none`/`base`/`fore`/`full` aliases; `0` and `10` are the
 pure extremes and the numbers cover everything between.
@@ -69,7 +69,7 @@ background luminance to guarantee a specific contrast level. The developer
 never picks a text luminance — they pick a contrast *intent*:
 
 ```html
-<div class="bg-lc-2 bg-chroma-mid bg-hue-primary">
+<div class="bg-lum-2 bg-chr-mid bg-hue-primary">
   <p class="text-contrast-md">Always readable against this background</p>
   <span class="text-contrast-xs">Subtle, muted caption</span>
 </div>
@@ -107,10 +107,10 @@ direction of maximum contrast:
 
 ```css
 @utility text-contrast-md {
-  --tx-l: clamp(0, calc(var(--bg-l) + var(--lc-dir) * 0.50), 1);
+  --tx-l: clamp(0, calc(var(--bg-l) + var(--lum-dir) * 0.50), 1);
   color: oklch(var(--tx-l) var(--tx-c) var(--tx-h));
 }
 ```
 
-The `--lc-dir` variable ensures the offset always moves toward the
+The `--lum-dir` variable ensures the offset always moves toward the
 contrasting end regardless of light/dark mode.

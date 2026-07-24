@@ -22,28 +22,29 @@ further churn.
 - **Shorthand utilities** (`{prop}-{L}-{C}` and `{prop}-{L}-{C}-{H}`, e.g.
   `bg-3-mhi`, `bg-3-mhi-accent`). They re-pinned all three axes on every leaf,
   working against the cascade. Split them into axes and hoist hue/chroma to a
-  `hue-*` / `chroma-*` seeder.
+  `hue-*` / `chr-*` seeder.
 - **The `none` / `base` / `fore` / `full` luminance aliases.** The scale is just
   `0`–`10`, with `0`/`10` as the pure extremes. Replace `base` → `1`,
   `fore` → `9`/`10`, `none` → `0`, `full` → `10`.
 
 ### Changed
 
-- **Renamed per-property axis setters** for clarity: `{prop}-c-*` → `{prop}-chroma-*`
-  and `{prop}-h-*` → `{prop}-hue-*` (e.g. `bg-c-mid` → `bg-chroma-mid`,
-  `text-h-info` → `text-hue-info`). The global seeders `hue-*` and `chroma-*`
-  are unchanged.
-- **Luminance scale reindexed to a plain white→black ramp.** `lc-0` is now pure
+- **Renamed the axis prefixes to `lum` / `chr` / `hue`** for readability now that
+  all three axes are first-class: `{prop}-lc-*` → `{prop}-lum-*`,
+  `{prop}-c-*` → `{prop}-chr-*`, `{prop}-h-*` → `{prop}-hue-*` (e.g. `bg-lc-5` →
+  `bg-lum-5`, `bg-c-mid` → `bg-chr-mid`, `text-h-info` → `text-hue-info`). The
+  global seeders are `hue-*` and `chr-*`.
+- **Luminance scale reindexed to a plain white→black ramp.** `lum-0` is now pure
   white (light) / pure black (dark) — the page-ward extreme — instead of the old
-  near-page 0.95. Everyday surfaces shift down: a near-page background is `lc-1`,
-  a card `lc-2`. The low end is finely graded (0→1→2 are small steps) and opens
+  near-page 0.95. Everyday surfaces shift down: a near-page background is `lum-1`,
+  a card `lum-2`. The low end is finely graded (0→1→2 are small steps) and opens
   up toward the dark end, matching where the eye is sensitive.
 - README and docs rewritten around the character-vs-emphasis model.
 
 ### Added
 
 - **Per-hue chroma normalization.** Each hue carries a `--cscale-*` multiplier and
-  every color resolves chroma as `calc(base × scale)`, so a given `chroma-*` stop
+  every color resolves chroma as `calc(base × scale)`, so a given `chr-*` stop
   looks about equally saturated across hues (blue no longer reads hotter than
   green). Override `--cscale-*` in `@theme` to retune.
 - `scripts/gen-index.js` generates `index.css`, keeping every painting utility's
