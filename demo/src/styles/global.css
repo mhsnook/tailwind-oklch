@@ -119,9 +119,9 @@ body {
   .card-foot {
     @apply border-lum-3 mt-1.5 flex items-center justify-between gap-3 border-t pt-3;
   }
-  .card-meta { @apply text-lum-6 inline-flex items-center gap-1.5 text-sm; }
+  .card-meta { @apply text-lum-6 inline-flex items-center gap-1.5 whitespace-nowrap text-sm; }
   .card-btn {
-    @apply bg-lum-6 text-lum-0 rounded-lg px-3.5 py-2 text-sm font-semibold;
+    @apply bg-lum-6 text-lum-0 shrink-0 rounded-lg px-3.5 py-2 text-sm font-semibold whitespace-nowrap;
     transition: background-color 0.15s;
   }
   .card-btn:hover { @apply bg-lum-up-1; }
