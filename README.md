@@ -1,358 +1,272 @@
 # tailwind-oklch
 
-An okLCH color composition system for Tailwind CSS. Uses independent CSS variables for **luminance**, **chroma**, and **hue**, so you can use atomic utility classes to
-modify just the luminance for emphasis (with no opacity hacks), just the chroma for decoration, just the hue
-for theme or semantic meanings.
+A cascade-first OKLCH color system for Tailwind CSS v4. Pure CSS, no JavaScript
+plugin. Instead of hand-picking hundreds of static color tokens, you **compose**
+colors from three independent axes — **luminance contrast**, **chroma**, and
+**hue** — and let two of them flow down the DOM tree so most elements only ever
+state one thing about themselves.
 
 _Note: This is a working concept; it's not really in production anywhere; YMMV._
 
-## Why okLCH?
+## The idea in one sentence
 
-**okLCH** (Lightness, Chroma, Hue) is a perceptually uniform color space. Unlike HSL, colors at the same lightness and chroma look equally bright regardless of hue. This makes it possible to build systematic, predictable color palettes from simple numeric scales instead of hand-picking individual hex values.
+**Each class states one fact about one axis.** Hue and chroma are a component's
+_character_ — you set them once, near the root, and they cascade. Luminance is
+_emphasis_ — you set it per element, constantly. So a component says "I'm
+success-flavored and quiet" at the top, and its interior just says "this part is
+subtle, this part stands out, this border is faint."
 
-`tailwind-oklch` takes this further: instead of defining dozens of static color tokens, you compose colors on the fly from three axes. CSS custom property inheritance means a parent can set a hue and children automatically share it — override just the axis you need.
-
-## Installation
-
-```bash
-pnpm add tailwind-oklch
+```html
+<!-- "generally success-colored, generally low-key" — declared once… -->
+<div class="hue-success chroma-mlo">
+  <!-- …then everything inside speaks only luminance -->
+  <div class="bg-lc-1">
+    <span class="text-lc-8">Saved to your deck</span>
+    <hr class="border-lc-3" />
+  </div>
+</div>
 ```
 
-## Setup
+Change `hue-success` to `hue-danger` and the whole subtree re-colors — no other
+edits. The interior markup is _portable_: it carries emphasis, and inherits its
+character from wherever you drop it.
 
-In your main CSS file, import both the core CSS and the shorthand plugin:
+## Why OKLCH?
+
+**OKLCH** (Lightness, Chroma, Hue) is a perceptually uniform color space. Unlike
+HSL, colors at the same lightness and chroma look equally bright regardless of
+hue. That's what makes composing on the fly work: a single numeric luminance
+scale reads consistently across every hue, so you can build systematic,
+predictable palettes from three simple axes instead of a wall of hex values.
+
+CSS custom property inheritance does the rest — a parent sets an axis, children
+share it automatically, and you override just the axis you need.
+
+## Install
 
 ```css
 @import "tailwindcss";
 @import "tailwind-oklch";
-@plugin "tailwind-oklch/plugin";
 ```
 
-## Core Concepts
+That's the whole setup. No `@plugin`, no build step, no JS.
 
-### The Three Axes
+Dark mode activates when the root element has the `.dark` class. Wire it to your
+theme toggle however you like; if you use a custom variant, declare it alongside
+the imports:
 
-Every color is built from three independent pieces:
+```css
+@custom-variant dark (&:is(.dark, .dark *));
+```
 
-| Axis | What it controls | Example values |
-|---|---|---|
-| **Luminance Contrast (LC)** | How far from the page color, on a 0–10 scale | `0`–`10`, `base`, `fore` |
-| **Chroma (C)** | Colorfulness / saturation | `lo`, `mlo`, `mid`, `mhi`, `hi` |
-| **Hue (H)** | Color identity | `primary`, `accent`, `success`, `warning`, `danger`, `info`, `neutral` |
+## The two kinds of class
 
-### Luminance Contrast Scale
+**Cascade seeders** set an axis for _everything below them_ and apply no color
+of their own. Put them near a component's root:
 
-The 0–10 scale measures contrast with the page — not absolute lightness:
+| Seeder      | Sets for all descendants            |
+| ----------- | ----------------------------------- |
+| `hue-*`     | hue (`hue-primary`, `hue-danger`, …) |
+| `chroma-*`  | chroma (`chroma-lo`, `chroma-hi`, …) |
 
-- **0 / `base`** = close to the page color (blends in)
-- **10 / `fore`** = high contrast with the page (stands out, like text)
-- **1–9** = evenly distributed between those endpoints
-
-This means `bg-lc-3` is always "3 steps from the page" — a subtle, low-contrast element in either light or dark mode.
-
-### CSS Cascade Inheritance
-
-Every utility both **sets its axis variable** and **applies the resolved `oklch()` color**. Sensible defaults are provided at `:root`, so a single class like `bg-lc-5` immediately produces a visible color. Variables inherit down the DOM, so a parent's hue automatically flows to children.
-
-## Usage
-
-### Decomposed Utilities (single-axis control)
-
-Set one axis at a time. The other two axes inherit from the parent or the root defaults.
-
-| Pattern | Sets | Example |
-|---|---|---|
-| `bg-lc-{L}` | background luminance contrast | `bg-lc-5`, `bg-lc-base`, `bg-lc-fore` |
-| `bg-c-{C}` | background chroma | `bg-c-lo`, `bg-c-mid`, `bg-c-hi` |
-| `bg-h-{H}` | background hue | `bg-h-primary`, `bg-h-accent`, `bg-h-danger` |
-| `text-lc-{L}` | text luminance contrast | `text-lc-fore`, `text-lc-8` |
-| `text-c-{C}` | text chroma | `text-c-mid` |
-| `text-h-{H}` | text hue | `text-h-accent` |
-| `border-lc-{L}` | border luminance contrast | `border-lc-3` |
-| `border-c-{C}` | border chroma | `border-c-mlo` |
-| `border-h-{H}` | border hue | `border-h-neutral` |
-
-The same pattern applies to `border-b-*` (border-bottom), `accent-*`, `from-*` (gradient from), `to-*` (gradient to), and `shadow-*`.
-
-### Global Hue and Chroma
-
-Most of the time, every color property on an element shares the same hue — the differences are in lightness and chroma. The `hue-*` utility sets the hue for **all** color properties at once:
+**Per-property setters** apply exactly one CSS property from one axis. Luminance
+is the one you set constantly; chroma and hue inherit from a seeder (or the
+`:root` default) unless you set them explicitly:
 
 ```html
-<!-- Set hue once, vary L and C per property -->
-<div class="hue-danger bg-1-mid text-10-lo border-3-mhi">
-  <button class="bg-5-mhi text-0-lo">Acknowledge</button>
-  <button class="bg-5-mhi text-10-lo">Cancel</button>
+<span class="bg-lc-1 bg-chroma-mlo bg-hue-primary">all three explicit</span>
+<span class="text-lc-6 text-chroma-hi text-hue-info">…</span>
+<span class="hover:bg-lc-2">luminance only; chroma + hue inherited</span>
+```
+
+Because `:root` already seeds `hue-primary` + low chroma, a brand-colored
+surface often needs only `bg-lc-1`.
+
+## One item, three characters
+
+The payoff: the same interior markup, restyled entirely by the seeder above it.
+Only the wrapper's two classes change — the `bg-lc-*`, `text-lc-*`,
+`border-lc-*` inside are byte-for-byte identical.
+
+```html
+<!-- Primary, middling weight -->
+<article class="hue-primary chroma-mid item">…</article>
+
+<!-- Warning, subtle -->
+<article class="hue-warning chroma-lo item">…</article>
+
+<!-- Success, bright and shiny -->
+<article class="hue-success chroma-hi item">…</article>
+```
+
+```html
+<!-- the shared interior, written once, reused verbatim under each seeder -->
+<article class="… bg-lc-1 border-lc-3 rounded-lg border p-4">
+  <h3 class="text-lc-9">Title</h3>
+  <p class="text-lc-7">Body copy that inherits its hue and chroma.</p>
+  <button class="bg-lc-4 text-lc-0 hover:bg-lc-up-1">Action</button>
+</article>
+```
+
+The component author writes emphasis; the caller decides the color and how loud
+it is.
+
+## Luminance contrast scale (`lc`)
+
+`{prop}-lc-{0–10 | base | fore | none | full}`. The scale measures contrast with
+the page — not absolute lightness — and auto-flips between light and dark mode,
+so you almost never write `dark:`.
+
+| Value         | Light mode        | Dark mode         | Meaning          |
+| ------------- | ----------------- | ----------------- | ---------------- |
+| `0` / `base`  | 0.95 (near white) | 0.12 (near black) | Blends with page |
+| `1`           | 0.91              | 0.20              | Subtle tint      |
+| `5`           | 0.63              | 0.52              | Mid-contrast     |
+| `7`           | 0.44              | 0.68              | Prominent        |
+| `10` / `fore` | 0.15 (near black) | 0.92 (near white) | Maximum contrast |
+| `none`        | 1.0 (white)       | 0.0 (black)       | Beyond base      |
+| `full`        | 0.0 (black)       | 1.0 (white)       | Beyond fore      |
+
+`bg-lc-3` is always "3 steps from the page" — a subtle, low-contrast element in
+either mode. Light mode uses a power curve (p≈1.3) so steps near the near-white
+base are smaller, where the eye is most sensitive; dark mode stays linear.
+
+## Chroma stops (`chroma`)
+
+`{prop}-chroma-{lo | mlo | mid | mhi | hi}`, or the seeder `chroma-{…}`:
+
+| Name  | Value | Use for                            |
+| ----- | ----- | ---------------------------------- |
+| `lo`  | 0.02  | Backgrounds, muted surfaces        |
+| `mlo` | 0.06  | Tinted backgrounds, subtle borders |
+| `mid` | 0.12  | Medium saturation                  |
+| `mhi` | 0.18  | Prominent accents                  |
+| `hi`  | 0.25  | Vivid, saturated colors            |
+
+## Hues (`hue`)
+
+`{prop}-hue-{…}`, or the seeder `hue-{…}`:
+
+| Name      | Default | Color         |
+| --------- | ------- | ------------- |
+| `primary` | 233     | blue/indigo   |
+| `accent`  | 350     | red/pink      |
+| `success` | 145     | green         |
+| `warning` | 55      | yellow        |
+| `danger`  | 15      | orange-red    |
+| `info`    | 220     | blue          |
+| `neutral` | 260     | purple-gray   |
+
+## Per-property setters
+
+Every property carries the full trio (`lc` / `chroma` / `hue`). Set only the axes
+that differ from what's inherited.
+
+| Prefix     | CSS property           | Setters                                          |
+| ---------- | ---------------------- | ------------------------------------------------ |
+| `bg`       | `background-color`     | `bg-lc-*` · `bg-chroma-*` · `bg-hue-*`           |
+| `text`     | `color`                | `text-lc-*` · `text-chroma-*` · `text-hue-*`     |
+| `border`   | `border-color`         | `border-lc-*` · `border-chroma-*` · `border-hue-*` |
+| `border-b` | `border-bottom-color`  | `border-b-lc-*` · `border-b-chroma-*` · `border-b-hue-*` |
+| `accent`   | `accent-color`         | `accent-lc-*` · `accent-chroma-*` · `accent-hue-*` |
+| `shadow`   | shadow color           | `shadow-lc-*` · `shadow-chroma-*` · `shadow-hue-*` |
+| `from`     | gradient from          | `from-lc-*` · `from-chroma-*` · `from-hue-*`     |
+| `to`       | gradient to            | `to-lc-*` · `to-chroma-*` · `to-hue-*`           |
+
+All setters work with standard Tailwind modifiers (`hover:`, `focus:`, `md:`, …).
+
+## Relative luminance adjustments
+
+Nudge off the _inherited/current_ luminance without rewriting it — ideal for
+hover/active states, and it doesn't cascade to children.
+
+```html
+<div class="bg-lc-1">
+  <button class="hover:bg-lc-up-1">one step more contrast on hover</button>
+  <span class="text-lc-7 group-hover:text-lc-down-1">one step less</span>
 </div>
 ```
 
-`chroma-*` does the same for chroma:
+`{prop}-lc-up-{1–5}` / `{prop}-lc-down-{1–5}` (bg and text). "Up" always means
+more contrast with the page, "down" less — direction adapts to light/dark
+automatically. Adjustments **don't compound**: a grandchild's `lc-up-1` nudges
+from the nearest ancestor's _set_ luminance, not a parent's already-nudged value.
+
+## Arbitrary values
+
+All three axes accept Tailwind's bracket syntax, on every setter and both
+seeders.
 
 ```html
-<!-- Everything low-chroma -->
-<div class="hue-primary chroma-lo bg-lc-1 text-lc-fore border-lc-3">
+<!-- Hue: any degree 0–360 -->
+<div class="hue-[180] bg-lc-3">Teal subtree</div>
+<div class="bg-hue-[280] text-hue-[40]">Purple bg, orange text</div>
+
+<!-- Chroma: integer 0–100, mapped to OKLCH 0.00–1.00 (practical range ~0–25) -->
+<div class="chroma-[8] bg-lc-3">Everything at chroma 0.08</div>
+<div class="bg-chroma-[15]">Background chroma 0.15</div>
+
+<!-- Luminance: integer 0–100, auto-flips in dark mode (reflected around 0.50) -->
+<div class="bg-lc-[70]">Light: L=0.70 · Dark: L=0.30</div>
 ```
 
-Per-property utilities (`bg-h-*`, `text-c-*`, etc.) still work as overrides when you need one property to differ.
-
-### Shorthand Utilities
-
-The plugin generates shorthands for common combinations:
-
-**Two-axis: `{property}-{L}-{C}`** — sets luminance and chroma, inherits hue from the cascade (set by `hue-*` or `:root` default):
+## Gradients
 
 ```html
-<div class="hue-accent bg-3-mhi text-10-lo border-2-mid">
-```
-
-**Three-axis: `{property}-{L}-{C}-{H}`** — sets all three axes explicitly in a single class:
-
-```html
-<div class="bg-3-mhi-accent text-fore-lo-neutral border-5-mid-primary">
-```
-
-Available properties: `bg`, `text`, `border`, `border-b`, `accent`, `from`, `to`.
-
-### Combining Decomposed and Shorthand
-
-The real power comes from combining both. Set a full color on a parent, then override a single axis on children:
-
-```html
-<!-- Parent sets the full color context -->
-<div class="bg-3-mhi-accent text-fore-lo-accent">
-
-  <!-- Child lightens only the background on hover -->
-  <button class="hover:bg-lc-6">Lighter on hover</button>
-
-  <!-- Child drops to page-level luminance, inherits chroma + hue -->
-  <footer class="bg-lc-base">Same accent hue, page-level brightness</footer>
-
-  <!-- Child switches to a different hue, keeps luminance + chroma -->
-  <aside class="bg-h-success">Success-colored sidebar</aside>
-</div>
-```
-
-### Using with Tailwind Modifiers
-
-All utilities work with standard Tailwind modifiers:
-
-```html
-<button class="bg-3-mid-primary hover:bg-lc-5 focus:bg-lc-6">
-  Hover and focus states
-</button>
-
-<div class="bg-lc-base dark:bg-lc-1">
-  Responsive to color scheme
+<div class="bg-linear-to-r from-lc-3 to-lc-7">
+  Same hue + chroma from the cascade, luminance ramps across
 </div>
 
-<input class="border-lc-3 focus:border-c-mid focus:border-h-primary">
-  Border chroma increases on focus
-</input>
-```
-
-### Relative Luminance Offsets
-
-Sometimes you don't want to set an absolute luminance — you want to nudge it relative to the inherited value. The `lc-up` and `lc-down` utilities shift luminance **toward more contrast** or **toward less contrast** without replacing the underlying `--bg-l` or `--tx-l` variable. This means children still inherit the original value.
-
-- **`lc-up-{N}`** — increase contrast (move away from the page color)
-- **`lc-down-{N}`** — decrease contrast (move toward the page color)
-
-Where `{N}` is 1–5, with each step equal to ~0.08 OKLCH lightness (roughly one position on the 0–10 scale).
-
-Available for `bg` and `text`:
-
-| Pattern | Effect |
-|---|---|
-| `bg-lc-up-{N}` | Background becomes more contrasting |
-| `bg-lc-down-{N}` | Background becomes less contrasting |
-| `text-lc-up-{N}` | Text becomes more contrasting |
-| `text-lc-down-{N}` | Text becomes less contrasting |
-
-The direction automatically adapts to light/dark mode — "up" always means more contrast with the page, "down" always means less, regardless of whether luminance values are increasing or decreasing.
-
-```html
-<!-- A card with a hover state one step brighter/darker than the parent -->
-<div class="bg-3-mlo-primary">
-  <button class="hover:bg-lc-up-1">Slightly more contrast on hover</button>
-  <span class="bg-lc-down-2">Subtler background, closer to page</span>
-</div>
-
-<!-- Muted secondary text that's two steps less contrasting than default -->
-<p class="text-fore-lo-neutral">
-  Primary text
-  <span class="text-lc-down-2">Secondary text</span>
-</p>
-```
-
-### Arbitrary Values
-
-All three axes support arbitrary values using Tailwind's bracket syntax. This gives you fine-grained control beyond the named stops.
-
-**Hue** — any degree value (0–360):
-
-```html
-<div class="hue-[180] bg-3-mid">Teal background</div>
-<div class="bg-h-[280] text-h-[40]">Purple bg, orange text</div>
-```
-
-**Chroma** — integer 0–100, mapped to OKLCH 0.00–1.00 (practical range is roughly 0–25):
-
-```html
-<div class="chroma-[8] bg-lc-3">All properties at chroma 0.08</div>
-<div class="bg-c-[15]">Background chroma 0.15</div>
-```
-
-**Luminance** — integer 0–100, with automatic light/dark mode flip:
-
-```html
-<div class="bg-lc-[60]">
-  Light mode: L=0.60 · Dark mode: L=0.40
-</div>
-```
-
-Arbitrary luminance values automatically invert in dark mode (reflected around 0.50), so `bg-lc-[70]` renders as 0.70 in light mode and 0.30 in dark mode — always maintaining the same relationship to the page.
-
-Available for all property prefixes (`bg-`, `text-`, `border-`, etc.), global setters (`hue-`, `chroma-`), and gradients (`from-`, `to-`).
-
-### Gradients
-
-```html
-<div class="bg-gradient-to-r from-3-mid-primary to-3-mid-accent">
-  Gradient from primary to accent
-</div>
-
-<!-- Or decomposed: override just the hue on the "to" end -->
-<div class="bg-gradient-to-r from-3-mid-primary to-h-accent">
-  Same luminance and chroma, different hue
+<!-- Override just the hue on the "to" end -->
+<div class="bg-linear-to-r from-lc-3 to-lc-3 to-hue-accent">
+  Primary → accent, matched luminance and chroma
 </div>
 ```
 
 ## Customization
 
-### Custom Hues
-
-Override the default hue values in a `@theme` block:
+Override any of the defaults in a `@theme` block.
 
 ```css
 @theme {
+  /* Re-theme the whole app */
   --hue-primary: 180;   /* teal */
   --hue-accent: 320;    /* pink */
+
+  /* Shift the luminance-contrast endpoints */
+  --lc-range-start: 0.95;   /* base (0) */
+  --lc-range-end: 0.15;     /* fore (10) */
 }
 ```
 
-Default hue values:
-
-| Name | Default | Color |
-|---|---|---|
-| `primary` | 233 | blue/indigo |
-| `accent` | 350 | red/pink |
-| `success` | 145 | green |
-| `warning` | 55 | yellow |
-| `danger` | 15 | orange-red |
-| `info` | 220 | blue |
-| `neutral` | 260 | purple-gray |
-
-### Custom Luminance Contrast Range
-
-Shift the overall luminance contrast endpoints:
-
-```css
-@theme {
-  --lc-range-start: 0.15;   /* base (0) is darker in dark mode */
-  --lc-range-end: 0.95;     /* fore (10) is brighter in dark mode */
-}
-```
-
-### Runtime Theming
-
-Because everything is driven by CSS custom properties, you can re-theme the entire app at runtime:
+Because everything is driven by CSS custom properties, you can also re-theme at
+runtime — set `--hue-primary` (or any axis variable) inline on a subtree and
+every descendant that resolves through it updates:
 
 ```js
-// Switch the primary hue to teal
 document.documentElement.style.setProperty('--hue-primary', '180');
 ```
 
-## Reference
+This is how per-section or per-user theming works: an inline `--hue-*` override
+flows through the same variables the utilities read, so seeders and setters keep
+composing on top of it.
 
-### Luminance Contrast Scale
+## Migrating from 0.6.x
 
-| Stop | Light Mode | Dark Mode |
-|---|---|---|
-| `0` / `base` | 0.95 | 0.12 |
-| `1` | 0.91 | 0.20 |
-| `2` | 0.85 | 0.28 |
-| `3` | 0.78 | 0.36 |
-| `4` | 0.71 | 0.44 |
-| `5` | 0.63 | 0.52 |
-| `6` | 0.54 | 0.60 |
-| `7` | 0.44 | 0.68 |
-| `8` | 0.34 | 0.76 |
-| `9` | 0.23 | 0.84 |
-| `10` / `fore` | 0.15 | 0.92 |
+0.7 drops the JavaScript plugin and the shorthand columns in favor of the pure
+single-axis API. The changes:
 
-Light mode uses a power curve (p≈1.3) so steps near the high-luminance
-base are smaller — small luminance differences are very perceptible
-against a near-white surface, so `lc-1` needs a gentler delta than the
-linear 0.08 would give. Dark mode stays linear.
-
-### Named Chroma Stops
-
-| Name | Value | Description |
-|---|---|---|
-| `lo` | 0.02 | Near-neutral, subtle tint |
-| `mlo` | 0.06 | Low saturation |
-| `mid` | 0.12 | Medium saturation |
-| `mhi` | 0.18 | Vivid |
-| `hi` | 0.25 | Maximum saturation |
-
-For finer control, use arbitrary chroma values (see [Arbitrary Values](#arbitrary-values) below).
-
-### LC Adjustment Steps
-
-Used by the relative luminance offset utilities (`bg-lc-up-*`, `bg-lc-down-*`, etc.):
-
-| Step | OKLCH L offset | Approximate scale positions |
-|---|---|---|
-| `1` | 0.08 | ~1 step |
-| `2` | 0.16 | ~2 steps |
-| `3` | 0.24 | ~3 steps |
-| `4` | 0.32 | ~4 steps |
-| `5` | 0.40 | ~5 steps |
-
-Override in a `@theme` block:
-
-```css
-@theme {
-  --lc-adj-1: 0.06;   /* smaller steps */
-  --lc-adj-2: 0.12;
-}
-```
-
-### Supported Properties
-
-**Global context setters** (set all properties at once):
-
-| Utility | Sets |
-|---|---|
-| `hue-{H}` | Hue for all properties (`--bg-h`, `--tx-h`, `--bd-h`, etc.) |
-| `chroma-{C}` | Chroma for all properties (`--bg-c`, `--tx-c`, `--bd-c`, etc.) |
-
-**Per-property utilities:**
-
-| Prefix | CSS Property | Decomposed | 2-axis Shorthand | 3-axis Shorthand |
-|---|---|---|---|---|
-| `bg` | `background-color` | `bg-lc-*`, `bg-c-*`, `bg-h-*` | `bg-{L}-{C}` | `bg-{L}-{C}-{H}` |
-| `text` | `color` | `text-lc-*`, `text-c-*`, `text-h-*` | `text-{L}-{C}` | `text-{L}-{C}-{H}` |
-| `border` | `border-color` | `border-lc-*`, `border-c-*`, `border-h-*` | `border-{L}-{C}` | `border-{L}-{C}-{H}` |
-| `border-b` | `border-bottom-color` | `border-b-lc-*`, `border-b-c-*`, `border-b-h-*` | `border-b-{L}-{C}` | `border-b-{L}-{C}-{H}` |
-| `accent` | `accent-color` | `accent-lc-*`, `accent-c-*`, `accent-h-*` | `accent-{L}-{C}` | `accent-{L}-{C}-{H}` |
-| `from` | gradient from | `from-lc-*`, `from-c-*`, `from-h-*` | `from-{L}-{C}` | `from-{L}-{C}-{H}` |
-| `to` | gradient to | `to-lc-*`, `to-c-*`, `to-h-*` | `to-{L}-{C}` | `to-{L}-{C}-{H}` |
-| `shadow` | shadow color | `shadow-lc-*`, `shadow-c-*`, `shadow-h-*` | — | — |
-
-### Light / Dark Mode
-
-Light mode is the default. Dark mode activates when the root element has the `.dark` class. The luminance contrast scale flips automatically — `lc-0` is always near the page, `lc-10` is always high contrast — no additional classes needed.
+- **No more `@plugin`.** Delete the `@plugin "tailwind-oklch/plugin";` line;
+  `@import "tailwind-oklch";` is now the entire install.
+- **Shorthands removed.** `bg-3-mhi` and `bg-3-mhi-accent` no longer exist —
+  they re-pinned all three axes on every leaf, which defeats the cascade. Split
+  them into their axes and hoist hue/chroma to a seeder:
+  `bg-3-mhi-accent` → `hue-accent` (on the parent) + `bg-lc-3 bg-chroma-mhi`.
+- **`-c-` → `-chroma-`, `-h-` → `-hue-`.** `bg-c-mid` → `bg-chroma-mid`,
+  `text-h-info` → `text-hue-info`. The global seeders `hue-*` / `chroma-*` are
+  unchanged.
+- Arbitrary values, relative adjustments, and every property family carry over
+  unchanged (now implemented in pure CSS).
 
 ## License
 

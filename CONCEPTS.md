@@ -67,7 +67,7 @@ background luminance to guarantee a specific contrast level. The developer
 never picks a text luminance — they pick a contrast *intent*:
 
 ```html
-<div class="bg-lc-2 bg-c-mid bg-h-primary">
+<div class="bg-lc-2 bg-chroma-mid bg-hue-primary">
   <p class="text-contrast-md">Always readable against this background</p>
   <span class="text-contrast-xs">Subtle, muted caption</span>
 </div>
