@@ -34,7 +34,8 @@
 @source inline("hue-{blue,purple,pink,red,orange,yellow,green,bluegreen}");
 @source inline("hue-{primary,accent,success,warning,danger,info}");
 @source inline("chroma-{low,mlow,mid,mhigh,high,max}");
-@source inline("bg-lum-{0,1,2,3,4,5,6,7,8,9,10}");
+@source inline("bg-lum-{none,1,2,3,4,5,6,7,8,9,10,max}");
+@source inline("text-lum-{none,max}");
 @source inline("bg-chroma-{low,mlow,mid,mhigh,high}");
 @source inline("bg-hue-{primary,accent,success,warning,danger,info}");
 @source inline("bg-lum-up-{1,2,3,4,5}");
@@ -117,6 +118,9 @@ body {
     display: flex; align-items: center;
   }
   .walk-preview > * { width: 100%; }
+  /* the "unseen parent": bold lives here, not in the demo markup, so each
+     example's code shows only the color classes it's demonstrating */
+  .walk-preview { font-weight: 700; }
   /* give every rendered fill a hairline so the panels read as objects */
   .walk-preview [class*="bg-lum"] { box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.12); }
   .dark .walk-preview [class*="bg-lum"] { box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.14); }
@@ -188,7 +192,7 @@ body {
   }
   .card-meta { @apply text-lum-6 inline-flex items-center gap-1.5 whitespace-nowrap text-sm; }
   .card-btn {
-    @apply bg-lum-6 text-lum-0 shrink-0 rounded-lg px-3.5 py-2 text-sm font-semibold whitespace-nowrap;
+    @apply bg-lum-6 text-lum-none shrink-0 rounded-lg px-3.5 py-2 text-sm font-semibold whitespace-nowrap;
     transition: background-color 0.15s;
   }
   .card-btn:hover { @apply bg-lum-up-1; }

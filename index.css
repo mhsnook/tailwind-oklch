@@ -6,15 +6,17 @@
  *   @import "tailwind-oklch";
  *
  * Each class states ONE fact about ONE axis. Every color is composed from three
- * independent axes — luminance (lum), chroma, and hue — two of which
- * cascade, so most elements only ever state their luminance.
+ * independent axes — luminance (lum), chroma, and hue — two of which cascade,
+ * so most elements only ever state their luminance.
  *
- *   - Cascade seeders set an axis for every descendant and paint nothing:
- *       hue-primary · hue-danger · …    seeds hue (and its chroma scale)
- *       chroma-mlow · chroma-high · …            seeds chroma
+ *   - Property-less axis classes carry no property; they set an axis for every
+ *     LCH calculation that cascades to them, and paint nothing themselves —
+ *     ordinary CSS custom-property inheritance:
+ *       hue-primary · hue-danger · …    sets hue (and its chroma scale) below
+ *       chroma-mlow · chroma-high · …   sets chroma below
  *
  *   - Per-property setters paint one property from one axis; hue and chroma
- *     inherit from a seeder (or the :root default) unless set explicitly:
+ *     inherit from an ancestor (or the :root default) unless set explicitly:
  *       bg-lum-2     bg-chroma-mlow     bg-hue-accent
  *       text-lum-9   text-chroma-high    text-hue-info
  *       …plus border-*, border-b-*, accent-*, shadow-*, from-*, to-*
@@ -28,13 +30,14 @@
  *     write the result to --bg-l, so --bg-l always holds the REAL surface — which
  *     is what the con-* contrast utilities read.
  *
- * Luminance scale: 0–10, a plain white→black ramp that auto-flips, measuring
- * contrast with the page.
- *   0  = pure white (light) / pure black (dark) — the page-ward extreme
- *   1  = blends with the page (the lightest usable surface)
- *   10 = pure black (light) / pure white (dark) — maximum foreground contrast
- * The low end is finely graded (the eye is most sensitive next to the page);
- * steps open up toward the dark end.
+ * Luminance scale: numbered stops 1..10 on a front-loaded formula that auto-flips
+ * for dark mode, measuring contrast with the page. The pure poles are named:
+ *   none = the page color: white (light) / black (dark) — zero contrast
+ *   1    = the lightest usable surface (hugs the page)
+ *   10   = a strong foreground (near, but not, the max)
+ *   max  = full contrast: black (light) / white (dark)
+ * Stops hug the page near 1 and open up toward 10; none/max sit outside the
+ * formula so a theme can pull the numbered range in without losing the extremes.
  *
  * Per-hue chroma: hues don't reach perceived saturation at the same chroma
  * (blue peaks early, yellow late), so each hue carries a --cscale-* multiplier
@@ -59,18 +62,20 @@
   --cscale-danger: 0.93;
   --cscale-info: 0.88;
 
-  /* ── Luminance scale (light): 0 = white … 10 = black ──────────────── */
-  --lum-0: 1;
-  --lum-1: .965;
-  --lum-2: .95;
-  --lum-3: .885;
-  --lum-4: .80;
-  --lum-5: .69;
-  --lum-6: .575;
-  --lum-7: .46;
-  --lum-8: .345;
-  --lum-9: .22;
-  --lum-10: 0;
+  /* ── Luminance scale (light). Numbered 1..10 on a front-loaded formula;
+     the pure poles are named: none = white (page), max = black (contrast). ── */
+  --lum-none: 1;
+  --lum-1: .92;
+  --lum-2: .887;
+  --lum-3: .831;
+  --lum-4: .759;
+  --lum-5: .676;
+  --lum-6: .583;
+  --lum-7: .481;
+  --lum-8: .371;
+  --lum-9: .254;
+  --lum-10: .13;
+  --lum-max: 0;
 
   /* ── Chroma stops (base, before per-hue scale) ────────────────────── */
   --chroma-low: .02;
@@ -101,23 +106,24 @@
   --lum-adj-5: .40;
 }
 
-/* ── Dark mode: the scale flips (0 = black, 10 = white) ─────────────────
-   0/blends and 10/max-contrast keep their meaning; the numbers just map to
-   flipped luminances. --lum-flip drives arbitrary-value auto-flip. */
+/* ── Dark mode: the scale flips. none = black (page), max = white (contrast);
+   the numbered stops map to their flipped luminances. --lum-flip drives
+   arbitrary-value auto-flip. */
 .dark {
   --lum-dir: 1;
   --lum-flip: 1;
-  --lum-0: 0;
+  --lum-none: 0;
   --lum-1: .185;
-  --lum-2: .22;
-  --lum-3: .30;
-  --lum-4: .395;
-  --lum-5: .49;
-  --lum-6: .58;
-  --lum-7: .67;
-  --lum-8: .76;
-  --lum-9: .86;
-  --lum-10: 1;
+  --lum-2: .215;
+  --lum-3: .268;
+  --lum-4: .334;
+  --lum-5: .412;
+  --lum-6: .498;
+  --lum-7: .593;
+  --lum-8: .696;
+  --lum-9: .805;
+  --lum-10: .92;
+  --lum-max: 1;
 }
 
 /* ── Cascade defaults ──────────────────────────────────────────────────
