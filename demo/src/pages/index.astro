@@ -24,6 +24,17 @@ const semantic = [
   { name: "warning", deg: 55, cs: 1.0 },
 ];
 
+// Surfaces for the text-contrast samples. Identical markup lands on each; only
+// the seeded surface changes, and con-* re-solves for it (note the ink flips
+// direction as the surface crosses the mid of the scale).
+const conSurfaces = [
+  { cls: "bg-lum-2", label: "bg-lum-2", note: "light → dark ink" },
+  { cls: "hue-primary chroma-mid bg-lum-4", label: "hue-primary · bg-lum-4", note: "tinted → dark ink" },
+  { cls: "hue-warning chroma-mid bg-lum-7", label: "hue-warning · bg-lum-7", note: "deep color → light ink" },
+  { cls: "bg-lum-9", label: "bg-lum-9", note: "dark → light ink" },
+];
+const conLevels = ["low", "mlow", "mid", "mhigh", "high"];
+
 const anatomy = `<span class="k">.bg-lum-5</span> {
   --bg-l: <span class="k">var(--lum-5)</span>;              <span class="c">/* the scale — section 2 */</span>
   background-color: oklch(
@@ -203,7 +214,7 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
     <section class="mt-16">
       <h2 class="text-xl font-semibold tracking-tight">Under the hood</h2>
       <p class="muted mt-1 max-w-[64ch] text-sm leading-relaxed">
-        The good stuff, folded away. Three questions, expandable — including two
+        The good stuff, folded away. Four questions, expandable — including two
         little code generators that spit out theme CSS you can paste.
       </p>
 
@@ -361,6 +372,69 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
                 the same palette as a shareable string.
               </p>
             </div>
+          </div>
+        </details>
+
+        <!-- 4 · Accessible, semantic text contrast -->
+        <details class="uh-item">
+          <summary>Accessible, semantic text contrast</summary>
+          <div class="uh-body">
+            <p>
+              A component shouldn't have to know whether it's sitting on a light card, a
+              dark panel, or a saturated brand color. <span class="kbd">text-con-*</span>
+              reads the surface it lands on, picks the direction that gives contrast, and
+              moves a fixed perceptual distance in <span class="kbd">L</span> — so one set
+              of classes yields the same readable type hierarchy on <em>any</em> background.
+              No <span class="kbd">dark:</span>, no per-surface overrides.
+            </p>
+
+            <h4>One type scale, four surfaces</h4>
+            <p>
+              Every block below is <em>identical markup</em> — <code class="kbd">con-low</code>
+              eyebrow, <code class="kbd">con-high</code> headline, <code class="kbd">con-mid</code>
+              body, <code class="kbd">con-mlow</code> caption. Only the seeded surface differs,
+              and the ink flips direction as the surface crosses the middle of the scale.
+              Toggle the theme — each one re-solves against its flipped surface.
+            </p>
+            <div class="con-samples">
+              {
+                conSurfaces.map((s) => (
+                  <div class={`con-card ${s.cls}`}>
+                    <div class="con-eyebrow text-con-low">{s.label}</div>
+                    <div class="con-head text-con-high">Readable anywhere</div>
+                    <p class="con-body text-con-mid">
+                      The same three utilities set headline, body, and caption — each one
+                      solving for this surface's own luminance.
+                    </p>
+                    <div class="con-cap text-con-mlow">caption · {s.note}</div>
+                  </div>
+                ))
+              }
+            </div>
+
+            <h4>The contrast ladder</h4>
+            <p>
+              The five stops are a graduated hierarchy, faint → stark. Here they are on a
+              single tinted surface — <span class="kbd">con-high</span> snaps to near
+              black/white (it <em>is</em> <span class="kbd">contrast-color()</span>), the
+              rest stay proportionally softer:
+            </p>
+            <div class="con-ladder hue-primary chroma-mid bg-lum-3">
+              {
+                conLevels.map((lv) => (
+                  <div class={`text-con-${lv}`}>
+                    <span class="con-ladder-tag">text-con-{lv}</span> The quick brown fox
+                    jumps over the lazy dog
+                  </div>
+                ))
+              }
+            </div>
+            <p class="muted mt-3 text-xs">
+              A distance-in-<span class="kbd">L</span> heuristic, not a WCAG/APCA number —
+              but it trusts OKLCH's perceptual uniformity and reads correctly across the
+              range. Borders and outlines get the same treatment via
+              <span class="kbd">border-con-*</span> / <span class="kbd">outline-con-*</span>.
+            </p>
           </div>
         </details>
       </div>

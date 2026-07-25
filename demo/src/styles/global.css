@@ -235,4 +235,34 @@ body {
     border-radius: 7px; padding: 0.3rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer;
   }
   .gen-copy:hover { border-color: var(--accent); }
+
+  /* ── Text-contrast samples ───────────────────────────────────────────
+     Type color comes entirely from text-con-* (which set `color`); these
+     classes only handle size/weight/rhythm, never color. */
+  .con-samples { display: grid; gap: 0.75rem; margin-top: 0.4rem; }
+  @media (min-width: 560px) { .con-samples { grid-template-columns: repeat(2, 1fr); } }
+  .con-card {
+    border-radius: 12px; padding: 1rem 1.1rem;
+    box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.06);
+  }
+  .dark .con-card { box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.1); }
+  .con-eyebrow {
+    font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .con-head { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; margin-top: 0.15rem; }
+  .con-body { font-size: 0.85rem; line-height: 1.5; margin-top: 0.35rem; max-width: none; }
+  .con-cap { font-family: var(--font-mono); font-size: 0.66rem; margin-top: 0.6rem; }
+
+  .con-ladder {
+    border-radius: 12px; padding: 1rem 1.1rem; margin-top: 0.4rem;
+    display: flex; flex-direction: column; gap: 0.35rem;
+    box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.06);
+  }
+  .dark .con-ladder { box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.1); }
+  .con-ladder > div { font-size: 0.98rem; font-weight: 600; }
+  .con-ladder-tag {
+    font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;
+    opacity: 0.75; margin-right: 0.4rem;
+  }
 }
