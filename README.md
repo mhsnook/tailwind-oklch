@@ -1,25 +1,47 @@
 # tailwind-oklch
 
 A cascade-first OKLCH color system for Tailwind CSS v4. Pure CSS, no JavaScript
-plugin. Instead of hand-picking hundreds of static color tokens, you **compose**
-colors from three independent axes — **luminance** (`lum`), **chroma**,
-and **hue** — and let two of them flow down the DOM tree so most elements only
-ever state one thing about themselves.
+plugin. You **compose** every color from three axes — **hue**, **chroma**, and
+**luminance** — and let the first two flow down the DOM tree, so most elements
+only ever state their own luminance (`text-lum-9`, `bg-lum-2`) and take their
+hue and chroma from the section around them.
 
 _Note: This is a working concept; it's not really in production anywhere; YMMV._
 
-## The idea in one sentence
+---
 
-**Each class states one fact about one axis.** Hue and chroma are a component's
-_character_ — you set them once, near the root, and they cascade. Luminance is
-_emphasis_ — you set it per element, constantly. So a component says "I'm
-success-flavored and quiet" at the top, and its interior just says "this part is
-subtle, this part stands out, this border is faint."
+## Part one — the simple part
+
+### The whole idea
+
+Color in a UI moves on two different rhythms, and OKLCH lets you drive each on
+its own axis.
+
+**Hue and chroma set the mood.** They carry the mood, semantics, and energy of a
+component or section — and that's largely an _area_ concern: within a given area,
+background, text, border, and outline tend to draw from the same family of color.
+A muted-blue panel's border is muted blue too; a bright section keeps its buttons
+bright. So these two axes change _rarely_, at the section level — state them once,
+high up, and every property and every descendant takes them.
+
+**Luminance is what makes things legible.** Inside that area, what separates a
+surface from its text from its border is _contrast_ — a difference in luminance.
+You'd never give a background and its foreground the same lightness and expect a
+shift of hue or chroma to tell them apart; it can't, and it wouldn't be
+accessible. So luminance is the axis you set _per property_ and _per element_,
+and the one you reach for constantly.
+
+The two kinds of class map straight onto that split:
+
+- **Set the mood once** with property-less `hue-*` / `chroma-*` — they paint
+  nothing, and set hue and chroma for _every_ color calculation below them.
+- **Work the contrast per element** with `bg-lum-*`, `text-lum-*`,
+  `border-lum-*` — each element stating its own luminance against the page.
 
 ```html
-<!-- "generally success-colored, generally low-key" — declared once… -->
-<div class="hue-success chroma-mlow">
-  <!-- …then everything inside speaks only luminance -->
+<!-- the section's mood — muted blue — set once -->
+<div class="hue-primary chroma-mlow">
+  <!-- inside, elements differ by luminance; that's what makes them legible -->
   <div class="bg-lum-2">
     <span class="text-lum-9">Saved to your deck</span>
     <hr class="border-lum-3" />
@@ -27,68 +49,81 @@ subtle, this part stands out, this border is faint."
 </div>
 ```
 
-Change `hue-success` to `hue-danger` and the whole subtree re-colors — no other
-edits. The interior markup is _portable_: it carries emphasis, and inherits its
-character from wherever you drop it.
+Change `hue-primary` to `hue-danger` and the whole subtree re-colors — the mood
+moves, the contrast structure stays put. The interior markup is _portable_: it
+carries its own legibility and takes on the mood of wherever you drop it.
 
-## Why OKLCH?
+This leans on OKLCH being **perceptually uniform** — a given luminance reads as
+about the same contrast across every hue — so one numeric scale can do the
+legibility work no matter which mood sits above it.
 
-**OKLCH** (Lightness, Chroma, Hue) is a perceptually uniform color space. Unlike
-HSL, colors at the same lightness and chroma look equally bright regardless of
-hue. That's what makes composing on the fly work: a single numeric luminance
-scale reads consistently across every hue, so you can build systematic,
-predictable palettes from three simple axes instead of a wall of hex values.
-
-CSS custom property inheritance does the rest — a parent sets an axis, children
-share it automatically, and you override just the axis you need.
-
-## Install
+### Install
 
 ```css
 @import "tailwindcss";
 @import "tailwind-oklch";
 ```
 
-That's the whole setup. No `@plugin`, no build step, no JS.
-
-Dark mode activates when the root element has the `.dark` class. Wire it to your
-theme toggle however you like; if you use a custom variant, declare it alongside
-the imports:
+That's the whole setup. No `@plugin`, no build step, no JS. Dark mode activates
+when the root element has `.dark`:
 
 ```css
 @custom-variant dark (&:is(.dark, .dark *));
 ```
 
-## The two kinds of class
+### Set the mood: `hue-*` and `chroma-*`
 
-**Property-less axis classes** carry no CSS property. They set an axis for every
-LCH calculation that cascades to them — plain custom-property inheritance — and
-paint nothing of their own. Put them near a component's root:
-
-| Class       | Sets for everything below                         |
-| ----------- | ------------------------------------------------- |
-| `hue-*`     | hue — and its per-hue chroma scale (see below)    |
-| `chroma-*`  | chroma (`chroma-low`, `chroma-high`, …)              |
-
-Make a section yellow and everything in it is yellow; make it bright and
-everything's bright. `hue-primary` is just `bg-hue-primary` without the `bg` —
-it sets the hue for _all_ properties below instead of one.
-
-**Per-property setters** paint exactly one CSS property from one axis. Luminance
-is the one you set constantly; chroma and hue inherit from an ancestor (or the
-`:root` default) unless you set them explicitly:
+These are **property-less** classes: they paint nothing themselves and set an
+axis for every color calculated below them. One class on a wrapper colors the
+whole area — so put them where a mood belongs: a section, a card, the page root.
 
 ```html
-<span class="bg-lum-2 bg-chroma-mlow bg-hue-primary">all three explicit</span>
-<span class="text-lum-6 text-chroma-high text-hue-info">…</span>
-<span class="hover:bg-lum-up-1">luminance only; chroma + hue inherited</span>
+<section class="hue-warning chroma-mid">…everything in here is warning-flavored…</section>
 ```
 
-Because `:root` already carries `hue-primary` + low chroma, a brand-colored
-surface often needs only `bg-lum-2`.
+| Class      | Sets for everything below                          |
+| ---------- | -------------------------------------------------- |
+| `hue-*`    | hue — and its per-hue chroma scale (see Part two)  |
+| `chroma-*` | chroma: `low` `mlow` `mid` `mhigh` `high` `max`    |
 
-A common pattern is to let a component own its luminance structure and take only
-character from the caller:
+The six named hues (`primary` `info` `accent` `danger` `success` `warning`) are
+just defaults — rename, retune, or generate your own (see
+[Tune the formulas](#tune-the-formulas-generate-your-theme)). There is **no
+`neutral` hue**: a neutral is the _absence_ of chroma, so reach for `chroma-low`
+(a faint temperature) or `chroma-[0]` (dead-flat gray).
+
+`:root` already carries `hue-primary` and a low chroma, so a brand-colored
+surface often needs only a luminance. When you want to scope an axis to a single
+property instead of cascading it, every setter has a `bg-hue-*` / `bg-chroma-*`
+form too (see the [reference](#every-property-every-axis)).
+
+### The contrast axis: luminance
+
+Luminance is how a surface, its text, and its border stay distinct — the axis
+you work per element, and touch constantly. `{prop}-lum-{1–10}` is a ramp that
+measures **contrast with the page** and auto-flips between light and dark mode,
+so you almost never write `dark:`. The numbered stops ride a front-loaded curve;
+the pure poles are **named**, outside the numbered range:
+
+| Stop   | Light | Dark  | Meaning                                       |
+| ------ | ----- | ----- | --------------------------------------------- |
+| `none` | 1.00  | 0.00  | the page color: white / black — zero contrast |
+| `1`    | 0.92  | 0.185 | lightest usable surface (hugs the page)       |
+| `2`    | 0.887 | 0.22  | subtle surface / card                         |
+| `3`    | 0.831 | 0.28  | raised surface                                |
+| `5`    | 0.676 | 0.44  | mid                                           |
+| `7`    | 0.481 | 0.63  | prominent                                     |
+| `9`    | 0.254 | 0.83  | strong text                                   |
+| `10`   | 0.13  | 0.92  | a strong foreground (near, not at, the max)   |
+| `max`  | 0.00  | 1.00  | full contrast: black / white                  |
+
+The scale is **front-loaded** — the eye is most sensitive next to the page, so
+steps are tight near `1` and open toward `10`. That's why "subtle card" is a
+real, distinct stop. The poles stay _out_ of the numbers, so a low-contrast
+theme can pull the numbered range in without giving up pure white/black.
+
+Because a component owns its own luminance and takes only its mood from the
+caller, the same markup yields many identities:
 
 ```css
 .card { @apply bg-lum-2 border-lum-3 rounded-lg border p-4; }
@@ -97,74 +132,68 @@ character from the caller:
 ```
 
 ```html
-<article class="card hue-primary chroma-mid">…</article>  <!-- middling -->
-<article class="card hue-warning chroma-low">…</article>    <!-- subtle -->
-<article class="card hue-success chroma-high">…</article>    <!-- bright -->
+<article class="card hue-primary chroma-mid">…</article>   <!-- middling -->
+<article class="card hue-warning chroma-low">…</article>   <!-- subtle -->
+<article class="card hue-success chroma-high">…</article>  <!-- bright -->
 ```
 
-Same markup, three identities. The author writes emphasis; the caller decides
-the color and how loud it is.
+### Two ways to move luminance around
 
-## Luminance scale (`lum`)
+Once luminance is doing all the work, two families make components _endlessly_
+composable — they let an element decide its own contrast without knowing where
+it lives.
 
-`{prop}-lum-{1–10}` — a ramp that measures contrast with the page and auto-flips
-between light and dark mode, so you almost never write `dark:`. The numbered
-stops ride a front-loaded formula; the **pure poles are named**, outside the
-numbered range:
+**Nudge from right here — `lum-up/down`.** `{prop}-lum-up-{1–5}` /
+`down-{1–5}` (bg and text) steps off the _inherited_ luminance without rewriting
+it — ideal for hover/active and raised chips. "Up" always means more contrast
+with the page; direction adapts to light/dark. Nudges **don't compound**.
 
-| Stop   | Light | Dark  | Meaning                                          |
-| ------ | ----- | ----- | ------------------------------------------------ |
-| `none` | 1.00  | 0.00  | the page color: white / black — zero contrast    |
-| `1`    | 0.92  | 0.185 | lightest usable surface (hugs the page)          |
-| `2`    | 0.887 | 0.22  | subtle surface / card                            |
-| `3`    | 0.831 | 0.28  | raised surface                                   |
-| `5`    | 0.676 | 0.44  | mid                                              |
-| `7`    | 0.481 | 0.63  | prominent                                        |
-| `9`    | 0.254 | 0.83  | strong text                                      |
-| `10`   | 0.13  | 0.92  | a strong foreground (near, not at, the max)      |
-| `max`  | 0.00  | 1.00  | full contrast: black / white                     |
+```html
+<div class="bg-lum-2">
+  <button class="hover:bg-lum-up-1">one step more contrast on hover</button>
+</div>
+```
 
-Worth internalizing:
+**Let it solve its own contrast — `con-*`.** `text-con-*`, `border-con-*`, and
+`outline-con-*` read the element's **background** and pick a luminance that
+contrasts — in whichever direction is needed, on a light _or_ dark surface, with
+no `dark:`. One class, readable anywhere.
 
-- **`none` and `max` are the pure extremes**, kept _out_ of the numbered scale.
-  Reach for them when you want literal white/black (`bg-lum-none`, `text-lum-max`);
-  the numbered stops stay usable surfaces. Because the poles are separate, a
-  low-contrast theme can pull the numbered range in (start `lum-1` at, say, 0.90)
-  without giving up pure white/black.
-- **The scale is front-loaded.** The eye is most sensitive next to the page, so
-  the steps are tight up near `1` and open up toward `10`. That's why a "subtle
-  card" is a real, distinct stop, not something you reach for with an arbitrary
-  value. Tune the endpoints and curve in the generator (`LUM_*_NEAR`, `LUM_GAMMA`).
+```html
+<article class="card">            <!-- card sets its own bg-lum-* -->
+  <p class="text-con-high">Stark against whatever surface this lands on.</p>
+  <hr class="border-con-mlow" />  <!-- a soft step off the surface -->
+</article>
+```
 
-## Chroma stops (`chroma`)
+`con` uses the same `low·mlow·mid·mhigh·high·max` words, but here they read as
+_how much contrast_ (faint → stark). `low`…`high` step a fixed perceptual
+distance in `L`; `max` always clamps to pure black/white — a guaranteed
+`contrast-color()`. `con` keeps the inherited hue/chroma and paints only its one
+property, so it changes nothing descendants inherit.
 
-`{prop}-chroma-{low | mlow | mid | mhigh | high | max}`, or the property-less `chroma-{…}`:
+**What more could you ask for?** The mood set once up top, contrast worked per
+element, and a class that solves contrast for you. That's the everyday API — you
+rarely need the rest.
 
-| Name    | Base value | Use for                            |
-| ------- | ---------- | ---------------------------------- |
-| `low`   | 0.02       | Backgrounds, muted surfaces        |
-| `mlow`  | 0.05       | Tinted backgrounds, subtle borders |
-| `mid`   | 0.09       | Medium saturation                  |
-| `mhigh` | 0.13       | Prominent accents                  |
-| `high`  | 0.17       | Vivid, saturated colors            |
-| `max`   | 0.25       | Full color — pushed past the gamut |
+---
 
-These are _base_ values — the chroma actually painted is the base times the
-active hue's scale (next section). `max` deliberately overshoots the sRGB gamut,
-so `oklch()` gamut-maps it to the most saturated color each hue can display —
-"give me the full color, whatever that is here."
+## Part two — the part that makes it look right
 
-## Per-hue chroma
+A simple surface API left room to spend the real effort on _perception_: making
+a given stop look the same across every hue and all the way up the luminance
+scale. Two corrections run automatically, and both are just formulas you can
+retune.
 
-Hues don't reach perceived saturation at the same chroma: blue and purple look
+### Per-hue chroma
+
+Hues don't reach perceived saturation at the same chroma — blue and purple look
 vivid at a low chroma, while yellow and green need more to read as colorful. A
-single flat chroma scale therefore looks uneven — `chroma-mid` that's right for
-green is garish on blue.
+single flat chroma scale therefore looks uneven.
 
 So each hue carries a **`--cscale-*` multiplier**, and every color resolves its
-chroma as `calc(base × scale)`. A given chroma stop then looks about equally
-saturated across every hue. Setting a hue (via `hue-*` or `bg-hue-*`) applies its
-scale automatically.
+chroma as `calc(base × scale)`. A given `chroma-*` stop then looks about equally
+saturated across every hue; setting a hue applies its scale automatically.
 
 | Hue       | Degrees | `--cscale-*` |
 | --------- | ------- | ------------ |
@@ -175,166 +204,103 @@ scale automatically.
 | `success` | 145     | 1.00         |
 | `warning` | 55      | 1.00         |
 
-These are calibrated by eye and easy to retune — override any `--cscale-*` in a
-`@theme` block. Arbitrary hues (`hue-[280]`) use a scale of `1` since their
-ceiling is unknown; set `bg-chroma-[n]` directly if you need to tame them.
+Arbitrary hues (`hue-[280]`) use a scale of `1`, since their ceiling is unknown.
 
-**There is no `neutral` hue.** A neutral is the _absence_ of chroma, not a color:
-reach for `chroma-low` (a faint temperature from whatever hue is set above) or
-`chroma-[0]` for a dead-flat gray. Keeping the axes decomposed means neutrality
-belongs to the chroma axis — folding it into the hue list would smuggle a chroma
-decision back into hue.
-
-## Chroma taper toward white
+### Chroma taper toward white
 
 At high luminance a fixed chroma reads as _much_ more saturated — it fills more
-of the visible gamut — so the same `chroma-*` stop that looks right at mid
-luminance turns neon on a near-white surface (and can't resolve to clean white at
-all). So chroma is tapered toward the light end: every color multiplies its
-chroma by `clamp(0, (1 − L) × --chroma-taper, 1)`. With the default
-`--chroma-taper: 3`, chroma is at full below L ≈ 0.67 and ramps to 0 at pure
-white, so a stop looks about **equally saturated across the scale**, light
-surfaces stay subtle, and the lightest stop resolves to true white. Raise
-`--chroma-taper` to let color survive closer to white; lower it for more muted
-lights. (The taper keys on the resolved `L`, so it also calms near-white text and
-works the same in dark mode.)
+of the visible gamut — so a stop that's right at mid luminance turns neon on a
+near-white surface (and can't resolve to clean white at all). So chroma tapers
+toward the light end: every color multiplies its chroma by
+`clamp(0, (1 − L) × --chroma-taper, 1)`. With the default `--chroma-taper: 3`,
+chroma is at full below L ≈ 0.67 and ramps to 0 at pure white — so a stop looks
+about equally saturated across the whole scale, light surfaces stay subtle, and
+the lightest stop resolves to true white. The taper keys on the resolved `L`, so
+it calms near-white text too and works the same in dark mode.
 
-## Per-property setters
+### Tune the formulas, generate your theme
 
-Every property carries the full trio (`lum` / `chroma` / `hue`). Set only the axes
-that differ from what's inherited.
-
-| Prefix     | CSS property           | Setters                                          |
-| ---------- | ---------------------- | ------------------------------------------------ |
-| `bg`       | `background-color`     | `bg-lum-*` · `bg-chroma-*` · `bg-hue-*`           |
-| `text`     | `color`                | `text-lum-*` · `text-chroma-*` · `text-hue-*`     |
-| `decoration` | `text-decoration-color` | `decoration-lum-*` · `decoration-chroma-*` · `decoration-hue-*` |
-| `border`   | `border-color`         | `border-lum-*` · `border-chroma-*` · `border-hue-*` |
-| `border-b` | `border-bottom-color`  | `border-b-lum-*` · `border-b-chroma-*` · `border-b-hue-*` |
-| `accent`   | `accent-color`         | `accent-lum-*` · `accent-chroma-*` · `accent-hue-*` |
-| `shadow`   | shadow color           | `shadow-lum-*` · `shadow-chroma-*` · `shadow-hue-*` |
-| `from`     | gradient from          | `from-lum-*` · `from-chroma-*` · `from-hue-*`     |
-| `to`       | gradient to            | `to-lum-*` · `to-chroma-*` · `to-hue-*`           |
-
-All setters work with standard Tailwind modifiers (`hover:`, `focus:`, `md:`, …).
-
-## Relative luminance adjustments
-
-Nudge off the _inherited/current_ luminance without rewriting it — ideal for
-hover/active states, and it doesn't cascade to children.
-
-```html
-<div class="bg-lum-2">
-  <button class="hover:bg-lum-up-1">one step more contrast on hover</button>
-  <span class="text-lum-7 group-hover:text-lum-down-1">one step less</span>
-</div>
-```
-
-`{prop}-lum-up-{1–5}` / `{prop}-lum-down-{1–5}` (bg and text). "Up" always means
-more contrast with the page, "down" less — direction adapts to light/dark
-automatically. Adjustments **don't compound**: a grandchild's `lum-up-1` nudges
-from the nearest ancestor's _set_ luminance, not a parent's already-nudged value.
-
-## Contrast against the background (`con`)
-
-`lum-up/down` measures off the property's own inherited luminance. `con-*`
-measures off the element's **background** (`--bg-l`) instead — and picks its
-direction automatically, moving toward whichever pole (lighter or darker) gives
-contrast. One class reads correctly on a light _or_ dark surface, with no `dark:`
-variant.
-
-```html
-<!-- A readable border/text/outline against whatever surface it lands on -->
-<article class="card">              <!-- card sets its own bg-lum-* -->
-  <p class="text-con-high">Stark against the card.</p>
-  <hr class="border-con-mlow" />   <!-- a soft step off the surface -->
-</article>
-```
-
-`text-con-*` and `border-con-*` / `outline-con-*` share the
-`low·mlow·mid·mhigh·high·max` vocabulary, but here it reads as **how much
-contrast** (faint → stark), not saturation. `low`…`high` step a fixed perceptual
-distance in `L` (so `high` may or may not reach the extreme, depending on the
-surface); `max` uses an offset big enough to **always** clamp to pure black or
-white — a guaranteed `contrast-color()`, whatever the surface. `text-con` keeps
-the inherited text hue/chroma; `border-con` and `outline-con` keep the inherited
-border hue/chroma — only the luminance is computed, so the contrasting color
-still carries the inherited hue (except `max`, which lands on pure black/white).
-
-`con` is the _only_ family always measured against the background; `lum` and
-`lum-up/down` measure against the property's own inherited value. `--bg-l` always
-holds the **real** surface — including a `bg-lum-up/down` nudge sitting above —
-so `con` stays contrast-compliant against the background that actually exists.
-That works without breaking the "nudges don't compound" rule: `bg-lum-up/down`
-reads its step from a separate anchor (the nearest absolute `bg-lum-N`) and
-writes the result into `--bg-l`. `con` itself paints only its one property and
-changes nothing descendants inherit. Arbitrary `con-[40]` sets ΔL directly
-(`n/100` off the background).
-
-## Arbitrary values
-
-All three axes accept Tailwind's bracket syntax, on every setter and both
-property-less `hue-*` / `chroma-*` classes.
-
-```html
-<!-- Hue: any degree 0–360 (uses chroma scale 1) -->
-<div class="hue-[180] bg-lum-3">Teal subtree</div>
-<div class="bg-hue-[280] text-hue-[40]">Purple bg, orange text</div>
-
-<!-- Chroma: integer 0–100, mapped to OKLCH 0.00–1.00 (practical range ~0–25) -->
-<div class="chroma-[8] bg-lum-3">Everything at chroma 0.08</div>
-<div class="bg-chroma-[15]">Background chroma 0.15</div>
-
-<!-- Luminance: integer 0–100 = direct L, auto-flips in dark mode -->
-<div class="bg-lum-[70]">Light: L=0.70 · Dark: L=0.30</div>
-```
-
-Note that arbitrary `lum-[n]` is a _direct luminance_ (`n/100`), while the named
-`lum-1…10` scale is a curved contrast ramp — two different tools that share the
-prefix.
-
-## Gradients
-
-```html
-<div class="bg-linear-to-r from-lum-3 to-lum-7">
-  Same hue + chroma from the cascade, luminance ramps across
-</div>
-
-<!-- Override just the hue on the "to" end -->
-<div class="bg-linear-to-r from-lum-3 to-lum-3 to-hue-accent">
-  Primary → accent, matched luminance and chroma
-</div>
-```
-
-## Customization
-
-Override any of the defaults in a `@theme` block.
+Every default is a CSS custom property, and the two corrections above plus the
+luminance ramp are **formula-driven** — so you tune the _shape_, not hundreds of
+values, and get a whole theme back.
 
 ```css
 @theme {
-  /* Re-theme the whole app */
-  --hue-primary: 180;    /* teal */
-  --hue-accent: 320;     /* pink */
-
-  /* Retune how saturated a hue reads */
-  --cscale-primary: 0.8;
-
-  /* Reshape the luminance ramp */
-  --lum-2: 0.94;           /* make the "card" stop lighter */
+  --hue-primary: 180;      /* re-theme: teal primary            */
+  --hue-accent: 320;       /*           pink accent             */
+  --cscale-primary: 0.8;   /* how saturated primary reads       */
+  --chroma-taper: 4;       /* let color survive closer to white */
+  --lum-2: 0.94;           /* reshape the ramp: lighter "card"  */
 }
 ```
 
-Because everything is driven by CSS custom properties, you can also re-theme at
-runtime — set `--hue-primary` (or any axis variable) inline on a subtree and
-every descendant that resolves through it updates:
+The knobs, all at the formula level:
+
+- **Luminance ramp** — stop count and front-loading curve. `bg-lum-14` exists the
+  moment `--lum-14` does; the poles are added for you.
+- **Per-hue chroma** — one `--cscale-*` per hue, so custom colors normalize too.
+- **Chroma taper** — one number for the whole app's high-luminance saturation.
+
+The [demo](demo) ships two generators for exactly this: pick a stop count and
+curve, or a set of hues, and copy a paste-ready `@theme` block — your CSS
+variables and whole theme, ready to go. And because it's all variables, you can
+re-theme at runtime:
 
 ```js
 document.documentElement.style.setProperty('--hue-primary', '180');
 ```
 
-This is how per-section or per-user theming works: an inline `--hue-*` override
-flows through the same variables the utilities read, so property-less classes and setters keep
-composing on top of it.
+Every descendant that resolves through it updates — that's how per-section or
+per-user theming works.
+
+---
+
+## Every property, every axis
+
+Every property carries the full trio (`lum` / `chroma` / `hue`). Set only the
+axes that differ from what's inherited.
+
+| Prefix       | CSS property            | Setters                                                          |
+| ------------ | ----------------------- | --------------------------------------------------------------- |
+| `bg`         | `background-color`      | `bg-lum-*` · `bg-chroma-*` · `bg-hue-*`                          |
+| `text`       | `color`                 | `text-lum-*` · `text-chroma-*` · `text-hue-*`                    |
+| `decoration` | `text-decoration-color` | `decoration-lum-*` · `decoration-chroma-*` · `decoration-hue-*` |
+| `border`     | `border-color`          | `border-lum-*` · `border-chroma-*` · `border-hue-*`             |
+| `border-b`   | `border-bottom-color`   | `border-b-lum-*` · `border-b-chroma-*` · `border-b-hue-*`       |
+| `accent`     | `accent-color`          | `accent-lum-*` · `accent-chroma-*` · `accent-hue-*`             |
+| `shadow`     | shadow color            | `shadow-lum-*` · `shadow-chroma-*` · `shadow-hue-*`             |
+| `from`       | gradient from           | `from-lum-*` · `from-chroma-*` · `from-hue-*`                    |
+| `to`         | gradient to             | `to-lum-*` · `to-chroma-*` · `to-hue-*`                          |
+
+All setters work with standard Tailwind modifiers (`hover:`, `focus:`, `md:`, …).
+
+**Chroma stops:** `low` (0.02) · `mlow` (0.05) · `mid` (0.09) · `mhigh` (0.13) ·
+`high` (0.17) · `max` (0.25). These are _base_ values, before the per-hue scale.
+`max` deliberately overshoots sRGB, so `oklch()` gamut-maps it to the most
+saturated color each hue can display — "give me the full color, whatever it is
+here."
+
+**Arbitrary values** — all three axes accept Tailwind's bracket syntax on every
+setter and both property-less classes:
+
+```html
+<div class="hue-[180] bg-lum-3">Teal subtree (chroma scale 1)</div>
+<div class="chroma-[8] bg-lum-3">Everything at chroma 0.08</div>   <!-- integer 0–100 → 0.00–1.00 -->
+<div class="bg-lum-[70]">Light: L=0.70 · Dark: L=0.30</div>        <!-- integer = direct L, auto-flips -->
+```
+
+Note that arbitrary `lum-[n]` is a _direct luminance_ (`n/100`), while the named
+`lum-1…10` scale is a curved contrast ramp — two tools sharing a prefix.
+Likewise `con-[40]` sets ΔL directly (`n/100` off the background).
+
+**Gradients** compose with Tailwind v4's own plumbing:
+
+```html
+<div class="bg-linear-to-r from-lum-3 to-lum-7">luminance ramps, hue + chroma from the cascade</div>
+<div class="bg-linear-to-r from-lum-3 to-lum-3 to-hue-accent">primary → accent, matched L and C</div>
+```
+
+---
 
 ## Migrating to 0.7
 
@@ -345,41 +311,36 @@ pre-1.0 — the API isn't settled, so pin the version and expect more churn.
   line — `@import "tailwind-oklch";` is the whole install now. The
   `{prop}-{L}-{C}[-{H}]` shorthands (`bg-3-mhi`, `bg-3-mhi-accent`) are gone;
   they re-pinned all three axes on every leaf, against the cascade. Split them
-  into axes and hoist hue/chroma to `hue-*` / `chroma-*`: `bg-3-mhi-accent` →
-  `hue-accent` (on the parent) + `bg-lum-3 bg-chroma-mhigh`.
+  into axes and hoist hue/chroma: `bg-3-mhi-accent` → `hue-accent` (on the
+  parent) + `bg-lum-3 bg-chroma-mhigh`.
 - **Axis prefixes renamed for readability** — `lum` / `chroma` / `hue`.
   `bg-lc-5` → `bg-lum-5`, `bg-c-mid` → `bg-chroma-mid`, `bg-h-info` → `bg-hue-info`.
-  The global property-less classes are `hue-*` and `chroma-*`.
 - **Chroma stops spelled out** — `lo` / `mlo` / `mhi` / `hi` → `low` / `mlow` /
-  `mhigh` / `high` (`mid` unchanged). Words of five letters or fewer are written
-  in full; the same `low·mlow·mid·mhigh·high` scale is reused wherever it fits.
+  `mhigh` / `high` (`mid` unchanged).
 - **The luminance scale is reindexed and re-cut.** Numbered stops are now `1`–`10`
-  on a front-loaded formula (`lum-1` ≈ 0.92, `lum-10` ≈ 0.13); the pure poles moved
-  out of the numbered range to `lum-none` (white/black) and `lum-max` (black/white).
-  `lum-0` no longer exists — it was the same as `none`. Everyday surfaces shift a
-  notch: a near-page background is `lum-1`/`lum-2`, a card `lum-2`.
-- **The `none` / `base` / `fore` / `full` aliases are gone.** Replace `lc-none` →
+  on a front-loaded formula; the pure poles moved out of the numbers to
+  `lum-none` (white/black) and `lum-max` (black/white). `lum-0` is gone.
+  Everyday surfaces shift a notch: a card is `lum-2`.
+- **The `none` / `base` / `fore` / `full` aliases are gone.** `lc-none` →
   `lum-none`, `lc-full` → `lum-max`, `lc-base` → `lum-1`, `lc-fore` → `lum-9`/`lum-10`.
-  Pure white/black text/fills are `text-lum-none` / `bg-lum-max` (etc.).
 - **Chroma is now scaled per hue.** A given `chroma-*` stop paints less on blue
-  than it used to (and about the same on green). If a color looks off, retune
-  its `--cscale-*` or set an explicit `*-chroma-[n]`.
+  than it used to. If a color looks off, retune its `--cscale-*` or set an
+  explicit `*-chroma-[n]`.
 
 ## Further reading
 
 - **[docs/cascade.md](docs/cascade.md)** — the cascade model and reference
-  frames: what cascades vs. what's a leaf, the three ways a class can be
-  measured (absolute stops · `lum-up/down` · `con`), and the anchor split that
-  lets `con` read the real surface while nudges stay non-compounding. Worked
-  example inside.
+  frames: what cascades vs. what's a leaf, the three ways a class can be measured
+  (absolute stops · `lum-up/down` · `con`), and the anchor split that lets `con`
+  read the real surface while nudges stay non-compounding.
 - **[docs/luminance-contrast.md](docs/luminance-contrast.md)** — the contrast
   math behind `con-*`: direction, the graduated ΔL offsets, and prior art.
 
 ## Building
 
-`index.css` is generated from `scripts/gen-index.js` to keep every color-painting
-utility's `oklch()` expression identical. Edit the generator, then run
-`node scripts/gen-index.js index.css`.
+`index.css` is generated from `scripts/gen-index.js` to keep every
+color-painting utility's `oklch()` expression identical. Edit the generator,
+then run `node scripts/gen-index.js index.css`.
 
 ## License
 
