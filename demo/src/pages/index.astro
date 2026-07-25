@@ -12,6 +12,8 @@ const wheel = [
   { name: "bluegreen", deg: 195, cs: 0.92 },
 ];
 const stops = ["lo", "mlo", "mid", "mhi", "hi"];
+const lums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const pickHues = ["primary", "accent", "success", "warning", "danger", "info"];
 
 const semantic = [
   { name: "primary", deg: 233, cs: 0.86 },
@@ -61,35 +63,43 @@ const semantic = [
       Pure CSS, one <span class="kbd">@import</span>, no plugin.
     </p>
 
-    <!-- ── The three axes, live ──────────────────────────────────────── -->
+    <!-- ── The L·C·H picker ──────────────────────────────────────────── -->
     <section class="mt-14">
-      <h2 class="text-xl font-semibold tracking-tight">Play with the three axes</h2>
-      <p class="muted mt-1 max-w-[64ch] text-sm leading-relaxed">
-        Drag each slider to see what its axis does. The class that would produce this
-        color is shown below — arbitrary values here, but the named stops
-        (<span class="kbd">lum-5</span>, <span class="kbd">chr-mid</span>,
-        <span class="kbd">hue-primary</span>) are just friendly aliases for the same three numbers.
+      <h2 class="text-xl font-semibold tracking-tight">Pick a color, one axis at a time</h2>
+      <p class="muted mt-1 max-w-[66ch] text-sm leading-relaxed">
+        Every swatch below is a real utility — <span class="kbd">bg-lum-*</span>,
+        <span class="kbd">bg-chr-*</span>, <span class="kbd">bg-hue-*</span>. Click a value to
+        set that axis; the other two strips re-seed through the cascade, exactly like they
+        would in your markup. The class that builds this color is shown beside it.
       </p>
 
-      <div class="pg mt-5">
-        <div class="pg-preview" id="pgPreview">
-          <div class="t" id="pgText">Compose, don't pick.</div>
-          <div class="v" id="pgVal">oklch(…)</div>
+      <div class="lch mt-5">
+        <div class="lch-side">
+          <div class="lch-preview hue-primary chr-mid bg-lum-5" id="lchPrev">
+            <span class="lch-pv-label" id="lchLabel">lum 5 · chr mid · primary</span>
+          </div>
+          <div class="lch-out" id="lchOut"></div>
         </div>
-        <div class="pg-controls">
-          <div class="pg-row">
-            <label>Luminance <small id="lLbl">63</small></label>
-            <input type="range" id="sL" min="0" max="100" value="63" />
+
+        <div class="lch-rows">
+          <div class="lch-axis">
+            <div class="lch-label"><span>Luminance</span> <b id="lLbl">5</b></div>
+            <div class="lch-track hue-primary chr-mid" id="rowL">
+              {lums.map((i) => <button class={`lch-sw bg-lum-${i}`} data-l={i} type="button" aria-label={`luminance ${i}`} />)}
+            </div>
           </div>
-          <div class="pg-row">
-            <label>Chroma <small id="cLbl">9</small></label>
-            <input type="range" id="sC" min="0" max="25" value="9" />
+          <div class="lch-axis">
+            <div class="lch-label"><span>Chroma</span> <b id="cLbl">mid</b></div>
+            <div class="lch-track hue-primary" id="rowC" style="--bg-l: var(--lum-5)">
+              {stops.map((s) => <button class={`lch-sw bg-chr-${s}`} data-c={s} type="button" aria-label={`chroma ${s}`} />)}
+            </div>
           </div>
-          <div class="pg-row">
-            <label>Hue <small id="hLbl">233</small></label>
-            <input type="range" id="sH" min="0" max="360" value="233" />
+          <div class="lch-axis">
+            <div class="lch-label"><span>Hue</span> <b id="hLbl">primary</b></div>
+            <div class="lch-track" id="rowH" style="--bg-l: var(--lum-5); --bg-c: var(--chr-mid)">
+              {pickHues.map((h) => <button class={`lch-sw bg-hue-${h}`} data-h={h} type="button" aria-label={`hue ${h}`} />)}
+            </div>
           </div>
-          <div class="pg-out" id="pgOut"></div>
         </div>
       </div>
     </section>
@@ -252,34 +262,48 @@ const semantic = [
 
   <script is:inline>
     (function () {
-      var sL = document.getElementById("sL");
-      var sC = document.getElementById("sC");
-      var sH = document.getElementById("sH");
-      if (!sL) return;
-      var pv = document.getElementById("pgPreview");
-      var txt = document.getElementById("pgText");
-      var val = document.getElementById("pgVal");
-      var out = document.getElementById("pgOut");
+      var prev = document.getElementById("lchPrev");
+      if (!prev) return;
+      var out = document.getElementById("lchOut");
+      var label = document.getElementById("lchLabel");
+      var rowL = document.getElementById("rowL");
+      var rowC = document.getElementById("rowC");
+      var rowH = document.getElementById("rowH");
       var lLbl = document.getElementById("lLbl");
       var cLbl = document.getElementById("cLbl");
       var hLbl = document.getElementById("hLbl");
-      function upd() {
-        var L = +sL.value, C = +sC.value, H = +sH.value;
-        var l = (L / 100).toFixed(3), c = (C / 100).toFixed(3);
-        var bg = "oklch(" + l + " " + c + " " + H + ")";
-        pv.style.background = bg;
-        var ink = L > 55 ? "oklch(0.18 " + c + " " + H + ")" : "oklch(0.98 " + c + " " + H + ")";
-        txt.style.color = ink;
-        val.style.color = ink;
-        val.textContent = bg;
-        lLbl.textContent = L;
-        cLbl.textContent = C;
-        hLbl.textContent = H;
-        out.innerHTML =
-          "bg-lum-<b>[" + L + "]</b> bg-chr-<b>[" + C + "]</b> bg-hue-<b>[" + H + "]</b>";
+      var L = 5, C = "mid", H = "primary";
+
+      function mark(row, key, val) {
+        Array.prototype.forEach.call(row.children, function (b) {
+          b.classList.toggle("is-active", b.dataset[key] === val);
+        });
       }
-      [sL, sC, sH].forEach(function (s) { s.addEventListener("input", upd); });
-      upd();
+      function render() {
+        // preview paints; the three strips re-seed via the cascade
+        prev.className = "lch-preview hue-" + H + " chr-" + C + " bg-lum-" + L;
+        rowL.className = "lch-track hue-" + H + " chr-" + C;
+        rowC.className = "lch-track hue-" + H;
+        rowC.style.setProperty("--bg-l", "var(--lum-" + L + ")");
+        rowH.className = "lch-track";
+        rowH.style.setProperty("--bg-l", "var(--lum-" + L + ")");
+        rowH.style.setProperty("--bg-c", "var(--chr-" + C + ")");
+        out.innerHTML = "hue-<b>" + H + "</b> chr-<b>" + C + "</b> bg-lum-<b>" + L + "</b>";
+        label.textContent = "lum " + L + " · chr " + C + " · " + H;
+        lLbl.textContent = L; cLbl.textContent = C; hLbl.textContent = H;
+        mark(rowL, "l", String(L));
+        mark(rowC, "c", C);
+        mark(rowH, "h", H);
+      }
+      function bind(row, cb) {
+        Array.prototype.forEach.call(row.querySelectorAll("button"), function (b) {
+          b.addEventListener("click", function () { cb(b.dataset); render(); });
+        });
+      }
+      bind(rowL, function (d) { L = +d.l; });
+      bind(rowC, function (d) { C = d.c; });
+      bind(rowH, function (d) { H = d.h; });
+      render();
     })();
   </script>
 </Layout>
