@@ -106,32 +106,13 @@
   --lum-adj-5: .40;
 }
 
-/* ── Dark mode: the scale flips. none = black (page), max = white (contrast);
-   the numbered stops map to their flipped luminances. --lum-flip drives
-   arbitrary-value auto-flip. */
-.dark {
-  --lum-dir: 1;
-  --lum-flip: 1;
-  --lum-none: 0;
-  --lum-1: .185;
-  --lum-2: .215;
-  --lum-3: .268;
-  --lum-4: .334;
-  --lum-5: .412;
-  --lum-6: .498;
-  --lum-7: .593;
-  --lum-8: .696;
-  --lum-9: .805;
-  --lum-10: .92;
-  --lum-max: 1;
-}
-
 /* ── Cascade defaults ──────────────────────────────────────────────────
    Sensible fallbacks so any single-axis setter resolves immediately. These
    inherit down the DOM, so a parent's hue/chroma flows to children. */
 :root {
   --lum-dir: -1;
   --lum-flip: 0;
+  --con-flip: .63;
 
   --bg-l: var(--lum-5);
   --bg-anchor-l: var(--bg-l);
@@ -143,6 +124,11 @@
   --tx-c: var(--chroma-low);
   --tx-cs: var(--cscale-primary);
   --tx-h: var(--hue-primary);
+
+  --dc-l: var(--lum-6);
+  --dc-c: var(--chroma-low);
+  --dc-cs: var(--cscale-primary);
+  --dc-h: var(--hue-primary);
 
   --bd-l: var(--lum-3);
   --bd-c: var(--chroma-low);
@@ -175,12 +161,34 @@
   --gt-h: var(--hue-primary);
 }
 
+/* ── Dark mode: the scale flips. none = black (page), max = white (contrast);
+   the numbered stops map to their flipped luminances. --lum-flip drives
+   arbitrary-value auto-flip. Comes after :root so these overrides win. */
+.dark {
+  --lum-dir: 1;
+  --lum-flip: 1;
+  --con-flip: .455;
+  --lum-none: 0;
+  --lum-1: .185;
+  --lum-2: .215;
+  --lum-3: .268;
+  --lum-4: .334;
+  --lum-5: .412;
+  --lum-6: .498;
+  --lum-7: .593;
+  --lum-8: .696;
+  --lum-9: .805;
+  --lum-10: .92;
+  --lum-max: 1;
+}
+
 /* ── Global (property-less) hue — sets hue (and its chroma scale) for every
    property that cascades below, painting nothing. Per-property hue utilities
    still override. ──────────────────────────────────────────────────────────── */
 @utility hue-* {
   --bg-h: --value(--hue-*);
   --tx-h: --value(--hue-*);
+  --dc-h: --value(--hue-*);
   --bd-h: --value(--hue-*);
   --bdb-h: --value(--hue-*);
   --ac-h: --value(--hue-*);
@@ -189,6 +197,7 @@
   --gt-h: --value(--hue-*);
   --bg-cs: --value(--cscale-*);
   --tx-cs: --value(--cscale-*);
+  --dc-cs: --value(--cscale-*);
   --bd-cs: --value(--cscale-*);
   --bdb-cs: --value(--cscale-*);
   --ac-cs: --value(--cscale-*);
@@ -200,6 +209,7 @@
   /* arbitrary hue-[280]: degrees as-is; no per-hue scale (unknown hue) */
   --bg-h: --value([integer]);
   --tx-h: --value([integer]);
+  --dc-h: --value([integer]);
   --bd-h: --value([integer]);
   --bdb-h: --value([integer]);
   --ac-h: --value([integer]);
@@ -208,6 +218,7 @@
   --gt-h: --value([integer]);
   --bg-cs: 1;
   --tx-cs: 1;
+  --dc-cs: 1;
   --bd-cs: 1;
   --bdb-cs: 1;
   --ac-cs: 1;
@@ -222,6 +233,7 @@
 @utility chroma-* {
   --bg-c: --value(--chroma-*);
   --tx-c: --value(--chroma-*);
+  --dc-c: --value(--chroma-*);
   --bd-c: --value(--chroma-*);
   --bdb-c: --value(--chroma-*);
   --ac-c: --value(--chroma-*);
@@ -233,6 +245,7 @@
   /* arbitrary chroma-[8]: chroma = n / 100 */
   --bg-c: calc(--value([integer]) / 100);
   --tx-c: calc(--value([integer]) / 100);
+  --dc-c: calc(--value([integer]) / 100);
   --bd-c: calc(--value([integer]) / 100);
   --bdb-c: calc(--value([integer]) / 100);
   --ac-c: calc(--value([integer]) / 100);
@@ -319,6 +332,36 @@
 @utility text-lum-down-* {
   --tx-l-adj: --value(--lum-adj-*);
   color: oklch(clamp(0, calc(var(--tx-l) - var(--lum-dir) * var(--tx-l-adj)), 1) calc(var(--tx-c) * var(--tx-cs) * clamp(0, calc((1 - (clamp(0, calc(var(--tx-l) - var(--lum-dir) * var(--tx-l-adj)), 1))) * var(--chroma-taper)), 1)) var(--tx-h));
+}
+
+/* ── Text Decoration ─────────────────────────────────────────────────── */
+@utility decoration-lum-* {
+  --dc-l: --value(--lum-*);
+  text-decoration-color: oklch(var(--dc-l) calc(var(--dc-c) * var(--dc-cs) * clamp(0, calc((1 - (var(--dc-l))) * var(--chroma-taper)), 1)) var(--dc-h));
+}
+@utility decoration-lum-* {
+  /* arbitrary decoration-lum-[60]: auto-flip L = v + flip × (1 − 2v) */
+  --dc-lv: calc(--value([integer]) / 100);
+  --dc-l: calc(var(--dc-lv) + var(--lum-flip) * (1 - 2 * var(--dc-lv)));
+  text-decoration-color: oklch(var(--dc-l) calc(var(--dc-c) * var(--dc-cs) * clamp(0, calc((1 - (var(--dc-l))) * var(--chroma-taper)), 1)) var(--dc-h));
+}
+@utility decoration-chroma-* {
+  --dc-c: --value(--chroma-*);
+  text-decoration-color: oklch(var(--dc-l) calc(var(--dc-c) * var(--dc-cs) * clamp(0, calc((1 - (var(--dc-l))) * var(--chroma-taper)), 1)) var(--dc-h));
+}
+@utility decoration-chroma-* {
+  --dc-c: calc(--value([integer]) / 100);
+  text-decoration-color: oklch(var(--dc-l) calc(var(--dc-c) * var(--dc-cs) * clamp(0, calc((1 - (var(--dc-l))) * var(--chroma-taper)), 1)) var(--dc-h));
+}
+@utility decoration-hue-* {
+  --dc-h: --value(--hue-*);
+  --dc-cs: --value(--cscale-*);
+  text-decoration-color: oklch(var(--dc-l) calc(var(--dc-c) * var(--dc-cs) * clamp(0, calc((1 - (var(--dc-l))) * var(--chroma-taper)), 1)) var(--dc-h));
+}
+@utility decoration-hue-* {
+  --dc-h: --value([integer]);
+  --dc-cs: 1;
+  text-decoration-color: oklch(var(--dc-l) calc(var(--dc-c) * var(--dc-cs) * clamp(0, calc((1 - (var(--dc-l))) * var(--chroma-taper)), 1)) var(--dc-h));
 }
 
 /* ── Border ─────────────────────────────────────────────────── */
@@ -519,36 +562,36 @@
    like lum-up/down it paints without rewriting the cascading vars. ────────── */
 @utility text-con-* {
   --con-off: --value(--con-*);
-  --con-dir: clamp(-1, calc((0.6 - var(--bg-l)) * 1000), 1);
+  --con-dir: clamp(-1, calc((var(--con-flip) - var(--bg-l)) * 1000), 1);
   color: oklch(clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1) calc(var(--tx-c) * var(--tx-cs) * clamp(0, calc((1 - (clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1))) * var(--chroma-taper)), 1)) var(--tx-h));
 }
 @utility text-con-* {
   /* arbitrary text-con-[40]: ΔL = n / 100 off the background */
   --con-off: calc(--value([integer]) / 100);
-  --con-dir: clamp(-1, calc((0.6 - var(--bg-l)) * 1000), 1);
+  --con-dir: clamp(-1, calc((var(--con-flip) - var(--bg-l)) * 1000), 1);
   color: oklch(clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1) calc(var(--tx-c) * var(--tx-cs) * clamp(0, calc((1 - (clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1))) * var(--chroma-taper)), 1)) var(--tx-h));
 }
 
 @utility border-con-* {
   --con-off: --value(--con-*);
-  --con-dir: clamp(-1, calc((0.6 - var(--bg-l)) * 1000), 1);
+  --con-dir: clamp(-1, calc((var(--con-flip) - var(--bg-l)) * 1000), 1);
   border-color: oklch(clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1) calc(var(--bd-c) * var(--bd-cs) * clamp(0, calc((1 - (clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1))) * var(--chroma-taper)), 1)) var(--bd-h));
 }
 @utility border-con-* {
   /* arbitrary border-con-[40]: ΔL = n / 100 off the background */
   --con-off: calc(--value([integer]) / 100);
-  --con-dir: clamp(-1, calc((0.6 - var(--bg-l)) * 1000), 1);
+  --con-dir: clamp(-1, calc((var(--con-flip) - var(--bg-l)) * 1000), 1);
   border-color: oklch(clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1) calc(var(--bd-c) * var(--bd-cs) * clamp(0, calc((1 - (clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1))) * var(--chroma-taper)), 1)) var(--bd-h));
 }
 
 @utility outline-con-* {
   --con-off: --value(--con-*);
-  --con-dir: clamp(-1, calc((0.6 - var(--bg-l)) * 1000), 1);
+  --con-dir: clamp(-1, calc((var(--con-flip) - var(--bg-l)) * 1000), 1);
   outline-color: oklch(clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1) calc(var(--bd-c) * var(--bd-cs) * clamp(0, calc((1 - (clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1))) * var(--chroma-taper)), 1)) var(--bd-h));
 }
 @utility outline-con-* {
   /* arbitrary outline-con-[40]: ΔL = n / 100 off the background */
   --con-off: calc(--value([integer]) / 100);
-  --con-dir: clamp(-1, calc((0.6 - var(--bg-l)) * 1000), 1);
+  --con-dir: clamp(-1, calc((var(--con-flip) - var(--bg-l)) * 1000), 1);
   outline-color: oklch(clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1) calc(var(--bd-c) * var(--bd-cs) * clamp(0, calc((1 - (clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1))) * var(--chroma-taper)), 1)) var(--bd-h));
 }
