@@ -145,15 +145,16 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
       <p class="muted mt-1 max-w-[66ch] text-sm leading-relaxed">
         Every swatch below is a real utility — <span class="kbd">bg-lum-*</span>,
         <span class="kbd">bg-chroma-*</span>, <span class="kbd">bg-hue-*</span>. Click a value to
-        set that axis; the other two strips re-seed through the cascade, exactly like they
+        set that axis; the other three strips re-seed through the cascade, exactly like they
         would in your markup. The classes that build the color are printed right on the
-        preview — in black or white, whichever the fill needs (that's <span class="kbd">con</span>).
+        preview, using the <span class="kbd">text-con-*</span> level you pick — it reads the
+        fill and stays readable in either direction.
       </p>
 
       <div class="lch mt-5">
         <div class="lch-side">
           <div class="lch-preview hue-primary chroma-mid bg-lum-5" id="lchPrev">
-            <span class="lch-pv-label" id="lchLabel">hue-<b>primary</b> chroma-<b>mid</b> bg-lum-<b>5</b></span>
+            <span class="lch-pv-label text-con-high" id="lchLabel">hue-<b>primary</b> chroma-<b>mid</b> bg-lum-<b>5</b></span>
           </div>
         </div>
 
@@ -174,6 +175,16 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
             <div class="lch-label"><span>Hue</span> <b id="hLbl">primary</b></div>
             <div class="lch-track" id="rowH" style="--bg-l: var(--lum-5); --bg-c: var(--chroma-mid)">
               {pickHues.map((h) => <button class={`lch-sw bg-hue-${h}`} data-h={h} type="button" aria-label={`hue ${h}`} />)}
+            </div>
+          </div>
+          <div class="lch-axis">
+            <div class="lch-label"><span>Text contrast</span> <b id="conLbl">high</b></div>
+            <div class="lch-track" id="rowCon">
+              {conLevels.map((lv) => (
+                <button class="lch-sw lch-con-sw" data-con={lv} type="button" aria-label={`text contrast ${lv}`}>
+                  <span class={`text-con-${lv}`}>Aa</span>
+                </button>
+              ))}
             </div>
           </div>
         </div>
@@ -512,10 +523,12 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
       var rowL = document.getElementById("rowL");
       var rowC = document.getElementById("rowC");
       var rowH = document.getElementById("rowH");
+      var rowCon = document.getElementById("rowCon");
       var lLbl = document.getElementById("lLbl");
       var cLbl = document.getElementById("cLbl");
       var hLbl = document.getElementById("hLbl");
-      var L = 5, C = "mid", H = "primary";
+      var conLbl = document.getElementById("conLbl");
+      var L = 5, C = "mid", H = "primary", CON = "high";
 
       function mark(row, key, val) {
         Array.prototype.forEach.call(row.children, function (b) {
@@ -523,7 +536,7 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
         });
       }
       function render() {
-        // preview paints; the three strips re-seed via the cascade
+        // preview paints; the other strips re-seed via the cascade
         prev.className = "lch-preview hue-" + H + " chroma-" + C + " bg-lum-" + L;
         rowL.className = "lch-track hue-" + H + " chroma-" + C;
         rowC.className = "lch-track hue-" + H;
@@ -531,8 +544,18 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
         rowH.className = "lch-track";
         rowH.style.setProperty("--bg-l", "var(--lum-" + L + ")");
         rowH.style.setProperty("--bg-c", "var(--chroma-" + C + ")");
+        // the contrast strip: every tile is the current fill; its Aa text sits at
+        // that tile's con level, so you can read each level against the color.
+        rowCon.className = "lch-track hue-" + H + " chroma-" + C;
+        Array.prototype.forEach.call(rowCon.children, function (b) {
+          b.className = "lch-sw lch-con-sw bg-lum-" + L +
+            (b.dataset.con === CON ? " is-active" : "");
+        });
+        // the preview label names the fill, drawn at the chosen contrast level
+        label.className = "lch-pv-label text-con-" + CON;
         label.innerHTML = "hue-<b>" + H + "</b> chroma-<b>" + C + "</b> bg-lum-<b>" + L + "</b>";
         lLbl.textContent = L; cLbl.textContent = C; hLbl.textContent = H;
+        conLbl.textContent = CON;
         mark(rowL, "l", String(L));
         mark(rowC, "c", C);
         mark(rowH, "h", H);
@@ -545,6 +568,7 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
       bind(rowL, function (d) { L = +d.l; });
       bind(rowC, function (d) { C = d.c; });
       bind(rowH, function (d) { H = d.h; });
+      bind(rowCon, function (d) { CON = d.con; });
       render();
     })();
   </script>
