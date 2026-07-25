@@ -493,7 +493,7 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
           pgOut.textContent = css;
           pgPal.innerHTML = hues.map(function (h, i) {
             var c = 0.14 * cscaleFor(h);
-            return '<div style="background:oklch(0.66 ' + round(c) + " " + h + ')"><span>' + names[i] + "</span></div>";
+            return '<div style="--l:0.66;background:oklch(0.66 ' + round(c) + " " + h + ')"><span>' + names[i] + "</span></div>";
           }).join("");
           pgNlbl.textContent = N; pgRlbl.textContent = rot + "°";
           try { pgBlob.textContent = btoa(JSON.stringify({ h: hues })).replace(/=+$/, ""); } catch (e) {}
