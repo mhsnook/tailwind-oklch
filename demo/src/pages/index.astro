@@ -156,6 +156,11 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
           <div class="lch-preview hue-primary chroma-mid bg-lum-5" id="lchPrev">
             <span class="lch-pv-label text-con-high" id="lchLabel">hue-<b>primary</b> chroma-<b>mid</b> bg-lum-<b>5</b></span>
           </div>
+          <div class="lch-resolved" id="lchResolved">
+            <span>L <b id="rvL">–</b></span>
+            <span>C <b id="rvC">–</b></span>
+            <span>H <b id="rvH">–</b></span>
+          </div>
         </div>
 
         <div class="lch-rows">
@@ -559,6 +564,15 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
         mark(rowL, "l", String(L));
         mark(rowC, "c", C);
         mark(rowH, "h", H);
+        // resolved oklch: read the browser's computed fill (chroma already ×cscale)
+        var m = /oklch\(\s*([\d.]+)[^\d.]+([\d.]+)[^\d.]+([\d.]+)/i.exec(
+          getComputedStyle(prev).backgroundColor
+        );
+        if (m) {
+          document.getElementById("rvL").textContent = (+m[1]).toFixed(3);
+          document.getElementById("rvC").textContent = (+m[2]).toFixed(3);
+          document.getElementById("rvH").textContent = Math.round(+m[3]) + "°";
+        }
       }
       function bind(row, cb) {
         Array.prototype.forEach.call(row.querySelectorAll("button"), function (b) {
