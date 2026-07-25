@@ -70,6 +70,15 @@ further churn.
   across the scale, light surfaces stay subtle, and the light pole (`lum-none`)
   resolves to true white. Keys on resolved `L`, so it also calms near-white text
   and works in dark mode; tune `--chroma-taper` per theme.
+- **`decoration-*` setters** (`text-decoration-color`) — `decoration-lum-*`,
+  `decoration-chroma-*`, `decoration-hue-*` — so an underline can sit on its own
+  luminance stop, independent of the text color.
+- **Contrast crossover follows the scale (`--con-flip`).** `con-*` now flips its
+  text direction (black↔white) at the scale's own midpoint — computed per mode —
+  instead of a fixed `0.6`, so max contrast switches at the same numbered stop in
+  light and dark. (Also fixed a specificity bug where `:root` was emitted after
+  `.dark`, so `--lum-dir` / `--lum-flip` / the crossover kept their light values
+  in dark mode; `:root` now comes first.)
 - **`max` stops for chroma and contrast.** `chroma-max` (base 0.25) overshoots the
   sRGB gamut so `oklch()` maps each hue to its most saturated displayable color —
   "full color, whatever that is here." `text-con-max` / `border-con-max` /
