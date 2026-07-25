@@ -12,7 +12,7 @@ const wheel = [
   { name: "bluegreen", deg: 195, cs: 0.92 },
 ];
 const stops = ["low", "mlow", "mid", "mhigh", "high"];
-const lums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const lums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const pickHues = ["primary", "accent", "success", "warning", "danger", "info"];
 
 const semantic = [
@@ -25,7 +25,7 @@ const semantic = [
 ];
 
 // Surfaces for the text-contrast samples. Identical markup lands on each; only
-// the seeded surface changes, and con-* re-solves for it (note the ink flips
+// the surface changes, and con-* re-solves for it (note the ink flips
 // direction as the surface crosses the mid of the scale).
 const conSurfaces = [
   { cls: "bg-lum-2", label: "bg-lum-2", note: "light → dark ink" },
@@ -43,22 +43,22 @@ const gridStops = ["low", "mlow", "mid", "mhigh", "high", "max"];
 const walk = [
   {
     n: "1",
-    title: "Two classes, and it pops",
-    note: `The paragraph carries just <code>font-bold text-lum-7</code> — no color, no hue, only <em>how far from the page</em>. Yet it comes out a deliberate, on-brand blue. Wait… where did the color come from?`,
+    title: "One class, and it pops",
+    note: `The paragraph carries just <code>text-lum-7</code> — no color, no hue, only <em>how far from the page</em>. Yet it comes out a deliberate, on-brand blue. Where did the color come from?`,
     html: `<div class="bg-lum-1 hue-primary chroma-mid rounded-xl p-5">
-  <p class="text-lum-7 font-bold">Two classes. And yet — blue.</p>
+  <p class="text-lum-7">A single class, and it's blue.</p>
 </div>`,
   },
   {
     n: "2",
-    title: "The wrapper seeded it",
-    note: `The wrapper did it. <code>bg-lum-1</code> paints only <em>this</em> div's background — one property. <code>hue-primary</code> and <code>chroma-mid</code> are <em>seeders</em>: they set hue and chroma for every descendant, so the paragraph inherited both and only had to choose a luminance. Swap the seeder to <code>hue-success</code> and everything re-tints — nothing inside changed. (Hue and chroma <em>can</em> be per-property too — <code>text-hue-*</code>, <code>bg-chroma-*</code> — but they usually travel together, so seeding is the common move.)`,
+    title: "The color came from above",
+    note: `<code>bg-lum-1</code> is scoped to a property — it paints only <em>this</em> div's background. But <code>hue-primary</code> and <code>chroma-mid</code> carry <em>no</em> property: they set hue and chroma for every LCH calculation below them, so the paragraph inherited both and only had to pick a luminance. Change <code>hue-primary</code> to <code>hue-success</code> and everything re-tints — nothing inside changed. (You can scope hue and chroma to a property too — <code>text-hue-*</code>, <code>bg-chroma-*</code> — but the property-less form is the common move.)`,
     html: `<div class="flex flex-wrap gap-3">
   <div class="bg-lum-1 hue-primary chroma-mid rounded-xl p-4">
-    <p class="text-lum-7 font-bold">hue-primary</p>
+    <p class="text-lum-7">hue-primary</p>
   </div>
   <div class="bg-lum-1 hue-success chroma-mid rounded-xl p-4">
-    <p class="text-lum-7 font-bold">hue-success</p>
+    <p class="text-lum-7">hue-success</p>
   </div>
 </div>`,
   },
@@ -68,10 +68,10 @@ const walk = [
     note: `Rather than hard-code <code>text-lum-7</code>, hand the job to <code>text-con-mid</code>: it reads the surface behind it and picks a luminance that contrasts — in whichever direction is needed. Here the <em>same</em> class sits on a light fill and a dark one; both stay readable, no <code>dark:</code> variant anywhere.`,
     html: `<div class="hue-primary chroma-mid flex flex-wrap gap-3">
   <div class="bg-lum-1 rounded-xl p-4">
-    <p class="text-con-mid font-bold">text-con-mid on lum-1</p>
+    <p class="text-con-mid">text-con-mid on lum-1</p>
   </div>
   <div class="bg-lum-7 rounded-xl p-4">
-    <p class="text-con-mid font-bold">same class on lum-7</p>
+    <p class="text-con-mid">same class on lum-7</p>
   </div>
 </div>`,
   },
@@ -80,8 +80,8 @@ const walk = [
     title: "Nudge, relative to right here",
     note: `Sometimes you want "a step brighter than <em>here</em>," wherever here is — a raised chip, a hover, a press. <code>bg-lum-up-2</code> nudges two steps off the inherited luminance (it never needs to know the surface was <code>lum-2</code>), and nudges don't compound down the tree.`,
     html: `<div class="bg-lum-2 hue-accent chroma-mid flex items-center gap-3 rounded-xl p-4">
-  <span class="text-lum-8 text-sm font-semibold">surface at lum-2</span>
-  <span class="bg-lum-up-2 text-con-high rounded-lg px-3 py-1.5 text-sm font-bold">bg-lum-up-2</span>
+  <span class="text-lum-8 text-sm">surface at lum-2</span>
+  <span class="bg-lum-up-2 text-con-high rounded-lg px-3 py-1.5 text-sm">bg-lum-up-2</span>
 </div>`,
   },
 ];
@@ -111,11 +111,14 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
       <button id="theme-toggle" class="toggle shrink-0" type="button">☀ Light</button>
     </header>
 
-    <p class="muted mt-5 max-w-[60ch] text-lg leading-relaxed">
-      Atomic OKLCH color utilities for Tailwind v4. Every color is three axes —
-      <b class="accent-ink">luminance</b>, <b class="accent-ink">chroma</b>,
-      <b class="accent-ink">hue</b> — and two of them cascade. Easiest to just watch it
-      compose:
+    <p class="muted mt-5 max-w-[64ch] text-lg leading-relaxed">
+      Atomic OKLCH color utilities for Tailwind v4. Luminance is set with the familiar
+      property-scoped classes — <span class="kbd">bg-lum-1</span>,
+      <span class="kbd">text-lum-7</span>. But <b class="accent-ink">hue</b> and
+      <b class="accent-ink">chroma</b> are <b>property-less</b>: they set the axis for
+      every LCH calculation that cascades to them. Make a section yellow and everything in
+      it is yellow; make it bright and everything's bright — so individual items just
+      manage their own luminance and contrast, for readability and emphasis. Watch:
     </p>
 
     <!-- ── Guided walkthrough ─────────────────────────────────────────── -->
@@ -145,7 +148,7 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
       <p class="muted mt-1 max-w-[66ch] text-sm leading-relaxed">
         Every swatch below is a real utility — <span class="kbd">bg-lum-*</span>,
         <span class="kbd">bg-chroma-*</span>, <span class="kbd">bg-hue-*</span>. Click a value to
-        set that axis; the other three strips re-seed through the cascade, exactly like they
+        set that axis; the other three strips re-derive through the cascade, exactly like they
         would in your markup. The classes that build the color are printed right on the
         preview, using the <span class="kbd">text-con-*</span> level you pick — it reads the
         fill and stays readable in either direction.
@@ -206,7 +209,7 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
         class skeleton. Its interior speaks only luminance
         (<span class="kbd">text-lum-9</span>, <span class="kbd">bg-lum-6</span>,
         <span class="kbd">border-con-mlow</span>); its character — which hue, how loud —
-        is seeded once on the wrapper with two words and cascades down.
+        is set once on the wrapper — two property-less words — and cascades down.
       </p>
 
       <div class="mt-6 grid gap-4 sm:grid-cols-3">
@@ -274,8 +277,8 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
       <p class="muted mt-4 max-w-[64ch] text-sm leading-relaxed">
         The <span class="kbd">card</span> bakes in <span class="kbd">bg-lum-2</span> and
         a <span class="kbd">border-con-mlow</span> — a border keyed off the card's own
-        surface, so it stays a soft step darker than whatever hue is seeded. The
-        three articles differ only by their two seeder words. Toggle the theme —
+        surface, so it stays a soft step darker than whatever hue is set above. The
+        three articles differ only by their two property-less words. Toggle the theme —
         every <span class="kbd">lum</span> value inverts while keeping its relationship
         to the page, and the border re-derives from the flipped surface. No
         <span class="kbd">dark:</span> classes anywhere.
@@ -306,14 +309,14 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
               — hue and chroma are left alone. And because the inputs are CSS variables, they
               <b>inherit</b>: put <span class="kbd">hue-success</span> on a parent and every
               descendant resolves its hue to it until something overrides. That's the cascade,
-              and it's why you seed a component's character once near the top and speak only
+              and it's why you set a component's character once near the top and speak only
               luminance inside.
             </p>
             <p>
               Each property keeps its <em>own</em> trio of variables —
               <span class="kbd">--bg-*</span>, <span class="kbd">--tx-*</span>,
               <span class="kbd">--bd-*</span>, … — so a surface and its text can sit at
-              different luminances while sharing one seeded hue. Two of those inputs are
+              different luminances while sharing one inherited hue. Two of those inputs are
               themselves tiny abstractions computed in pure CSS: a <b>luminance scale</b> and a
               <b>per-hue chroma multiplier</b>. Those are the next two questions.
             </p>
@@ -325,10 +328,13 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
           <summary>How does the luminance scale work?</summary>
           <div class="uh-body">
             <p>
-              <span class="kbd">--lum-0…10</span> is a plain white→black ramp that measures
-              contrast <em>with the page</em>, not absolute lightness. It's front-loaded — tiny
-              steps near the page (where the eye is most sensitive), opening up toward the dark
-              end — and it auto-flips because <span class="kbd">.dark</span> just redefines each
+              <span class="kbd">--lum-1…10</span> is a ramp that measures contrast
+              <em>with the page</em>, not absolute lightness. Stop 1 hugs the page and steps open
+              up toward 10; the pure poles sit <em>outside</em> the numbered range as
+              <span class="kbd">lum-none</span> (the page: white/black) and
+              <span class="kbd">lum-max</span> (full contrast: black/white), so a low-contrast
+              theme can pull the numbered stops in without losing the extremes. It auto-flips
+              because <span class="kbd">.dark</span> just redefines each
               <span class="kbd">--lum-N</span>. All CSS, no runtime JS.
             </p>
             <h4>The stops (grayscale)</h4>
@@ -469,7 +475,7 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
             <p>
               Every block below is <em>identical markup</em> — <code class="kbd">con-low</code>
               eyebrow, <code class="kbd">con-high</code> headline, <code class="kbd">con-mid</code>
-              body, <code class="kbd">con-mlow</code> caption. Only the seeded surface differs,
+              body, <code class="kbd">con-mlow</code> caption. Only the surface differs,
               and the ink flips direction as the surface crosses the middle of the scale.
               Toggle the theme — each one re-solves against its flipped surface.
             </p>
@@ -541,7 +547,7 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
         });
       }
       function render() {
-        // preview paints; the other strips re-seed via the cascade
+        // preview paints; the other strips re-derive via the cascade
         prev.className = "lch-preview hue-" + H + " chroma-" + C + " bg-lum-" + L;
         rowL.className = "lch-track hue-" + H + " chroma-" + C;
         rowC.className = "lch-track hue-" + H;
