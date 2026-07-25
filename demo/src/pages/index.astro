@@ -171,15 +171,15 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
         Every swatch below is a real utility — <span class="kbd">bg-lum-*</span>,
         <span class="kbd">bg-chroma-*</span>, <span class="kbd">bg-hue-*</span>. Click a value to
         set that axis; the other two strips re-seed through the cascade, exactly like they
-        would in your markup. The class that builds this color is shown beside it.
+        would in your markup. The classes that build the color are printed right on the
+        preview — in black or white, whichever the fill needs (that's <span class="kbd">con</span>).
       </p>
 
       <div class="lch mt-5">
         <div class="lch-side">
           <div class="lch-preview hue-primary chroma-mid bg-lum-5" id="lchPrev">
-            <span class="lch-pv-label" id="lchLabel">lum 5 · chroma mid · primary</span>
+            <span class="lch-pv-label" id="lchLabel">hue-<b>primary</b> chroma-<b>mid</b> bg-lum-<b>5</b></span>
           </div>
-          <div class="lch-out" id="lchOut"></div>
         </div>
 
         <div class="lch-rows">
@@ -533,7 +533,6 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
     (function () {
       var prev = document.getElementById("lchPrev");
       if (!prev) return;
-      var out = document.getElementById("lchOut");
       var label = document.getElementById("lchLabel");
       var rowL = document.getElementById("rowL");
       var rowC = document.getElementById("rowC");
@@ -557,8 +556,7 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
         rowH.className = "lch-track";
         rowH.style.setProperty("--bg-l", "var(--lum-" + L + ")");
         rowH.style.setProperty("--bg-c", "var(--chroma-" + C + ")");
-        out.innerHTML = "hue-<b>" + H + "</b> chroma-<b>" + C + "</b> bg-lum-<b>" + L + "</b>";
-        label.textContent = "lum " + L + " · chroma " + C + " · " + H;
+        label.innerHTML = "hue-<b>" + H + "</b> chroma-<b>" + C + "</b> bg-lum-<b>" + L + "</b>";
         lLbl.textContent = L; cLbl.textContent = C; hLbl.textContent = H;
         mark(rowL, "l", String(L));
         mark(rowC, "c", C);
