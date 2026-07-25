@@ -198,9 +198,10 @@ for (const p of PROPS) {
 w(`}`);
 w('');
 
-// ── seeders ───────────────────────────────────────────────────────────────
-w(`/* ── Global hue seeder — sets hue (and its chroma scale) for every property,
-   painting nothing. Per-property hue utilities still override. ───────────── */`);
+// ── property-less axis classes ──────────────────────────────────────────────
+w(`/* ── Global (property-less) hue — sets hue (and its chroma scale) for every
+   property that cascades below, painting nothing. Per-property hue utilities
+   still override. ──────────────────────────────────────────────────────────── */`);
 w(`@utility hue-* {`);
 for (const p of PROPS) w(`  --${p.stem}-h: --value(--hue-*);`);
 for (const p of PROPS) w(`  --${p.stem}-cs: --value(--cscale-*);`);
@@ -211,8 +212,9 @@ for (const p of PROPS) w(`  --${p.stem}-h: --value([integer]);`);
 for (const p of PROPS) w(`  --${p.stem}-cs: 1;`);
 w(`}`);
 w('');
-w(`/* ── Global chroma seeder — sets chroma for every property, painting nothing.
-   Per-property chroma utilities still override. ─────────────────────────── */`);
+w(`/* ── Global (property-less) chroma — sets chroma for every property that
+   cascades below, painting nothing. Per-property chroma utilities still
+   override. ────────────────────────────────────────────────────────────────── */`);
 w(`@utility chroma-* {`);
 for (const p of PROPS) w(`  --${p.stem}-c: --value(--chroma-*);`);
 w(`}`);

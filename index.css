@@ -175,8 +175,9 @@
   --gt-h: var(--hue-primary);
 }
 
-/* ── Global hue seeder — sets hue (and its chroma scale) for every property,
-   painting nothing. Per-property hue utilities still override. ───────────── */
+/* ── Global (property-less) hue — sets hue (and its chroma scale) for every
+   property that cascades below, painting nothing. Per-property hue utilities
+   still override. ──────────────────────────────────────────────────────────── */
 @utility hue-* {
   --bg-h: --value(--hue-*);
   --tx-h: --value(--hue-*);
@@ -215,8 +216,9 @@
   --gt-cs: 1;
 }
 
-/* ── Global chroma seeder — sets chroma for every property, painting nothing.
-   Per-property chroma utilities still override. ─────────────────────────── */
+/* ── Global (property-less) chroma — sets chroma for every property that
+   cascades below, painting nothing. Per-property chroma utilities still
+   override. ────────────────────────────────────────────────────────────────── */
 @utility chroma-* {
   --bg-c: --value(--chroma-*);
   --tx-c: --value(--chroma-*);

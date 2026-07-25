@@ -61,16 +61,21 @@ the imports:
 
 ## The two kinds of class
 
-**Cascade seeders** set an axis for _everything below them_ and paint nothing of
-their own. Put them near a component's root:
+**Property-less axis classes** carry no CSS property. They set an axis for every
+LCH calculation that cascades to them — plain custom-property inheritance — and
+paint nothing of their own. Put them near a component's root:
 
-| Seeder      | Sets for all descendants                          |
+| Class       | Sets for everything below                         |
 | ----------- | ------------------------------------------------- |
 | `hue-*`     | hue — and its per-hue chroma scale (see below)    |
 | `chroma-*`  | chroma (`chroma-low`, `chroma-high`, …)              |
 
+Make a section yellow and everything in it is yellow; make it bright and
+everything's bright. `hue-primary` is just `bg-hue-primary` without the `bg` —
+it sets the hue for _all_ properties below instead of one.
+
 **Per-property setters** paint exactly one CSS property from one axis. Luminance
-is the one you set constantly; chroma and hue inherit from a seeder (or the
+is the one you set constantly; chroma and hue inherit from an ancestor (or the
 `:root` default) unless you set them explicitly:
 
 ```html
@@ -79,7 +84,7 @@ is the one you set constantly; chroma and hue inherit from a seeder (or the
 <span class="hover:bg-lum-up-1">luminance only; chroma + hue inherited</span>
 ```
 
-Because `:root` already seeds `hue-primary` + low chroma, a brand-colored
+Because `:root` already carries `hue-primary` + low chroma, a brand-colored
 surface often needs only `bg-lum-2`.
 
 A common pattern is to let a component own its luminance structure and take only
@@ -102,34 +107,38 @@ the color and how loud it is.
 
 ## Luminance scale (`lum`)
 
-`{prop}-lum-{0–10}` — a plain **white → black ramp** that measures contrast with
-the page and auto-flips between light and dark mode, so you almost never write
-`dark:`.
+`{prop}-lum-{1–10}` — a ramp that measures contrast with the page and auto-flips
+between light and dark mode, so you almost never write `dark:`. The numbered
+stops ride a front-loaded formula; the **pure poles are named**, outside the
+numbered range:
 
-| Stop | Light | Dark  | Meaning                                    |
-| ---- | ----- | ----- | ------------------------------------------ |
-| `0`  | 1.00  | 0.00  | pure white / pure black — the page-ward extreme |
-| `1`  | 0.965 | 0.185 | blends with the page (lightest usable surface) |
-| `2`  | 0.95  | 0.22  | subtle surface / card                      |
-| `3`  | 0.885 | 0.30  | raised surface / border                    |
-| `5`  | 0.69  | 0.49  | mid                                        |
-| `7`  | 0.46  | 0.67  | prominent                                  |
-| `9`  | 0.22  | 0.86  | strong text                                |
-| `10` | 0.00  | 1.00  | pure black / pure white — maximum foreground contrast |
+| Stop   | Light | Dark  | Meaning                                          |
+| ------ | ----- | ----- | ------------------------------------------------ |
+| `none` | 1.00  | 0.00  | the page color: white / black — zero contrast    |
+| `1`    | 0.92  | 0.185 | lightest usable surface (hugs the page)          |
+| `2`    | 0.887 | 0.22  | subtle surface / card                            |
+| `3`    | 0.831 | 0.28  | raised surface                                   |
+| `5`    | 0.676 | 0.44  | mid                                              |
+| `7`    | 0.481 | 0.63  | prominent                                        |
+| `9`    | 0.254 | 0.83  | strong text                                      |
+| `10`   | 0.13  | 0.92  | a strong foreground (near, not at, the max)      |
+| `max`  | 0.00  | 1.00  | full contrast: black / white                     |
 
-Two things worth internalizing:
+Worth internalizing:
 
-- **`0` and `10` are the pure extremes** (white and black), not everyday values.
-  Your page sits near `0`; the lightest surface you'd actually paint is `1`, a
-  card is `2`, and so on. Text lives up around `8`–`10`.
-- **The low end is finely graded.** The eye is most sensitive to differences
-  next to the page color, so `0`→`1`→`2` are tiny steps and the scale opens up
-  toward the dark end. That's why a "subtle card" is a real, distinct stop
-  rather than something you have to reach for with an arbitrary value.
+- **`none` and `max` are the pure extremes**, kept _out_ of the numbered scale.
+  Reach for them when you want literal white/black (`bg-lum-none`, `text-lum-max`);
+  the numbered stops stay usable surfaces. Because the poles are separate, a
+  low-contrast theme can pull the numbered range in (start `lum-1` at, say, 0.90)
+  without giving up pure white/black.
+- **The scale is front-loaded.** The eye is most sensitive next to the page, so
+  the steps are tight up near `1` and open up toward `10`. That's why a "subtle
+  card" is a real, distinct stop, not something you reach for with an arbitrary
+  value. Tune the endpoints and curve in the generator (`LUM_*_NEAR`, `LUM_GAMMA`).
 
 ## Chroma stops (`chroma`)
 
-`{prop}-chroma-{low | mlow | mid | mhigh | high | max}`, or the seeder `chroma-{…}`:
+`{prop}-chroma-{low | mlow | mid | mhigh | high | max}`, or the property-less `chroma-{…}`:
 
 | Name    | Base value | Use for                            |
 | ------- | ---------- | ---------------------------------- |
@@ -171,7 +180,7 @@ These are calibrated by eye and easy to retune — override any `--cscale-*` in 
 ceiling is unknown; set `bg-chroma-[n]` directly if you need to tame them.
 
 **There is no `neutral` hue.** A neutral is the _absence_ of chroma, not a color:
-reach for `chroma-low` (a faint temperature from whatever hue is seeded) or
+reach for `chroma-low` (a faint temperature from whatever hue is set above) or
 `chroma-[0]` for a dead-flat gray. Keeping the axes decomposed means neutrality
 belongs to the chroma axis — folding it into the hue list would smuggle a chroma
 decision back into hue.
@@ -249,7 +258,7 @@ surface); `max` uses an offset big enough to **always** clamp to pure black or
 white — a guaranteed `contrast-color()`, whatever the surface. `text-con` keeps
 the inherited text hue/chroma; `border-con` and `outline-con` keep the inherited
 border hue/chroma — only the luminance is computed, so the contrasting color
-still carries the seeded hue (except `max`, which lands on pure black/white).
+still carries the inherited hue (except `max`, which lands on pure black/white).
 
 `con` is the _only_ family always measured against the background; `lum` and
 `lum-up/down` measure against the property's own inherited value. `--bg-l` always
@@ -264,7 +273,7 @@ changes nothing descendants inherit. Arbitrary `con-[40]` sets ΔL directly
 ## Arbitrary values
 
 All three axes accept Tailwind's bracket syntax, on every setter and both
-seeders.
+property-less `hue-*` / `chroma-*` classes.
 
 ```html
 <!-- Hue: any degree 0–360 (uses chroma scale 1) -->
@@ -280,7 +289,7 @@ seeders.
 ```
 
 Note that arbitrary `lum-[n]` is a _direct luminance_ (`n/100`), while the named
-`lum-0…10` scale is a curved contrast ramp — two different tools that share the
+`lum-1…10` scale is a curved contrast ramp — two different tools that share the
 prefix.
 
 ## Gradients
@@ -323,7 +332,7 @@ document.documentElement.style.setProperty('--hue-primary', '180');
 ```
 
 This is how per-section or per-user theming works: an inline `--hue-*` override
-flows through the same variables the utilities read, so seeders and setters keep
+flows through the same variables the utilities read, so property-less classes and setters keep
 composing on top of it.
 
 ## Migrating to 0.7
@@ -335,22 +344,22 @@ pre-1.0 — the API isn't settled, so pin the version and expect more churn.
   line — `@import "tailwind-oklch";` is the whole install now. The
   `{prop}-{L}-{C}[-{H}]` shorthands (`bg-3-mhi`, `bg-3-mhi-accent`) are gone;
   they re-pinned all three axes on every leaf, against the cascade. Split them
-  into axes and hoist hue/chroma to a seeder: `bg-3-mhi-accent` →
+  into axes and hoist hue/chroma to `hue-*` / `chroma-*`: `bg-3-mhi-accent` →
   `hue-accent` (on the parent) + `bg-lum-3 bg-chroma-mhigh`.
 - **Axis prefixes renamed for readability** — `lum` / `chroma` / `hue`.
   `bg-lc-5` → `bg-lum-5`, `bg-c-mid` → `bg-chroma-mid`, `bg-h-info` → `bg-hue-info`.
-  The global seeders are `hue-*` and `chroma-*`.
+  The global property-less classes are `hue-*` and `chroma-*`.
 - **Chroma stops spelled out** — `lo` / `mlo` / `mhi` / `hi` → `low` / `mlow` /
   `mhigh` / `high` (`mid` unchanged). Words of five letters or fewer are written
   in full; the same `low·mlow·mid·mhigh·high` scale is reused wherever it fits.
-- **The luminance scale is reindexed.** `lum-0` is now **pure white/black**, not
-  the old near-page 0.95. The everyday surfaces shifted down a notch: a
-  near-page background that was `lc-0` is now `lum-1`/`lum-2`; text at the old
-  `lc-10` (near-black) is now `lum-10` = pure black — use `lum-9` for the softer
-  near-black.
-- **The `none` / `base` / `fore` / `full` aliases are gone.** The scale is just
-  `0`–`10`, with `0` and `10` as the pure extremes. Replace `lc-base` → `lum-1`,
-  `lc-fore` → `lum-9`/`lum-10`, `lc-none` → `lum-0`, `lc-full` → `lum-10`.
+- **The luminance scale is reindexed and re-cut.** Numbered stops are now `1`–`10`
+  on a front-loaded formula (`lum-1` ≈ 0.92, `lum-10` ≈ 0.13); the pure poles moved
+  out of the numbered range to `lum-none` (white/black) and `lum-max` (black/white).
+  `lum-0` no longer exists — it was the same as `none`. Everyday surfaces shift a
+  notch: a near-page background is `lum-1`/`lum-2`, a card `lum-2`.
+- **The `none` / `base` / `fore` / `full` aliases are gone.** Replace `lc-none` →
+  `lum-none`, `lc-full` → `lum-max`, `lc-base` → `lum-1`, `lc-fore` → `lum-9`/`lum-10`.
+  Pure white/black text/fills are `text-lum-none` / `bg-lum-max` (etc.).
 - **Chroma is now scaled per hue.** A given `chroma-*` stop paints less on blue
   than it used to (and about the same on green). If a color looks off, retune
   its `--cscale-*` or set an explicit `*-chroma-[n]`.

@@ -1,7 +1,7 @@
 ## The cascade model & reference frames
 
 Every color in tailwind-oklch is composed from three axes — luminance (`lum`),
-chroma, and hue — and two of them **cascade**. You seed a component's character
+chroma, and hue — and two of them **cascade**. You set a component's character
 once near its root and most elements inside only ever state their own luminance.
 This doc is about the part that trips people up: **what a class is measured
 _against_**. Get the reference frames straight and the rest of the system falls
@@ -18,14 +18,14 @@ or just paint itself?**
 
 | Class kind | Examples | Writes | Cascades to descendants? |
 | --- | --- | --- | --- |
-| **Seeders** | `hue-primary`, `chroma-mid` | `--*-h`, `--*-c`, `--*-cs` (every property) | ✅ that's their whole job — paint nothing |
+| **Property-less axis** | `hue-primary`, `chroma-mid` | `--*-h`, `--*-c`, `--*-cs` (every property) | ✅ that's their whole job — paint nothing |
 | **Absolute setters** | `bg-lum-5`, `text-chroma-high`, `border-hue-info` | that property's axis var, e.g. `--bg-l` | ✅ the var inherits; also paints the property |
 | **Relative nudges** | `bg-lum-up-1`, `text-lum-down-2` | see [below](#the-anchor-split) | ⚠️ bg updates `--bg-l` (the real surface) but not the anchor |
 | **Contrast (leaf)** | `text-con-mid`, `border-con-low` | nothing that inherits | ❌ computes a color for this element only |
 
-Seeders and absolute setters are the only classes that change a subtree's
-inherited character. Nudges and `con-*` read the cascade and mostly paint
-themselves.
+The property-less axis classes and absolute setters are the only classes that
+change a subtree's inherited character. Nudges and `con-*` read the cascade and
+mostly paint themselves.
 
 ### Three reference frames
 
@@ -51,26 +51,26 @@ is off _my background_.
 ### The worked example
 
 This is the case that exposes the whole mechanism. Three nested elements, light
-mode (`--lum-1 = .965`, the `up-1` step is `.08`, `con-low` is a `.18` ΔL):
+mode (`--lum-1 = .92`, the `up-1` step is `.08`, `con-low` is a `.18` ΔL):
 
 ```html
-<div class="bg-lum-1">            <!-- absolute:  --bg-l = .965, paints .965 -->
-  <div class="bg-lum-up-1">       <!-- nudge:     paints .885, and sets --bg-l = .885 -->
-    <span class="text-con-low">   <!-- leaf:      reads --bg-l = .885 → text .705 -->
+<div class="bg-lum-1">            <!-- absolute:  --bg-l = .92, paints .92 -->
+  <div class="bg-lum-up-1">       <!-- nudge:     paints .84, and sets --bg-l = .84 -->
+    <span class="text-con-low">   <!-- leaf:      reads --bg-l = .84 → text .66 -->
       one step of contrast off the surface it actually sits on
     </span>
   </div>
 </div>
 ```
 
-- The `bg-lum-up-1` div paints `.965 − .08 = .885` **and writes `.885` into
+- The `bg-lum-up-1` div paints `.92 − .08 = .84` **and writes `.84` into
   `--bg-l`**, because that is now the real surface.
-- `text-con-low` reads `--bg-l = .885` and lands at `.885 − .18 = .705` — a full
+- `text-con-low` reads `--bg-l = .84` and lands at `.84 − .18 = .66` — a full
   `.18 ΔL` against the surface it's actually on.
 
 The subtle part: if the nudge had _not_ updated `--bg-l`, `con` would have read
-the last absolute (`.965`) and produced `.785` — only `.10 ΔL` against the real
-`.885` surface. Contrast-compliant against a surface that isn't there. So the
+the last absolute (`.92`) and produced `.74` — only `.10 ΔL` against the real
+`.84` surface. Contrast-compliant against a surface that isn't there. So the
 nudge **must** publish the real surface for `con` to trust it.
 
 ### Why you can't just make it compound
@@ -134,7 +134,7 @@ computes its color inline and paints. It's non-compounding for the same reason
 | --- | --- | --- | --- |
 | `--bg-l` | `bg-lum-N` (absolute) **and** `bg-lum-up/down` (real surface) | `con-*`, `bg-lum-up/down`'s paint | ✅ |
 | `--bg-anchor-l` | `bg-lum-N` (absolute) and `:root` only | `bg-lum-up/down` (its step) | ✅ |
-| `--bg-c` / `--bg-h` / `--bg-cs` | seeders, `bg-chroma/hue-*` | every bg paint | ✅ |
+| `--bg-c` / `--bg-h` / `--bg-cs` | `chroma-*` / `hue-*`, `bg-chroma/hue-*` | every bg paint | ✅ |
 | `--tx-l` | `text-lum-N` (absolute) | `text-lum-up/down`, `text-con-*`'s hue/chroma path | ✅ |
 | `--con-dir` / `--con-off` | `con-*` (scratch, per element) | `con-*`'s own calc | — |
 
