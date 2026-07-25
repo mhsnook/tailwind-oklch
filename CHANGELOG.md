@@ -22,18 +22,21 @@ further churn.
 - **Shorthand utilities** (`{prop}-{L}-{C}` and `{prop}-{L}-{C}-{H}`, e.g.
   `bg-3-mhi`, `bg-3-mhi-accent`). They re-pinned all three axes on every leaf,
   working against the cascade. Split them into axes and hoist hue/chroma to a
-  `hue-*` / `chr-*` seeder.
+  `hue-*` / `chroma-*` seeder.
 - **The `none` / `base` / `fore` / `full` luminance aliases.** The scale is just
   `0`–`10`, with `0`/`10` as the pure extremes. Replace `base` → `1`,
   `fore` → `9`/`10`, `none` → `0`, `full` → `10`.
 
 ### Changed
 
-- **Renamed the axis prefixes to `lum` / `chr` / `hue`** for readability now that
+- **Renamed the axis prefixes to `lum` / `chroma` / `hue`** for readability now that
   all three axes are first-class: `{prop}-lc-*` → `{prop}-lum-*`,
-  `{prop}-c-*` → `{prop}-chr-*`, `{prop}-h-*` → `{prop}-hue-*` (e.g. `bg-lc-5` →
-  `bg-lum-5`, `bg-c-mid` → `bg-chr-mid`, `text-h-info` → `text-hue-info`). The
-  global seeders are `hue-*` and `chr-*`.
+  `{prop}-c-*` → `{prop}-chroma-*`, `{prop}-h-*` → `{prop}-hue-*` (e.g. `bg-lc-5` →
+  `bg-lum-5`, `bg-c-mid` → `bg-chroma-mid`, `text-h-info` → `text-hue-info`). The
+  global seeders are `hue-*` and `chroma-*`.
+- **Chroma stops spelled out** — `lo`/`mlo`/`mhi`/`hi` → `low`/`mlow`/`mhigh`/`high`
+  (`mid` unchanged). Whole words for anything five letters or fewer; the same
+  `low·mlow·mid·mhigh·high` scale is reused across axes wherever it fits.
 - **Luminance scale reindexed to a plain white→black ramp.** `lum-0` is now pure
   white (light) / pure black (dark) — the page-ward extreme — instead of the old
   near-page 0.95. Everyday surfaces shift down: a near-page background is `lum-1`,
@@ -44,7 +47,7 @@ further churn.
 ### Added
 
 - **Per-hue chroma normalization.** Each hue carries a `--cscale-*` multiplier and
-  every color resolves chroma as `calc(base × scale)`, so a given `chr-*` stop
+  every color resolves chroma as `calc(base × scale)`, so a given `chroma-*` stop
   looks about equally saturated across hues (blue no longer reads hotter than
   green). Override `--cscale-*` in `@theme` to retune.
 - `scripts/gen-index.js` generates `index.css`, keeping every painting utility's

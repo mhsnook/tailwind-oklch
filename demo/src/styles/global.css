@@ -33,9 +33,9 @@
    Tailwind can't see them in source — safelist the combinations. */
 @source inline("hue-{blue,purple,pink,red,orange,yellow,green,bluegreen}");
 @source inline("hue-{primary,accent,success,warning,danger,info}");
-@source inline("chr-{lo,mlo,mid,mhi,hi}");
+@source inline("chroma-{low,mlow,mid,mhigh,high}");
 @source inline("bg-lum-{0,1,2,3,4,5,6,7,8,9,10}");
-@source inline("bg-chr-{lo,mlo,mid,mhi,hi}");
+@source inline("bg-chroma-{low,mlow,mid,mhigh,high}");
 @source inline("bg-hue-{primary,accent,success,warning,danger,info}");
 
 /* ── Page chrome ─────────────────────────────────────────────────────────
