@@ -1,11 +1,13 @@
 'use strict';
-// Generator for tailwind-oklch 1.0 index.css.
+// Generator for tailwind-oklch index.css.
 // Emits readable, commented CSS. Every color-painting utility resolves chroma
 // as calc(var(--X-c) * var(--X-cs)) so per-hue normalization applies uniformly.
+//
+// Axis prefixes: lum (luminance) · chr (chroma) · hue.
 
 // Named hues map to real hue angles. There is deliberately no "neutral" — a
-// neutral is the absence of chroma (chroma-lo, or chroma-[0] for a flat gray),
-// not a hue. Keeping the axes decomposed means neutrality lives on chroma.
+// neutral is the absence of chroma (chr-lo, or chr-[0] for a flat gray), not a
+// hue. Keeping the axes decomposed means neutrality lives on chroma.
 const HUES = [
   ['primary', 233], ['accent', 350], ['success', 145],
   ['warning', 55], ['danger', 15], ['info', 220],
@@ -37,7 +39,7 @@ const PROPS = [
 
 const STOPS = 'var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position))';
 
-// color() builds an oklch() with a given luminance expression for a stem.
+// col() builds an oklch() with a given luminance expression for a stem.
 const col = (stem, lExpr) =>
   `oklch(${lExpr} calc(var(--${stem}-c) * var(--${stem}-cs)) var(--${stem}-h))`;
 
@@ -61,23 +63,24 @@ w(`/* tailwind-oklch — a cascade-first OKLCH color system for Tailwind v4
  *   @import "tailwind-oklch";
  *
  * Each class states ONE fact about ONE axis. Every color is composed from three
- * independent axes — luminance contrast (lc), chroma, and hue — two of which
+ * independent axes — luminance (lum), chroma (chr), and hue — two of which
  * cascade, so most elements only ever state their luminance.
  *
  *   - Cascade seeders set an axis for every descendant and paint nothing:
  *       hue-primary · hue-danger · …    seeds hue (and its chroma scale)
- *       chroma-mlo · chroma-hi · …      seeds chroma
+ *       chr-mlo · chr-hi · …            seeds chroma
  *
  *   - Per-property setters paint one property from one axis; hue and chroma
  *     inherit from a seeder (or the :root default) unless set explicitly:
- *       bg-lc-2      bg-chroma-mlo     bg-hue-accent
- *       text-lc-9    text-chroma-hi    text-hue-info
+ *       bg-lum-2     bg-chr-mlo     bg-hue-accent
+ *       text-lum-9   text-chr-hi    text-hue-info
  *       …plus border-*, border-b-*, accent-*, shadow-*, from-*, to-*
  *
  *   - Relative adjustments nudge off the inherited luminance without rewriting
- *     it (so they don't compound down the tree): bg-lc-up-1 · text-lc-down-1 · …
+ *     it (so they don't compound down the tree): bg-lum-up-1 · text-lum-down-1 · …
  *
- * Luminance contrast scale: 0–10, a plain white→black ramp that auto-flips.
+ * Luminance scale: 0–10, a plain white→black ramp that auto-flips, measuring
+ * contrast with the page.
  *   0  = pure white (light) / pure black (dark) — the page-ward extreme
  *   1  = blends with the page (the lightest usable surface)
  *   10 = pure black (light) / pure white (dark) — maximum foreground contrast
@@ -100,24 +103,24 @@ w(`  /* ── Per-hue chroma scale — perceptual normalization multipliers ─
 for (const [n] of HUES) w(`  --cscale-${n}: ${CSCALE[n]};`);
 w('');
 w(`  /* ── Luminance scale (light): 0 = white … 10 = black ──────────────── */`);
-for (let i = 0; i <= 10; i++) w(`  --l-${i}: ${L_LIGHT[i]};`);
+for (let i = 0; i <= 10; i++) w(`  --lum-${i}: ${L_LIGHT[i]};`);
 w('');
 w(`  /* ── Chroma stops (base, before per-hue scale) ────────────────────── */`);
-for (const [n, v] of CHROMA) w(`  --c-${n}: ${v};`);
+for (const [n, v] of CHROMA) w(`  --chr-${n}: ${v};`);
 w('');
-w(`  /* ── LC adjustment steps (~one 0–10 position each) ────────────────── */`);
-for (const [n, v] of ADJ) w(`  --lc-adj-${n}: ${v};`);
+w(`  /* ── Luminance adjustment steps (~one 0–10 position each) ─────────── */`);
+for (const [n, v] of ADJ) w(`  --lum-adj-${n}: ${v};`);
 w(`}`);
 w('');
 
 // ── dark ────────────────────────────────────────────────────────────────
 w(`/* ── Dark mode: the scale flips (0 = black, 10 = white) ─────────────────
    0/blends and 10/max-contrast keep their meaning; the numbers just map to
-   flipped luminances. --lc-flip drives arbitrary-value auto-flip. */`);
+   flipped luminances. --lum-flip drives arbitrary-value auto-flip. */`);
 w(`.dark {`);
-w(`  --lc-dir: 1;`);
-w(`  --lc-flip: 1;`);
-for (let i = 0; i <= 10; i++) w(`  --l-${i}: ${L_DARK[i]};`);
+w(`  --lum-dir: 1;`);
+w(`  --lum-flip: 1;`);
+for (let i = 0; i <= 10; i++) w(`  --lum-${i}: ${L_DARK[i]};`);
 w(`}`);
 w('');
 
@@ -126,14 +129,14 @@ w(`/* ── Cascade defaults ────────────────�
    Sensible fallbacks so any single-axis setter resolves immediately. These
    inherit down the DOM, so a parent's hue/chroma flows to children. */`);
 w(`:root {`);
-w(`  --lc-dir: -1;`);
-w(`  --lc-flip: 0;`);
+w(`  --lum-dir: -1;`);
+w(`  --lum-flip: 0;`);
 w('');
 const defL = { bg: '5', tx: '10', bd: '3', bdb: '3', ac: '5', sh: '5', gf: '5', gt: '5' };
 const defC = { bg: 'lo', tx: 'lo', bd: 'lo', bdb: 'lo', ac: 'mid', sh: 'lo', gf: 'mid', gt: 'mid' };
 for (const p of PROPS) {
-  w(`  --${p.stem}-l: var(--l-${defL[p.stem]});`);
-  w(`  --${p.stem}-c: var(--c-${defC[p.stem]});`);
+  w(`  --${p.stem}-l: var(--lum-${defL[p.stem]});`);
+  w(`  --${p.stem}-c: var(--chr-${defC[p.stem]});`);
   w(`  --${p.stem}-cs: var(--cscale-primary);`);
   w(`  --${p.stem}-h: var(--hue-primary);`);
   if (p.stem !== 'gt') w('');
@@ -156,11 +159,11 @@ w(`}`);
 w('');
 w(`/* ── Global chroma seeder — sets chroma for every property, painting nothing.
    Per-property chroma utilities still override. ─────────────────────────── */`);
-w(`@utility chroma-* {`);
-for (const p of PROPS) w(`  --${p.stem}-c: --value(--c-*);`);
+w(`@utility chr-* {`);
+for (const p of PROPS) w(`  --${p.stem}-c: --value(--chr-*);`);
 w(`}`);
-w(`@utility chroma-* {`);
-w(`  /* arbitrary chroma-[8]: chroma = n / 100 */`);
+w(`@utility chr-* {`);
+w(`  /* arbitrary chr-[8]: chroma = n / 100 */`);
 for (const p of PROPS) w(`  --${p.stem}-c: calc(--value([integer]) / 100);`);
 w(`}`);
 w('');
@@ -174,22 +177,22 @@ for (const p of PROPS) {
   const s = p.stem;
   w(`/* ── ${titleOf[s]} ─────────────────────────────────────────────────── */`);
   // luminance (named + arbitrary)
-  w(`@utility ${p.pre}-lc-* {`);
-  w(`  --${s}-l: --value(--l-*);`);
+  w(`@utility ${p.pre}-lum-* {`);
+  w(`  --${s}-l: --value(--lum-*);`);
   w(applyColor(p, `var(--${s}-l)`));
   w(`}`);
-  w(`@utility ${p.pre}-lc-* {`);
-  w(`  /* arbitrary ${p.pre}-lc-[60]: auto-flip L = v + flip × (1 − 2v) */`);
+  w(`@utility ${p.pre}-lum-* {`);
+  w(`  /* arbitrary ${p.pre}-lum-[60]: auto-flip L = v + flip × (1 − 2v) */`);
   w(`  --${s}-lv: calc(--value([integer]) / 100);`);
-  w(`  --${s}-l: calc(var(--${s}-lv) + var(--lc-flip) * (1 - 2 * var(--${s}-lv)));`);
+  w(`  --${s}-l: calc(var(--${s}-lv) + var(--lum-flip) * (1 - 2 * var(--${s}-lv)));`);
   w(applyColor(p, `var(--${s}-l)`));
   w(`}`);
   // chroma (named + arbitrary)
-  w(`@utility ${p.pre}-chroma-* {`);
-  w(`  --${s}-c: --value(--c-*);`);
+  w(`@utility ${p.pre}-chr-* {`);
+  w(`  --${s}-c: --value(--chr-*);`);
   w(applyColor(p, `var(--${s}-l)`));
   w(`}`);
-  w(`@utility ${p.pre}-chroma-* {`);
+  w(`@utility ${p.pre}-chr-* {`);
   w(`  --${s}-c: calc(--value([integer]) / 100);`);
   w(applyColor(p, `var(--${s}-l)`));
   w(`}`);
@@ -206,14 +209,14 @@ for (const p of PROPS) {
   w(`}`);
   // relative adjustments (bg + text only, matching prior scope)
   if (s === 'bg' || s === 'tx') {
-    const up = `clamp(0, calc(var(--${s}-l) + var(--lc-dir) * var(--${s}-l-adj)), 1)`;
-    const dn = `clamp(0, calc(var(--${s}-l) - var(--lc-dir) * var(--${s}-l-adj)), 1)`;
-    w(`@utility ${p.pre}-lc-up-* {`);
-    w(`  --${s}-l-adj: --value(--lc-adj-*);`);
+    const up = `clamp(0, calc(var(--${s}-l) + var(--lum-dir) * var(--${s}-l-adj)), 1)`;
+    const dn = `clamp(0, calc(var(--${s}-l) - var(--lum-dir) * var(--${s}-l-adj)), 1)`;
+    w(`@utility ${p.pre}-lum-up-* {`);
+    w(`  --${s}-l-adj: --value(--lum-adj-*);`);
     w(applyColor(p, up));
     w(`}`);
-    w(`@utility ${p.pre}-lc-down-* {`);
-    w(`  --${s}-l-adj: --value(--lc-adj-*);`);
+    w(`@utility ${p.pre}-lum-down-* {`);
+    w(`  --${s}-l-adj: --value(--lum-adj-*);`);
     w(applyColor(p, dn));
     w(`}`);
   }
