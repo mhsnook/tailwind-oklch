@@ -18,10 +18,25 @@ const CSCALE = {
   primary: 0.86, accent: 0.90, success: 1.0,
   warning: 1.0, danger: 0.93, info: 0.88,
 };
-// Luminance scale: 0 = pure white (light) / pure black (dark); 10 = the opposite.
-// Front-loaded near the page: 1–2 hug the page surface, steps open up lower down.
-const L_LIGHT = ['1', '.965', '.95', '.885', '.80', '.69', '.575', '.46', '.345', '.22', '0'];
-const L_DARK  = ['0', '.185', '.22', '.30', '.395', '.49', '.58', '.67', '.76', '.86', '1'];
+// Luminance scale. The numbered stops 1..N ride a front-loaded formula between a
+// near-page endpoint and a far (foreground) endpoint — never the pure extremes.
+// The pure poles live OUTSIDE the numbered scale, as named stops:
+//   none = the page color (white in light / black in dark) — zero contrast
+//   max  = full contrast   (black in light / white in dark)
+// Pull LUM_*_NEAR in (e.g. 0.90) for a lower-contrast theme; raise LUM_GAMMA to
+// hug the page harder near stop 1.
+const LUM_N = 10;
+const LUM_GAMMA = 1.45; // >1 front-loads: small steps near the page, opening up lower
+const l3 = (x) => String(Math.round(x * 1000) / 1000).replace(/^0\./, '.');
+// front-loaded ramp from `near` (stop 1, hugging the page) to `far` (stop N)
+const ramp = (near, far) =>
+  Array.from({ length: LUM_N }, (_, k) =>
+    l3(near + (far - near) * Math.pow(k / (LUM_N - 1), LUM_GAMMA))
+  );
+const L_LIGHT = ramp(0.92, 0.13); // light: stop 1 near white, stop N a dark foreground
+const L_DARK  = ramp(0.185, 0.92); // dark: stop 1 near black, stop N a light foreground
+const L_NONE = ['1', '0']; // [light, dark]
+const L_MAX  = ['0', '1'];
 // Chroma stops. `max` overshoots the sRGB gamut on purpose: oklch() gamut-maps
 // it to the most saturated displayable color at each L/H — "give me the full
 // color, whatever that is here" — so a given hue clamps to its own ceiling.
@@ -49,8 +64,15 @@ const PROPS = [
 const STOPS = 'var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position))';
 
 // col() builds an oklch() with a given luminance expression for a stem.
+// Chroma is tapered toward white: at high L a fixed chroma reads as far more
+// saturated (it fills more of the visible gamut), so we scale it down as L→1.
+// taper = clamp(0, (1 − L) × --chroma-taper, 1): full chroma below L ≈ 1−1/k,
+// falling to 0 at pure white — so a given chroma stop looks about equally
+// saturated across the scale, and the lightest stop resolves to clean white.
+const taper = (lExpr) =>
+  `clamp(0, calc((1 - (${lExpr})) * var(--chroma-taper)), 1)`;
 const col = (stem, lExpr) =>
-  `oklch(${lExpr} calc(var(--${stem}-c) * var(--${stem}-cs)) var(--${stem}-h))`;
+  `oklch(${lExpr} calc(var(--${stem}-c) * var(--${stem}-cs) * ${taper(lExpr)}) var(--${stem}-h))`;
 
 // applyColor emits the declaration(s) that paint `color` for a property.
 function applyColor(p, lExpr) {
@@ -72,15 +94,17 @@ w(`/* tailwind-oklch — a cascade-first OKLCH color system for Tailwind v4
  *   @import "tailwind-oklch";
  *
  * Each class states ONE fact about ONE axis. Every color is composed from three
- * independent axes — luminance (lum), chroma, and hue — two of which
- * cascade, so most elements only ever state their luminance.
+ * independent axes — luminance (lum), chroma, and hue — two of which cascade,
+ * so most elements only ever state their luminance.
  *
- *   - Cascade seeders set an axis for every descendant and paint nothing:
- *       hue-primary · hue-danger · …    seeds hue (and its chroma scale)
- *       chroma-mlow · chroma-high · …            seeds chroma
+ *   - Property-less axis classes carry no property; they set an axis for every
+ *     LCH calculation that cascades to them, and paint nothing themselves —
+ *     ordinary CSS custom-property inheritance:
+ *       hue-primary · hue-danger · …    sets hue (and its chroma scale) below
+ *       chroma-mlow · chroma-high · …   sets chroma below
  *
  *   - Per-property setters paint one property from one axis; hue and chroma
- *     inherit from a seeder (or the :root default) unless set explicitly:
+ *     inherit from an ancestor (or the :root default) unless set explicitly:
  *       bg-lum-2     bg-chroma-mlow     bg-hue-accent
  *       text-lum-9   text-chroma-high    text-hue-info
  *       …plus border-*, border-b-*, accent-*, shadow-*, from-*, to-*
@@ -94,13 +118,14 @@ w(`/* tailwind-oklch — a cascade-first OKLCH color system for Tailwind v4
  *     write the result to --bg-l, so --bg-l always holds the REAL surface — which
  *     is what the con-* contrast utilities read.
  *
- * Luminance scale: 0–10, a plain white→black ramp that auto-flips, measuring
- * contrast with the page.
- *   0  = pure white (light) / pure black (dark) — the page-ward extreme
- *   1  = blends with the page (the lightest usable surface)
- *   10 = pure black (light) / pure white (dark) — maximum foreground contrast
- * The low end is finely graded (the eye is most sensitive next to the page);
- * steps open up toward the dark end.
+ * Luminance scale: numbered stops 1..10 on a front-loaded formula that auto-flips
+ * for dark mode, measuring contrast with the page. The pure poles are named:
+ *   none = the page color: white (light) / black (dark) — zero contrast
+ *   1    = the lightest usable surface (hugs the page)
+ *   10   = a strong foreground (near, but not, the max)
+ *   max  = full contrast: black (light) / white (dark)
+ * Stops hug the page near 1 and open up toward 10; none/max sit outside the
+ * formula so a theme can pull the numbered range in without losing the extremes.
  *
  * Per-hue chroma: hues don't reach perceived saturation at the same chroma
  * (blue peaks early, yellow late), so each hue carries a --cscale-* multiplier
@@ -117,11 +142,19 @@ w('');
 w(`  /* ── Per-hue chroma scale — perceptual normalization multipliers ───── */`);
 for (const [n] of HUES) w(`  --cscale-${n}: ${CSCALE[n]};`);
 w('');
-w(`  /* ── Luminance scale (light): 0 = white … 10 = black ──────────────── */`);
-for (let i = 0; i <= 10; i++) w(`  --lum-${i}: ${L_LIGHT[i]};`);
+w(`  /* ── Luminance scale (light). Numbered 1..${LUM_N} on a front-loaded formula;`);
+w(`     the pure poles are named: none = white (page), max = black (contrast). ── */`);
+w(`  --lum-none: ${L_NONE[0]};`);
+for (let i = 1; i <= LUM_N; i++) w(`  --lum-${i}: ${L_LIGHT[i - 1]};`);
+w(`  --lum-max: ${L_MAX[0]};`);
 w('');
 w(`  /* ── Chroma stops (base, before per-hue scale) ────────────────────── */`);
 for (const [n, v] of CHROMA) w(`  --chroma-${n}: ${v};`);
+w('');
+w(`  /* ── Chroma taper toward white: full chroma below L ≈ 0.67, → 0 at L=1,`);
+w(`     so a chroma stop looks about equally saturated across the scale and the`);
+w(`     lightest surfaces stay subtle. Higher = chroma survives closer to white. ─ */`);
+w(`  --chroma-taper: 3;`);
 w('');
 w(`  /* ── Contrast strength (ΔL off the background, toward contrast) ─────── */`);
 for (const [n, v] of CON) w(`  --con-${n}: ${v};`);
@@ -132,13 +165,15 @@ w(`}`);
 w('');
 
 // ── dark ────────────────────────────────────────────────────────────────
-w(`/* ── Dark mode: the scale flips (0 = black, 10 = white) ─────────────────
-   0/blends and 10/max-contrast keep their meaning; the numbers just map to
-   flipped luminances. --lum-flip drives arbitrary-value auto-flip. */`);
+w(`/* ── Dark mode: the scale flips. none = black (page), max = white (contrast);
+   the numbered stops map to their flipped luminances. --lum-flip drives
+   arbitrary-value auto-flip. */`);
 w(`.dark {`);
 w(`  --lum-dir: 1;`);
 w(`  --lum-flip: 1;`);
-for (let i = 0; i <= 10; i++) w(`  --lum-${i}: ${L_DARK[i]};`);
+w(`  --lum-none: ${L_NONE[1]};`);
+for (let i = 1; i <= LUM_N; i++) w(`  --lum-${i}: ${L_DARK[i - 1]};`);
+w(`  --lum-max: ${L_MAX[1]};`);
 w(`}`);
 w('');
 
@@ -163,9 +198,10 @@ for (const p of PROPS) {
 w(`}`);
 w('');
 
-// ── seeders ───────────────────────────────────────────────────────────────
-w(`/* ── Global hue seeder — sets hue (and its chroma scale) for every property,
-   painting nothing. Per-property hue utilities still override. ───────────── */`);
+// ── property-less axis classes ──────────────────────────────────────────────
+w(`/* ── Global (property-less) hue — sets hue (and its chroma scale) for every
+   property that cascades below, painting nothing. Per-property hue utilities
+   still override. ──────────────────────────────────────────────────────────── */`);
 w(`@utility hue-* {`);
 for (const p of PROPS) w(`  --${p.stem}-h: --value(--hue-*);`);
 for (const p of PROPS) w(`  --${p.stem}-cs: --value(--cscale-*);`);
@@ -176,8 +212,9 @@ for (const p of PROPS) w(`  --${p.stem}-h: --value([integer]);`);
 for (const p of PROPS) w(`  --${p.stem}-cs: 1;`);
 w(`}`);
 w('');
-w(`/* ── Global chroma seeder — sets chroma for every property, painting nothing.
-   Per-property chroma utilities still override. ─────────────────────────── */`);
+w(`/* ── Global (property-less) chroma — sets chroma for every property that
+   cascades below, painting nothing. Per-property chroma utilities still
+   override. ────────────────────────────────────────────────────────────────── */`);
 w(`@utility chroma-* {`);
 for (const p of PROPS) w(`  --${p.stem}-c: --value(--chroma-*);`);
 w(`}`);

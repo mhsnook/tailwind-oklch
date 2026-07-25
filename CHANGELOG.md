@@ -21,11 +21,11 @@ further churn.
   `@import "tailwind-oklch";`.
 - **Shorthand utilities** (`{prop}-{L}-{C}` and `{prop}-{L}-{C}-{H}`, e.g.
   `bg-3-mhi`, `bg-3-mhi-accent`). They re-pinned all three axes on every leaf,
-  working against the cascade. Split them into axes and hoist hue/chroma to a
-  `hue-*` / `chroma-*` seeder.
-- **The `none` / `base` / `fore` / `full` luminance aliases.** The scale is just
-  `0`–`10`, with `0`/`10` as the pure extremes. Replace `base` → `1`,
-  `fore` → `9`/`10`, `none` → `0`, `full` → `10`.
+  working against the cascade. Split them into axes and hoist hue/chroma to the
+  property-less `hue-*` / `chroma-*` classes.
+- **The `base` / `fore` / `full` luminance aliases.** Replace `base` → `1`,
+  `fore` → `9`/`10`, `full` → `lum-max`. (The page-pole alias survives, renamed:
+  `none` → `lum-none`.)
 
 ### Changed
 
@@ -33,15 +33,18 @@ further churn.
   all three axes are first-class: `{prop}-lc-*` → `{prop}-lum-*`,
   `{prop}-c-*` → `{prop}-chroma-*`, `{prop}-h-*` → `{prop}-hue-*` (e.g. `bg-lc-5` →
   `bg-lum-5`, `bg-c-mid` → `bg-chroma-mid`, `text-h-info` → `text-hue-info`). The
-  global seeders are `hue-*` and `chroma-*`.
+  property-less axis classes are `hue-*` and `chroma-*` — they set an axis for
+  every LCH calculation that cascades to them (no "seeder" concept; it's just
+  custom-property inheritance).
 - **Chroma stops spelled out** — `lo`/`mlo`/`mhi`/`hi` → `low`/`mlow`/`mhigh`/`high`
   (`mid` unchanged). Whole words for anything five letters or fewer; the same
   `low·mlow·mid·mhigh·high` scale is reused across axes wherever it fits.
-- **Luminance scale reindexed to a plain white→black ramp.** `lum-0` is now pure
-  white (light) / pure black (dark) — the page-ward extreme — instead of the old
-  near-page 0.95. Everyday surfaces shift down: a near-page background is `lum-1`,
-  a card `lum-2`. The low end is finely graded (0→1→2 are small steps) and opens
-  up toward the dark end, matching where the eye is sensitive.
+- **Luminance scale is a front-loaded formula with named poles.** Numbered stops
+  `1`–`10` ride a generated ramp (`lum-1` ≈ 0.92 → `lum-10` ≈ 0.13); the pure
+  extremes are the named stops `lum-none` (page: white/black) and `lum-max`
+  (contrast: black/white), kept out of the numbered range so a low-contrast theme
+  can pull the numbers in without losing the poles. `lum-0` is gone — it was just
+  `none`. Everyday surfaces: a near-page background is `lum-1`, a card `lum-2`.
 - README and docs rewritten around the character-vs-emphasis model.
 
 ### Added
@@ -59,6 +62,14 @@ further churn.
   light or dark surface with no `dark:` variant. Strength stops reuse the
   `low·mlow·mid·mhigh·high` scale (here: faint → stark). Inherited hue/chroma are
   kept; only luminance is computed. A leaf utility — it doesn't cascade.
+- **Chroma taper toward white (`--chroma-taper`).** A fixed chroma looks far more
+  saturated at high luminance, so light surfaces went neon and the lightest stop
+  couldn't reach clean white. Chroma is now multiplied by
+  `clamp(0, (1 − L) × --chroma-taper, 1)` (default 3): full below L ≈ 0.67,
+  ramping to 0 at white. A `chroma-*` stop now looks about equally saturated
+  across the scale, light surfaces stay subtle, and the light pole (`lum-none`)
+  resolves to true white. Keys on resolved `L`, so it also calms near-white text
+  and works in dark mode; tune `--chroma-taper` per theme.
 - **`max` stops for chroma and contrast.** `chroma-max` (base 0.25) overshoots the
   sRGB gamut so `oklch()` maps each hue to its most saturated displayable color —
   "full color, whatever that is here." `text-con-max` / `border-con-max` /
