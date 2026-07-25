@@ -1,16 +1,14 @@
 {
   "name": "tailwind-oklch",
-  "version": "0.6.0",
-  "description": "OKLCH color composition system for Tailwind CSS v4",
+  "version": "0.7.0",
+  "description": "Cascade-first OKLCH color composition system for Tailwind CSS v4",
   "style": "index.css",
   "main": "index.css",
   "exports": {
-    ".": "./index.css",
-    "./plugin": "./plugin.js"
+    ".": "./index.css"
   },
   "files": [
-    "index.css",
-    "plugin.js"
+    "index.css"
   ],
   "scripts": {
     "format": "oxfmt --write \"demo/src/**/*.{ts,tsx,js,mjs}\" \"demo/astro.config.mjs\""
