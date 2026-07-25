@@ -38,6 +38,54 @@ const conLevels = ["low", "mlow", "mid", "mhigh", "high", "max"];
 // the five perceptual stops.
 const gridStops = ["low", "mlow", "mid", "mhigh", "high", "max"];
 
+// Guided walkthrough. Each step renders its exact HTML live (set:html) and shows
+// the same string as code, so demo and source can never drift.
+const walk = [
+  {
+    n: "1",
+    title: "Two classes, and it pops",
+    note: `The paragraph carries just <code>font-bold text-lum-7</code> — no color, no hue, only <em>how far from the page</em>. Yet it comes out a deliberate, on-brand blue. Wait… where did the color come from?`,
+    html: `<div class="bg-lum-1 hue-primary chroma-mid rounded-xl p-5">
+  <p class="text-lum-7 font-bold">Two classes. And yet — blue.</p>
+</div>`,
+  },
+  {
+    n: "2",
+    title: "The wrapper seeded it",
+    note: `The wrapper did it. <code>bg-lum-1</code> paints only <em>this</em> div's background — one property. <code>hue-primary</code> and <code>chroma-mid</code> are <em>seeders</em>: they set hue and chroma for every descendant, so the paragraph inherited both and only had to choose a luminance. Swap the seeder to <code>hue-success</code> and everything re-tints — nothing inside changed. (Hue and chroma <em>can</em> be per-property too — <code>text-hue-*</code>, <code>bg-chroma-*</code> — but they usually travel together, so seeding is the common move.)`,
+    html: `<div class="flex flex-wrap gap-3">
+  <div class="bg-lum-1 hue-primary chroma-mid rounded-xl p-4">
+    <p class="text-lum-7 font-bold">hue-primary</p>
+  </div>
+  <div class="bg-lum-1 hue-success chroma-mid rounded-xl p-4">
+    <p class="text-lum-7 font-bold">hue-success</p>
+  </div>
+</div>`,
+  },
+  {
+    n: "3",
+    title: "Let the text solve its own contrast",
+    note: `Rather than hard-code <code>text-lum-7</code>, hand the job to <code>text-con-mid</code>: it reads the surface behind it and picks a luminance that contrasts — in whichever direction is needed. Here the <em>same</em> class sits on a light fill and a dark one; both stay readable, no <code>dark:</code> variant anywhere.`,
+    html: `<div class="hue-primary chroma-mid flex flex-wrap gap-3">
+  <div class="bg-lum-1 rounded-xl p-4">
+    <p class="text-con-mid font-bold">text-con-mid on lum-1</p>
+  </div>
+  <div class="bg-lum-7 rounded-xl p-4">
+    <p class="text-con-mid font-bold">same class on lum-7</p>
+  </div>
+</div>`,
+  },
+  {
+    n: "4",
+    title: "Nudge, relative to right here",
+    note: `Sometimes you want "a step brighter than <em>here</em>," wherever here is — a raised chip, a hover, a press. <code>bg-lum-up-2</code> nudges two steps off the inherited luminance (it never needs to know the surface was <code>lum-2</code>), and nudges don't compound down the tree.`,
+    html: `<div class="bg-lum-2 hue-accent chroma-mid flex items-center gap-3 rounded-xl p-4">
+  <span class="text-lum-8 text-sm font-semibold">surface at lum-2</span>
+  <span class="bg-lum-up-2 text-con-high rounded-lg px-3 py-1.5 text-sm font-bold">bg-lum-up-2</span>
+</div>`,
+  },
+];
+
 const anatomy = `<span class="k">.bg-lum-5</span> {
   --bg-l: <span class="k">var(--lum-5)</span>;              <span class="c">/* the scale — section 2 */</span>
   background-color: oklch(
@@ -63,28 +111,38 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
       <button id="theme-toggle" class="toggle shrink-0" type="button">☀ Light</button>
     </header>
 
-    <p class="muted mt-5 max-w-[64ch] text-lg leading-relaxed">
-      Atomic utility classes for OKLCH color. Set a full color, or change one axis
-      at a time — no opacity hacks. Every color is composed from three independent
-      axes, each its own utility class or CSS variable:
+    <p class="muted mt-5 max-w-[60ch] text-lg leading-relaxed">
+      Atomic OKLCH color utilities for Tailwind v4. Every color is three axes —
+      <b class="accent-ink">luminance</b>, <b class="accent-ink">chroma</b>,
+      <b class="accent-ink">hue</b> — and two of them cascade. Easiest to just watch it
+      compose:
     </p>
-    <ul class="muted mt-3 max-w-[64ch] space-y-1.5 text-[0.98rem] leading-relaxed">
-      <li>
-        <b class="accent-ink">luminance</b> (<span class="kbd">lum</span>) — how far
-        from the page color, on a 0–10 white→black ramp that auto-flips for dark mode
-      </li>
-      <li>
-        <b class="accent-ink">chroma</b> — how saturated
-      </li>
-      <li>
-        <b class="accent-ink">hue</b> (<span class="kbd">hue</span>) — which color
-      </li>
-    </ul>
-    <p class="muted mt-3 max-w-[64ch] text-[0.98rem] leading-relaxed">
-      Hue and chroma <b>cascade</b> down the DOM, so you seed a component's character
-      once near its root and most elements inside only ever state their luminance.
-      Pure CSS, one <span class="kbd">@import</span>, no plugin.
-    </p>
+
+    <!-- ── Guided walkthrough ─────────────────────────────────────────── -->
+    <section class="mt-9">
+      <div class="walk">
+        {
+          walk.map((s) => (
+            <div class="walk-step">
+              <div class="walk-head">
+                <span class="walk-n">{s.n}</span>
+                <h2 class="walk-title">{s.title}</h2>
+              </div>
+              <p class="walk-note" set:html={s.note} />
+              <div class="walk-demo">
+                <div class="walk-preview" set:html={s.html} />
+                <pre class="walk-code"><code>{s.html}</code></pre>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+      <p class="muted mt-8 max-w-[62ch] leading-relaxed">
+        Luminance, chroma, hue — set one property, seed a subtree, nudge off what you
+        inherited, or let contrast solve itself. That's the whole system. Here are the
+        three axes as live dials:
+      </p>
+    </section>
 
     <!-- ── The L·C·H picker ──────────────────────────────────────────── -->
     <section class="mt-14">
@@ -93,15 +151,15 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
         Every swatch below is a real utility — <span class="kbd">bg-lum-*</span>,
         <span class="kbd">bg-chroma-*</span>, <span class="kbd">bg-hue-*</span>. Click a value to
         set that axis; the other two strips re-seed through the cascade, exactly like they
-        would in your markup. The class that builds this color is shown beside it.
+        would in your markup. The classes that build the color are printed right on the
+        preview — in black or white, whichever the fill needs (that's <span class="kbd">con</span>).
       </p>
 
       <div class="lch mt-5">
         <div class="lch-side">
           <div class="lch-preview hue-primary chroma-mid bg-lum-5" id="lchPrev">
-            <span class="lch-pv-label" id="lchLabel">lum 5 · chroma mid · primary</span>
+            <span class="lch-pv-label" id="lchLabel">hue-<b>primary</b> chroma-<b>mid</b> bg-lum-<b>5</b></span>
           </div>
-          <div class="lch-out" id="lchOut"></div>
         </div>
 
         <div class="lch-rows">
@@ -223,7 +281,7 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
 
       <div class="uh mt-5">
         <!-- 1 · How it works -->
-        <details class="uh-item">
+        <details class="uh-item" name="uh">
           <summary>How the heck does it work?</summary>
           <div class="uh-body">
             <p>
@@ -252,7 +310,7 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
         </details>
 
         <!-- 2 · The luminance scale -->
-        <details class="uh-item">
+        <details class="uh-item" name="uh">
           <summary>How does the luminance scale work?</summary>
           <div class="uh-body">
             <p>
@@ -292,7 +350,7 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
         </details>
 
         <!-- 3 · Per-hue chroma -->
-        <details class="uh-item">
+        <details class="uh-item" name="uh">
           <summary>How do the hue-chroma multipliers work?</summary>
           <div class="uh-body">
             <p>
@@ -384,7 +442,7 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
         </details>
 
         <!-- 4 · Accessible, semantic text contrast -->
-        <details class="uh-item">
+        <details class="uh-item" name="uh">
           <summary>Accessible, semantic text contrast</summary>
           <div class="uh-body">
             <p>
@@ -455,7 +513,6 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
     (function () {
       var prev = document.getElementById("lchPrev");
       if (!prev) return;
-      var out = document.getElementById("lchOut");
       var label = document.getElementById("lchLabel");
       var rowL = document.getElementById("rowL");
       var rowC = document.getElementById("rowC");
@@ -479,8 +536,7 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
         rowH.className = "lch-track";
         rowH.style.setProperty("--bg-l", "var(--lum-" + L + ")");
         rowH.style.setProperty("--bg-c", "var(--chroma-" + C + ")");
-        out.innerHTML = "hue-<b>" + H + "</b> chroma-<b>" + C + "</b> bg-lum-<b>" + L + "</b>";
-        label.textContent = "lum " + L + " · chroma " + C + " · " + H;
+        label.innerHTML = "hue-<b>" + H + "</b> chroma-<b>" + C + "</b> bg-lum-<b>" + L + "</b>";
         lLbl.textContent = L; cLbl.textContent = C; hLbl.textContent = H;
         mark(rowL, "l", String(L));
         mark(rowC, "c", C);
