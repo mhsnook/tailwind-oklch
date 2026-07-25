@@ -123,7 +123,7 @@ body {
 
   /* ── The "item" component — owns its luminance; caller passes character ── */
   .card {
-    @apply bg-lum-2 border-lum-3 flex flex-col gap-2 rounded-2xl border p-5;
+    @apply bg-lum-2 border-con-mlow flex flex-col gap-2 rounded-2xl border p-5;
     box-shadow: 0 1px 2px oklch(0 0 0 / 0.04), 0 14px 34px -26px oklch(0 0 0 / 0.35);
   }
   .card-eyebrow {

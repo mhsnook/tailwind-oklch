@@ -208,6 +208,34 @@ more contrast with the page, "down" less — direction adapts to light/dark
 automatically. Adjustments **don't compound**: a grandchild's `lum-up-1` nudges
 from the nearest ancestor's _set_ luminance, not a parent's already-nudged value.
 
+## Contrast against the background (`con`)
+
+`lum-up/down` measures off the property's own inherited luminance. `con-*`
+measures off the element's **background** (`--bg-l`) instead — and picks its
+direction automatically, moving toward whichever pole (lighter or darker) gives
+contrast. One class reads correctly on a light _or_ dark surface, with no `dark:`
+variant.
+
+```html
+<!-- A readable border/text/outline against whatever surface it lands on -->
+<article class="card">              <!-- card sets its own bg-lum-* -->
+  <p class="text-con-high">Stark against the card.</p>
+  <hr class="border-con-mlow" />   <!-- a soft step off the surface -->
+</article>
+```
+
+`text-con-*` and `border-con-*` / `outline-con-*` share the
+`low·mlow·mid·mhigh·high` vocabulary, but here it reads as **how much contrast**
+(faint → stark), not saturation. `text-con` keeps the inherited text hue/chroma;
+`border-con` and `outline-con` keep the inherited border hue/chroma — only the
+luminance is computed, so the contrasting color still carries the seeded hue.
+
+`con` is the _only_ family always measured against the background — everything
+else (`lum`, `lum-up/down`) is measured against the property's own inherited
+value. Like `lum-up/down` it's a leaf utility: it paints without rewriting the
+cascading axis vars, so it never compounds down the tree. Arbitrary `con-[40]`
+sets ΔL directly (`n/100` off the background).
+
 ## Arbitrary values
 
 All three axes accept Tailwind's bracket syntax, on every setter and both

@@ -24,6 +24,9 @@ const L_LIGHT = ['1', '.965', '.95', '.885', '.80', '.69', '.575', '.46', '.345'
 const L_DARK  = ['0', '.185', '.22', '.30', '.395', '.49', '.58', '.67', '.76', '.86', '1'];
 const CHROMA = [['low', '.02'], ['mlow', '.05'], ['mid', '.09'], ['mhigh', '.13'], ['high', '.17']];
 const ADJ = [['1', '.08'], ['2', '.16'], ['3', '.24'], ['4', '.32'], ['5', '.40']];
+// Contrast strength: ΔL stepped off the background, toward contrast. Reuses the
+// low·mlow·mid·mhigh·high vocabulary — here it means "how much contrast".
+const CON = [['low', '.18'], ['mlow', '.25'], ['mid', '.32'], ['mhigh', '.42'], ['high', '.55']];
 
 // property stem, utility prefix, and how it applies the resolved color.
 const PROPS = [
@@ -107,6 +110,9 @@ for (let i = 0; i <= 10; i++) w(`  --lum-${i}: ${L_LIGHT[i]};`);
 w('');
 w(`  /* ── Chroma stops (base, before per-hue scale) ────────────────────── */`);
 for (const [n, v] of CHROMA) w(`  --chroma-${n}: ${v};`);
+w('');
+w(`  /* ── Contrast strength (ΔL off the background, toward contrast) ─────── */`);
+for (const [n, v] of CON) w(`  --con-${n}: ${v};`);
 w('');
 w(`  /* ── Luminance adjustment steps (~one 0–10 position each) ─────────── */`);
 for (const [n, v] of ADJ) w(`  --lum-adj-${n}: ${v};`);
@@ -220,6 +226,42 @@ for (const p of PROPS) {
     w(applyColor(p, dn));
     w(`}`);
   }
+  w('');
+}
+
+// ── contrast (con-*) utilities ─────────────────────────────────────────────
+// Background-relative and auto-directional: luminance is chosen to contrast
+// with the element's own inherited background (--bg-l), moving toward whichever
+// pole (lighter/darker) gives contrast. One class works on a light OR dark
+// surface. Chroma/hue are inherited (text-con reads --tx-*, border/outline read
+// --bd-*); only luminance is computed. Like lum-up/down it's a leaf utility —
+// it paints without rewriting the cascading axis vars.
+const CON_PROPS = [
+  { pre: 'text',    stem: 'tx', apply: (c) => `  color: ${c};` },
+  { pre: 'border',  stem: 'bd', apply: (c) => `  border-color: ${c};` },
+  { pre: 'outline', stem: 'bd', apply: (c) => `  outline-color: ${c};` },
+];
+// direction: +1 when the background is dark (go lighter), −1 when light (go
+// darker); the ×1000 makes the clamp snap hard at the 0.6 luminance midpoint.
+const CON_DIR = `clamp(-1, calc((0.6 - var(--bg-l)) * 1000), 1)`;
+const conL = `clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1)`;
+
+w(`/* ── Contrast (con-*) — luminance chosen to contrast with the element's own
+   background (--bg-l), auto-directional so one class works on light OR dark
+   surfaces. Inherits chroma/hue; only luminance is computed. A leaf utility:
+   like lum-up/down it paints without rewriting the cascading vars. ────────── */`);
+for (const p of CON_PROPS) {
+  w(`@utility ${p.pre}-con-* {`);
+  w(`  --con-off: --value(--con-*);`);
+  w(`  --con-dir: ${CON_DIR};`);
+  w(p.apply(col(p.stem, conL)));
+  w(`}`);
+  w(`@utility ${p.pre}-con-* {`);
+  w(`  /* arbitrary ${p.pre}-con-[40]: ΔL = n / 100 off the background */`);
+  w(`  --con-off: calc(--value([integer]) / 100);`);
+  w(`  --con-dir: ${CON_DIR};`);
+  w(p.apply(col(p.stem, conL)));
+  w(`}`);
   w('');
 }
 
