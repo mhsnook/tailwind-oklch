@@ -344,9 +344,11 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
             <h4>Roll your own scale — codegen</h4>
             <p>
               The utilities read <span class="kbd">--lum-N</span> straight from your theme, so
-              you can have as many stops as you like — <span class="kbd">bg-lum-14</span> exists
-              the moment <span class="kbd">--lum-14</span> does. Pick a count and a front-loading
-              curve; paste the output into your <span class="kbd">@theme</span>.
+              you can have as many numbered stops as you like — <span class="kbd">bg-lum-14</span>
+              exists the moment <span class="kbd">--lum-14</span> does. Pick a count and a
+              front-loading curve; the pure poles (<span class="kbd">none</span> /
+              <span class="kbd">max</span>) are added automatically. Paste into your
+              <span class="kbd">@theme</span>.
             </p>
             <div class="gen">
               <div class="gen-controls">
@@ -614,18 +616,25 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
       if (lgN) {
         var lgOut = el("lgOut"), lgRamp = el("lgRamp"), lgNlbl = el("lgNlbl"), lgPlbl = el("lgPlbl");
         function lgRender() {
-          var N = +lgN.value, p = +lgP.value / 10, light = [], dark = [], i, t;
-          for (i = 0; i <= N; i++) { t = i / N; light.push(1 - Math.pow(t, p)); dark.push(Math.pow(t, p)); }
-          var css = "@theme {\n";
-          for (i = 0; i <= N; i++) css += "  --lum-" + i + ": " + round(light[i]) + ";\n";
-          css += "}\n.dark {\n";
-          for (i = 0; i <= N; i++) css += "  --lum-" + i + ": " + round(dark[i]) + ";\n";
-          css += "}";
+          // N NUMBERED stops on a front-loaded ramp between near-page and far
+          // endpoints; the pure poles (none/max) live outside the numbers.
+          var N = +lgN.value, g = +lgP.value / 10, light = [], dark = [], i, t, e;
+          var lNear = 0.92, lFar = 0.13, dNear = 0.185, dFar = 0.92;
+          for (i = 1; i <= N; i++) {
+            t = (i - 1) / (N - 1); e = Math.pow(t, g);
+            light.push(lNear + (lFar - lNear) * e);
+            dark.push(dNear + (dFar - dNear) * e);
+          }
+          var css = "@theme {\n  --lum-none: 1;\n";
+          for (i = 1; i <= N; i++) css += "  --lum-" + i + ": " + round(light[i - 1]) + ";\n";
+          css += "  --lum-max: 0;\n}\n.dark {\n  --lum-none: 0;\n";
+          for (i = 1; i <= N; i++) css += "  --lum-" + i + ": " + round(dark[i - 1]) + ";\n";
+          css += "  --lum-max: 1;\n}";
           lgOut.textContent = css;
-          lgRamp.innerHTML = light.map(function (L) {
+          lgRamp.innerHTML = [1].concat(light, [0]).map(function (L) {
             return '<div style="background:oklch(' + round(L) + ' 0 0)"></div>';
           }).join("");
-          lgNlbl.textContent = N; lgPlbl.textContent = p.toFixed(1);
+          lgNlbl.textContent = N; lgPlbl.textContent = g.toFixed(1);
         }
         lgN.addEventListener("input", lgRender);
         lgP.addEventListener("input", lgRender);
