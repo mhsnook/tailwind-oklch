@@ -334,6 +334,16 @@ pre-1.0 — the API isn't settled, so pin the version and expect more churn.
   than it used to (and about the same on green). If a color looks off, retune
   its `--cscale-*` or set an explicit `*-chroma-[n]`.
 
+## Further reading
+
+- **[docs/cascade.md](docs/cascade.md)** — the cascade model and reference
+  frames: what cascades vs. what's a leaf, the three ways a class can be
+  measured (absolute stops · `lum-up/down` · `con`), and the anchor split that
+  lets `con` read the real surface while nudges stay non-compounding. Worked
+  example inside.
+- **[docs/luminance-contrast.md](docs/luminance-contrast.md)** — the contrast
+  math behind `con-*`: direction, the graduated ΔL offsets, and prior art.
+
 ## Building
 
 `index.css` is generated from `scripts/gen-index.js` to keep every color-painting

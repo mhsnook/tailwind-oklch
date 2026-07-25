@@ -51,38 +51,15 @@ sensible ranges like 1,2,3 or 8,9,10 (assuming your theme has 10 stops) you can 
 this Card component in various different contexts, invert it (without keeping track of
 flipping from light to dark at the theme level), wash it out or punch it up.
 
-### Nudges don't compound; `con` reads the real surface
+### Which surface does `con` read?
 
-Two rules that sound contradictory but aren't, once you see the mechanism.
-
-**Nudges don't compound.** `lum-up-*` / `lum-down-*` measure from the nearest
-_absolute_ `lum-N`, never from a parent's already-nudged value. Two nested
-`bg-lum-up-1`s land on the same luminance, not two steps down. This is forced by
-CSS as much as chosen: a custom property can't be defined in terms of its own
-inherited value (`--x: calc(var(--x) + …)` is a dependency cycle → invalid), so
-"add a step to whatever I inherited, in place" is simply not expressible. A nudge
-has to read from a _different_ variable than the one it writes.
-
-**`con` reads the real surface.** `text-con-*` / `border-con-*` / `outline-con-*`
-compute a luminance to contrast with `--bg-l` — and `--bg-l` must hold the
-_actual_ background, nudges included, or the math would be contrast-compliant
-against a surface that isn't there.
-
-Both hold at once because `bg-lum-up/down` splits the two roles across two vars:
-
-- `--bg-anchor-l` — the nearest **absolute** `bg-lum-N`. Nudges _read_ this (so
-  they don't compound) and never rewrite it.
-- `--bg-l` — the **real** painted surface. A nudge _writes_ its result here (so
-  `con` and descendants read the true background). An absolute `bg-lum-N` resets
-  both.
-
-So dropping an absolute `bg-lum-N` on a parent is what anchors a subtree — the
-numbered stops are your reference points — while `con` always measures against
-the surface that actually exists. (`text-lum-up/down` needs no anchor: nothing
-downstream reads `--tx-l`, so it just paints inline.)
-
-The **seeders** (`hue-*`, `chroma-*`) and **direct setters** (`bg-lum-N`,
-`text-chroma-N`, …) remain the only classes that change what cascades.
+The one thing worth knowing here: `con-*` reads `--bg-l`, and `--bg-l` always
+holds the **real** background — including a `bg-lum-up/down` nudge above the
+element — so the contrast is computed against the surface that actually exists,
+never a stale one. That interaction (why nudges don't compound, why `con` still
+sees them, and the CSS cycle that forces the design) is the reference-frame
+story, documented in full in [cascade.md](./cascade.md) with a worked example.
+The rest of _this_ doc is just the contrast math.
 
 ### Naming
 
@@ -148,8 +125,8 @@ level is a one-word bump away. Borders and outlines get the same treatment via
 `border-con-*` and `outline-con-*` (reading the inherited border hue/chroma).
 
 **Shipped in 0.7.** `text-con-*`, `border-con-*`, and `outline-con-*` are live
-with exactly the offsets tabled above. They compute the luminance inline rather
-than rewriting `--tx-l` / `--bd-l`, so — like `lum-up/down` — they paint without
-touching the cascading axis vars and never compound down the tree. `con` is the
-one family always measured against the background; `lum` and `lum-up/down` stay
-measured against the property's own inherited value.
+with exactly the offsets tabled above. They compute the luminance inline and
+paint a single property — a leaf, changing nothing descendants inherit. `con` is
+the one family always measured against the background (`--bg-l`); `lum` and
+`lum-up/down` are measured against the property's own inherited value. See
+[cascade.md](./cascade.md) for how `--bg-l` stays truthful through nudges.
