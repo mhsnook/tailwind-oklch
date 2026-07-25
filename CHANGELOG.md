@@ -59,6 +59,12 @@ further churn.
   light or dark surface with no `dark:` variant. Strength stops reuse the
   `low·mlow·mid·mhigh·high` scale (here: faint → stark). Inherited hue/chroma are
   kept; only luminance is computed. A leaf utility — it doesn't cascade.
+- **`max` stops for chroma and contrast.** `chroma-max` (base 0.25) overshoots the
+  sRGB gamut so `oklch()` maps each hue to its most saturated displayable color —
+  "full color, whatever that is here." `text-con-max` / `border-con-max` /
+  `outline-con-max` use a ≥1 offset so the clamp always snaps to pure black or
+  white — a guaranteed `contrast-color()` regardless of surface, where the graded
+  `con-high` only reaches the extreme on mid-range surfaces.
 - **`--bg-l` now tracks the real surface through relative nudges.** `bg-lum-up/down`
   reads its step from a new `--bg-anchor-l` (the nearest absolute `bg-lum-N`) and
   writes the result into `--bg-l`, so the contrast utilities always measure
