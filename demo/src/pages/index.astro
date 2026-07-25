@@ -78,10 +78,11 @@ const walk = [
   {
     n: "4",
     title: "Nudge, relative to right here",
-    note: `Sometimes you want "a step brighter than <em>here</em>," wherever here is — a raised chip, a hover, a press. <code>bg-lum-up-2</code> nudges two steps off the inherited luminance (it never needs to know the surface was <code>lum-2</code>), and nudges don't compound down the tree.`,
+    note: `Sometimes you want "one step up from <em>here</em>," wherever here is — a raised chip, a hover, a press. <code>bg-lum-up-1</code> nudges one step off the inherited luminance; <code>up-2</code> goes two. Neither needs to know the surface was <code>lum-2</code>, and nudges don't compound down the tree.`,
     html: `<div class="bg-lum-2 hue-accent chroma-mid flex items-center gap-3 rounded-xl p-4">
   <span class="text-lum-8 text-sm">surface at lum-2</span>
-  <span class="bg-lum-up-2 text-con-high rounded-lg px-3 py-1.5 text-sm">bg-lum-up-2</span>
+  <span class="bg-lum-up-1 text-con-high rounded-lg px-3 py-1.5 text-sm">bg-lum-up-1</span>
+  <span class="bg-lum-up-2 text-con-high rounded px-2 py-1 text-xs">up-2</span>
 </div>`,
   },
 ];
@@ -145,13 +146,9 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
     <!-- ── The L·C·H picker ──────────────────────────────────────────── -->
     <section class="mt-14">
       <h2 class="text-xl font-semibold tracking-tight">Pick a color, one axis at a time</h2>
-      <p class="muted mt-1 max-w-[66ch] text-sm leading-relaxed">
-        Every swatch below is a real utility — <span class="kbd">bg-lum-*</span>,
-        <span class="kbd">bg-chroma-*</span>, <span class="kbd">bg-hue-*</span>. Click a value to
-        set that axis; the other three strips re-derive through the cascade, exactly like they
-        would in your markup. The classes that build the color are printed right on the
-        preview, using the <span class="kbd">text-con-*</span> level you pick — it reads the
-        fill and stays readable in either direction.
+      <p class="muted mt-1 max-w-[62ch] text-sm leading-relaxed">
+        Click a value on any strip to set that axis. The preview shows the classes, and
+        the resolved OKLCH for both the fill and its <span class="kbd">text-con-*</span> text.
       </p>
 
       <div class="lch mt-5">
@@ -160,9 +157,8 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
             <span class="lch-pv-label text-con-high" id="lchLabel">hue-<b>primary</b> chroma-<b>mid</b> bg-lum-<b>5</b></span>
           </div>
           <div class="lch-resolved" id="lchResolved">
-            <span>L <b id="rvL">–</b></span>
-            <span>C <b id="rvC">–</b></span>
-            <span>H <b id="rvH">–</b></span>
+            <div class="lch-rv"><span class="lch-rv-tag">fill</span> <span>L <b id="rvL">–</b></span> <span>C <b id="rvC">–</b></span> <span>H <b id="rvH">–</b></span></div>
+            <div class="lch-rv"><span class="lch-rv-tag">text</span> <span>L <b id="tvL">–</b></span> <span>C <b id="tvC">–</b></span> <span>H <b id="tvH">–</b></span></div>
           </div>
         </div>
 
@@ -344,9 +340,11 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
             <h4>Roll your own scale — codegen</h4>
             <p>
               The utilities read <span class="kbd">--lum-N</span> straight from your theme, so
-              you can have as many stops as you like — <span class="kbd">bg-lum-14</span> exists
-              the moment <span class="kbd">--lum-14</span> does. Pick a count and a front-loading
-              curve; paste the output into your <span class="kbd">@theme</span>.
+              you can have as many numbered stops as you like — <span class="kbd">bg-lum-14</span>
+              exists the moment <span class="kbd">--lum-14</span> does. Pick a count and a
+              front-loading curve; the pure poles (<span class="kbd">none</span> /
+              <span class="kbd">max</span>) are added automatically. Paste into your
+              <span class="kbd">@theme</span>.
             </p>
             <div class="gen">
               <div class="gen-controls">
@@ -570,15 +568,17 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
         mark(rowL, "l", String(L));
         mark(rowC, "c", C);
         mark(rowH, "h", H);
-        // resolved oklch: read the browser's computed fill (chroma already ×cscale)
-        var m = /oklch\(\s*([\d.]+)[^\d.]+([\d.]+)[^\d.]+([\d.]+)/i.exec(
-          getComputedStyle(prev).backgroundColor
-        );
-        if (m) {
-          document.getElementById("rvL").textContent = (+m[1]).toFixed(3);
-          document.getElementById("rvC").textContent = (+m[2]).toFixed(3);
-          document.getElementById("rvH").textContent = Math.round(+m[3]) + "°";
+        // resolved oklch (chroma already ×cscale ×taper): read the browser's
+        // computed values — the fill's background and the con text's color.
+        function show(prop, col, ids) {
+          var m = /oklch\(\s*([\d.]+)[^\d.]+([\d.]+)[^\d.]+(-?[\d.]+)/i.exec(col);
+          if (!m) return;
+          document.getElementById(ids[0]).textContent = (+m[1]).toFixed(3);
+          document.getElementById(ids[1]).textContent = (+m[2]).toFixed(3);
+          document.getElementById(ids[2]).textContent = Math.round(+m[3]) + "°";
         }
+        show("bg", getComputedStyle(prev).backgroundColor, ["rvL", "rvC", "rvH"]);
+        show("text", getComputedStyle(label).color, ["tvL", "tvC", "tvH"]);
       }
       function bind(row, cb) {
         Array.prototype.forEach.call(row.querySelectorAll("button"), function (b) {
@@ -614,18 +614,25 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
       if (lgN) {
         var lgOut = el("lgOut"), lgRamp = el("lgRamp"), lgNlbl = el("lgNlbl"), lgPlbl = el("lgPlbl");
         function lgRender() {
-          var N = +lgN.value, p = +lgP.value / 10, light = [], dark = [], i, t;
-          for (i = 0; i <= N; i++) { t = i / N; light.push(1 - Math.pow(t, p)); dark.push(Math.pow(t, p)); }
-          var css = "@theme {\n";
-          for (i = 0; i <= N; i++) css += "  --lum-" + i + ": " + round(light[i]) + ";\n";
-          css += "}\n.dark {\n";
-          for (i = 0; i <= N; i++) css += "  --lum-" + i + ": " + round(dark[i]) + ";\n";
-          css += "}";
+          // N NUMBERED stops on a front-loaded ramp between near-page and far
+          // endpoints; the pure poles (none/max) live outside the numbers.
+          var N = +lgN.value, g = +lgP.value / 10, light = [], dark = [], i, t, e;
+          var lNear = 0.92, lFar = 0.13, dNear = 0.185, dFar = 0.92;
+          for (i = 1; i <= N; i++) {
+            t = (i - 1) / (N - 1); e = Math.pow(t, g);
+            light.push(lNear + (lFar - lNear) * e);
+            dark.push(dNear + (dFar - dNear) * e);
+          }
+          var css = "@theme {\n  --lum-none: 1;\n";
+          for (i = 1; i <= N; i++) css += "  --lum-" + i + ": " + round(light[i - 1]) + ";\n";
+          css += "  --lum-max: 0;\n}\n.dark {\n  --lum-none: 0;\n";
+          for (i = 1; i <= N; i++) css += "  --lum-" + i + ": " + round(dark[i - 1]) + ";\n";
+          css += "  --lum-max: 1;\n}";
           lgOut.textContent = css;
-          lgRamp.innerHTML = light.map(function (L) {
+          lgRamp.innerHTML = [1].concat(light, [0]).map(function (L) {
             return '<div style="background:oklch(' + round(L) + ' 0 0)"></div>';
           }).join("");
-          lgNlbl.textContent = N; lgPlbl.textContent = p.toFixed(1);
+          lgNlbl.textContent = N; lgPlbl.textContent = g.toFixed(1);
         }
         lgN.addEventListener("input", lgRender);
         lgP.addEventListener("input", lgRender);
