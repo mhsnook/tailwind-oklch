@@ -37,6 +37,12 @@ const L_LIGHT = ramp(0.92, 0.13); // light: stop 1 near white, stop N a dark for
 const L_DARK  = ramp(0.185, 0.92); // dark: stop 1 near black, stop N a light foreground
 const L_NONE = ['1', '0']; // [light, dark]
 const L_MAX  = ['0', '1'];
+// Contrast crossover: the surface L where con-* flips text direction (black↔white).
+// Use the scale's own midpoint (between lum-5 and lum-6) rather than a fixed 0.6,
+// so the flip lands at the SAME stop in light and dark even though the two scales
+// aren't symmetric. Themeable via --con-flip.
+const conMid = (arr) => l3((+arr[4] + +arr[5]) / 2);
+const CON_MID = [conMid(L_LIGHT), conMid(L_DARK)]; // [light, dark]
 // Chroma stops. `max` overshoots the sRGB gamut on purpose: oklch() gamut-maps
 // it to the most saturated displayable color at each L/H — "give me the full
 // color, whatever that is here" — so a given hue clamps to its own ceiling.
@@ -53,6 +59,7 @@ const CON = [['low', '.18'], ['mlow', '.25'], ['mid', '.32'], ['mhigh', '.42'], 
 const PROPS = [
   { stem: 'bg',  pre: 'bg',       apply: (col) => `background-color: ${col};` },
   { stem: 'tx',  pre: 'text',     apply: (col) => `color: ${col};` },
+  { stem: 'dc',  pre: 'decoration', apply: (col) => `text-decoration-color: ${col};` },
   { stem: 'bd',  pre: 'border',   apply: (col) => `border-color: ${col};` },
   { stem: 'bdb', pre: 'border-b', apply: (col) => `border-bottom-color: ${col};` },
   { stem: 'ac',  pre: 'accent',   apply: (col) => `accent-color: ${col};` },
@@ -164,29 +171,20 @@ for (const [n, v] of ADJ) w(`  --lum-adj-${n}: ${v};`);
 w(`}`);
 w('');
 
-// ── dark ────────────────────────────────────────────────────────────────
-w(`/* ── Dark mode: the scale flips. none = black (page), max = white (contrast);
-   the numbered stops map to their flipped luminances. --lum-flip drives
-   arbitrary-value auto-flip. */`);
-w(`.dark {`);
-w(`  --lum-dir: 1;`);
-w(`  --lum-flip: 1;`);
-w(`  --lum-none: ${L_NONE[1]};`);
-for (let i = 1; i <= LUM_N; i++) w(`  --lum-${i}: ${L_DARK[i - 1]};`);
-w(`  --lum-max: ${L_MAX[1]};`);
-w(`}`);
-w('');
-
 // ── :root defaults ───────────────────────────────────────────────────────
+// NOTE: :root is emitted BEFORE .dark on purpose. :root and .dark have equal
+// specificity, so for any variable set in both, source order decides — the dark
+// override only wins if it comes later.
 w(`/* ── Cascade defaults ──────────────────────────────────────────────────
    Sensible fallbacks so any single-axis setter resolves immediately. These
    inherit down the DOM, so a parent's hue/chroma flows to children. */`);
 w(`:root {`);
 w(`  --lum-dir: -1;`);
 w(`  --lum-flip: 0;`);
+w(`  --con-flip: ${CON_MID[0]};`);
 w('');
-const defL = { bg: '5', tx: '10', bd: '3', bdb: '3', ac: '5', sh: '5', gf: '5', gt: '5' };
-const defC = { bg: 'low', tx: 'low', bd: 'low', bdb: 'low', ac: 'mid', sh: 'low', gf: 'mid', gt: 'mid' };
+const defL = { bg: '5', tx: '10', dc: '6', bd: '3', bdb: '3', ac: '5', sh: '5', gf: '5', gt: '5' };
+const defC = { bg: 'low', tx: 'low', dc: 'low', bd: 'low', bdb: 'low', ac: 'mid', sh: 'low', gf: 'mid', gt: 'mid' };
 for (const p of PROPS) {
   w(`  --${p.stem}-l: var(--lum-${defL[p.stem]});`);
   if (p.stem === 'bg') w(`  --bg-anchor-l: var(--bg-l);`);
@@ -195,6 +193,20 @@ for (const p of PROPS) {
   w(`  --${p.stem}-h: var(--hue-primary);`);
   if (p.stem !== 'gt') w('');
 }
+w(`}`);
+w('');
+
+// ── dark ────────────────────────────────────────────────────────────────
+w(`/* ── Dark mode: the scale flips. none = black (page), max = white (contrast);
+   the numbered stops map to their flipped luminances. --lum-flip drives
+   arbitrary-value auto-flip. Comes after :root so these overrides win. */`);
+w(`.dark {`);
+w(`  --lum-dir: 1;`);
+w(`  --lum-flip: 1;`);
+w(`  --con-flip: ${CON_MID[1]};`);
+w(`  --lum-none: ${L_NONE[1]};`);
+for (let i = 1; i <= LUM_N; i++) w(`  --lum-${i}: ${L_DARK[i - 1]};`);
+w(`  --lum-max: ${L_MAX[1]};`);
 w(`}`);
 w('');
 
@@ -226,7 +238,7 @@ w('');
 
 // ── per-property setters ───────────────────────────────────────────────────
 const titleOf = {
-  bg: 'Background', tx: 'Text', bd: 'Border', bdb: 'Border Bottom',
+  bg: 'Background', tx: 'Text', dc: 'Text Decoration', bd: 'Border', bdb: 'Border Bottom',
   ac: 'Accent Color', sh: 'Shadow Color', gf: 'Gradient From', gt: 'Gradient To',
 };
 for (const p of PROPS) {
@@ -306,7 +318,7 @@ const CON_PROPS = [
 ];
 // direction: +1 when the background is dark (go lighter), −1 when light (go
 // darker); the ×1000 makes the clamp snap hard at the 0.6 luminance midpoint.
-const CON_DIR = `clamp(-1, calc((0.6 - var(--bg-l)) * 1000), 1)`;
+const CON_DIR = `clamp(-1, calc((var(--con-flip) - var(--bg-l)) * 1000), 1)`;
 const conL = `clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1)`;
 
 w(`/* ── Contrast (con-*) — luminance chosen to contrast with the element's own

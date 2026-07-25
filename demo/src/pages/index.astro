@@ -43,15 +43,15 @@ const gridStops = ["low", "mlow", "mid", "mhigh", "high", "max"];
 const walk = [
   {
     n: "1",
-    title: "One class, and it pops",
-    note: `The paragraph carries just <code>text-lum-7</code> — no color, no hue, only <em>how far from the page</em>. Yet it comes out a deliberate, on-brand blue. Where did the color come from?`,
+    title: "One smart luminance scale",
+    note: `Luminance is one ramp that measures contrast with the page. This paragraph puts its text at <code>text-lum-7</code> and its underline at <code>decoration-lum-4</code> — two stops on that ramp — and both auto-flip for dark mode. (It comes out blue, though, with no hue in sight. Where from?)`,
     html: `<div class="bg-lum-1 hue-primary chroma-mid rounded-xl p-5">
-  <p class="text-lum-7">A single class, and it's blue.</p>
+  <p class="text-lum-7 underline decoration-lum-4">Text at lum-7, underline at lum-4.</p>
 </div>`,
   },
   {
     n: "2",
-    title: "The color came from above",
+    title: "Compose with hue and chroma",
     note: `<code>bg-lum-1</code> is scoped to a property — it paints only <em>this</em> div's background. But <code>hue-primary</code> and <code>chroma-mid</code> carry <em>no</em> property: they set hue and chroma for every LCH calculation below them, so the paragraph inherited both and only had to pick a luminance. Change <code>hue-primary</code> to <code>hue-success</code> and everything re-tints — nothing inside changed. (You can scope hue and chroma to a property too — <code>text-hue-*</code>, <code>bg-chroma-*</code> — but the property-less form is the common move.)`,
     html: `<div class="flex flex-wrap gap-3">
   <div class="bg-lum-1 hue-primary chroma-mid rounded-xl p-4">
@@ -112,14 +112,14 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
       <button id="theme-toggle" class="toggle shrink-0" type="button">☀ Light</button>
     </header>
 
-    <p class="muted mt-5 max-w-[64ch] text-lg leading-relaxed">
-      Atomic OKLCH color utilities for Tailwind v4. Luminance is set with the familiar
-      property-scoped classes — <span class="kbd">bg-lum-1</span>,
-      <span class="kbd">text-lum-7</span>. But <b class="accent-ink">hue</b> and
-      <b class="accent-ink">chroma</b> are <b>property-less</b>: they set the axis for
-      every LCH calculation that cascades to them. Make a section yellow and everything in
-      it is yellow; make it bright and everything's bright — so individual items just
-      manage their own luminance and contrast, for readability and emphasis. Watch:
+    <p class="muted mt-5 max-w-[66ch] text-lg leading-relaxed">
+      Atomic OKLCH color utilities for Tailwind v4, controlling
+      <b class="accent-ink">hue</b>, <b class="accent-ink">chroma</b>, and
+      <b class="accent-ink">luminance</b> with individual classes:
+      <span class="kbd">bg-hue-primary bg-lum-1 bg-chroma-mid</span>. Thanks to the magic of
+      cascading stylesheets and the wonder of CSS variables, we can have a lot of fun
+      recombining these into semantic, accessible, beautiful colours that make our
+      components more portable and more context-ground-able than ever before.
     </p>
 
     <!-- ── Guided walkthrough ─────────────────────────────────────────── -->

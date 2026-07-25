@@ -208,6 +208,7 @@ that differ from what's inherited.
 | ---------- | ---------------------- | ------------------------------------------------ |
 | `bg`       | `background-color`     | `bg-lum-*` · `bg-chroma-*` · `bg-hue-*`           |
 | `text`     | `color`                | `text-lum-*` · `text-chroma-*` · `text-hue-*`     |
+| `decoration` | `text-decoration-color` | `decoration-lum-*` · `decoration-chroma-*` · `decoration-hue-*` |
 | `border`   | `border-color`         | `border-lum-*` · `border-chroma-*` · `border-hue-*` |
 | `border-b` | `border-bottom-color`  | `border-b-lum-*` · `border-b-chroma-*` · `border-b-hue-*` |
 | `accent`   | `accent-color`         | `accent-lum-*` · `accent-chroma-*` · `accent-hue-*` |
