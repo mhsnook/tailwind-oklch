@@ -156,17 +156,22 @@ scale automatically.
 
 | Hue       | Degrees | `--cscale-*` |
 | --------- | ------- | ------------ |
-| `primary` | 233     | 0.72         |
-| `info`    | 220     | 0.74         |
-| `neutral` | 260     | 0.78         |
+| `primary` | 233     | 0.86         |
+| `info`    | 220     | 0.88         |
 | `accent`  | 350     | 0.90         |
-| `danger`  | 15      | 0.95         |
+| `danger`  | 15      | 0.93         |
 | `success` | 145     | 1.00         |
-| `warning` | 55      | 1.05         |
+| `warning` | 55      | 1.00         |
 
 These are calibrated by eye and easy to retune — override any `--cscale-*` in a
 `@theme` block. Arbitrary hues (`hue-[280]`) use a scale of `1` since their
 ceiling is unknown; set `bg-chroma-[n]` directly if you need to tame them.
+
+**There is no `neutral` hue.** A neutral is the _absence_ of chroma, not a color:
+reach for `chroma-lo` (a faint temperature from whatever hue is seeded) or
+`chroma-[0]` for a dead-flat gray. Keeping the axes decomposed means neutrality
+belongs to the chroma axis — folding it into the hue list would smuggle a chroma
+decision back into hue.
 
 ## Per-property setters
 
