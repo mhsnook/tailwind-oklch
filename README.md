@@ -230,11 +230,15 @@ variant.
 `border-con` and `outline-con` keep the inherited border hue/chroma — only the
 luminance is computed, so the contrasting color still carries the seeded hue.
 
-`con` is the _only_ family always measured against the background — everything
-else (`lum`, `lum-up/down`) is measured against the property's own inherited
-value. Like `lum-up/down` it's a leaf utility: it paints without rewriting the
-cascading axis vars, so it never compounds down the tree. Arbitrary `con-[40]`
-sets ΔL directly (`n/100` off the background).
+`con` is the _only_ family always measured against the background; `lum` and
+`lum-up/down` measure against the property's own inherited value. `--bg-l` always
+holds the **real** surface — including a `bg-lum-up/down` nudge sitting above —
+so `con` stays contrast-compliant against the background that actually exists.
+That works without breaking the "nudges don't compound" rule: `bg-lum-up/down`
+reads its step from a separate anchor (the nearest absolute `bg-lum-N`) and
+writes the result into `--bg-l`. `con` itself paints only its one property and
+changes nothing descendants inherit. Arbitrary `con-[40]` sets ΔL directly
+(`n/100` off the background).
 
 ## Arbitrary values
 

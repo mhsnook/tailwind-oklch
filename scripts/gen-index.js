@@ -79,8 +79,14 @@ w(`/* tailwind-oklch — a cascade-first OKLCH color system for Tailwind v4
  *       text-lum-9   text-chroma-high    text-hue-info
  *       …plus border-*, border-b-*, accent-*, shadow-*, from-*, to-*
  *
- *   - Relative adjustments nudge off the inherited luminance without rewriting
- *     it (so they don't compound down the tree): bg-lum-up-1 · text-lum-down-1 · …
+ *   - Relative adjustments nudge off the nearest absolute luminance, and DON'T
+ *     compound: bg-lum-up-1 · text-lum-down-1 · …. The numbered stops are your
+ *     reference points — a nudge always measures from the nearest ancestor's
+ *     absolute lum-N, so nested nudges don't stack. (CSS requires this: a custom
+ *     property can't derive from its own inherited value without forming a
+ *     cycle.) bg nudges read a separate --bg-anchor-l (the nearest absolute) and
+ *     write the result to --bg-l, so --bg-l always holds the REAL surface — which
+ *     is what the con-* contrast utilities read.
  *
  * Luminance scale: 0–10, a plain white→black ramp that auto-flips, measuring
  * contrast with the page.
@@ -142,6 +148,7 @@ const defL = { bg: '5', tx: '10', bd: '3', bdb: '3', ac: '5', sh: '5', gf: '5', 
 const defC = { bg: 'low', tx: 'low', bd: 'low', bdb: 'low', ac: 'mid', sh: 'low', gf: 'mid', gt: 'mid' };
 for (const p of PROPS) {
   w(`  --${p.stem}-l: var(--lum-${defL[p.stem]});`);
+  if (p.stem === 'bg') w(`  --bg-anchor-l: var(--bg-l);`);
   w(`  --${p.stem}-c: var(--chroma-${defC[p.stem]});`);
   w(`  --${p.stem}-cs: var(--cscale-primary);`);
   w(`  --${p.stem}-h: var(--hue-primary);`);
@@ -182,15 +189,18 @@ const titleOf = {
 for (const p of PROPS) {
   const s = p.stem;
   w(`/* ── ${titleOf[s]} ─────────────────────────────────────────────────── */`);
-  // luminance (named + arbitrary)
+  // luminance (named + arbitrary). Absolute bg setters also reset --bg-anchor-l:
+  // this is the reference point that bg-lum-up/down nudges measure from.
   w(`@utility ${p.pre}-lum-* {`);
   w(`  --${s}-l: --value(--lum-*);`);
+  if (s === 'bg') w(`  --bg-anchor-l: var(--bg-l);`);
   w(applyColor(p, `var(--${s}-l)`));
   w(`}`);
   w(`@utility ${p.pre}-lum-* {`);
   w(`  /* arbitrary ${p.pre}-lum-[60]: auto-flip L = v + flip × (1 − 2v) */`);
   w(`  --${s}-lv: calc(--value([integer]) / 100);`);
   w(`  --${s}-l: calc(var(--${s}-lv) + var(--lum-flip) * (1 - 2 * var(--${s}-lv)));`);
+  if (s === 'bg') w(`  --bg-anchor-l: var(--bg-l);`);
   w(applyColor(p, `var(--${s}-l)`));
   w(`}`);
   // chroma (named + arbitrary)
@@ -213,17 +223,27 @@ for (const p of PROPS) {
   w(`  --${s}-cs: 1;`);
   w(applyColor(p, `var(--${s}-l)`));
   w(`}`);
-  // relative adjustments (bg + text only, matching prior scope)
+  // relative adjustments (bg + text only, matching prior scope). Non-compounding:
+  // a nudge measures from the nearest absolute lum-N, never from a parent's
+  // already-nudged value. bg reads a separate --bg-anchor-l (the nearest
+  // absolute) and writes the nudged value into --bg-l, so --bg-l always holds the
+  // real surface that con-* reads. text paints inline (nothing downstream reads
+  // --tx-l). A property can't derive from its own inherited value (that's a CSS
+  // cycle → invalid), which is exactly why the anchor exists and why nudges can't
+  // compound.
   if (s === 'bg' || s === 'tx') {
-    const up = `clamp(0, calc(var(--${s}-l) + var(--lum-dir) * var(--${s}-l-adj)), 1)`;
-    const dn = `clamp(0, calc(var(--${s}-l) - var(--lum-dir) * var(--${s}-l-adj)), 1)`;
+    const base = s === 'bg' ? 'var(--bg-anchor-l)' : `var(--${s}-l)`;
+    const up = `clamp(0, calc(${base} + var(--lum-dir) * var(--${s}-l-adj)), 1)`;
+    const dn = `clamp(0, calc(${base} - var(--lum-dir) * var(--${s}-l-adj)), 1)`;
     w(`@utility ${p.pre}-lum-up-* {`);
     w(`  --${s}-l-adj: --value(--lum-adj-*);`);
-    w(applyColor(p, up));
+    if (s === 'bg') { w(`  --bg-l: ${up};`); w(applyColor(p, 'var(--bg-l)')); }
+    else            { w(applyColor(p, up)); }
     w(`}`);
     w(`@utility ${p.pre}-lum-down-* {`);
     w(`  --${s}-l-adj: --value(--lum-adj-*);`);
-    w(applyColor(p, dn));
+    if (s === 'bg') { w(`  --bg-l: ${dn};`); w(applyColor(p, 'var(--bg-l)')); }
+    else            { w(applyColor(p, dn)); }
     w(`}`);
   }
   w('');

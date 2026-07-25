@@ -19,8 +19,14 @@
  *       text-lum-9   text-chroma-high    text-hue-info
  *       …plus border-*, border-b-*, accent-*, shadow-*, from-*, to-*
  *
- *   - Relative adjustments nudge off the inherited luminance without rewriting
- *     it (so they don't compound down the tree): bg-lum-up-1 · text-lum-down-1 · …
+ *   - Relative adjustments nudge off the nearest absolute luminance, and DON'T
+ *     compound: bg-lum-up-1 · text-lum-down-1 · …. The numbered stops are your
+ *     reference points — a nudge always measures from the nearest ancestor's
+ *     absolute lum-N, so nested nudges don't stack. (CSS requires this: a custom
+ *     property can't derive from its own inherited value without forming a
+ *     cycle.) bg nudges read a separate --bg-anchor-l (the nearest absolute) and
+ *     write the result to --bg-l, so --bg-l always holds the REAL surface — which
+ *     is what the con-* contrast utilities read.
  *
  * Luminance scale: 0–10, a plain white→black ramp that auto-flips, measuring
  * contrast with the page.
@@ -115,6 +121,7 @@
   --lum-flip: 0;
 
   --bg-l: var(--lum-5);
+  --bg-anchor-l: var(--bg-l);
   --bg-c: var(--chroma-low);
   --bg-cs: var(--cscale-primary);
   --bg-h: var(--hue-primary);
@@ -222,12 +229,14 @@
 /* ── Background ─────────────────────────────────────────────────── */
 @utility bg-lum-* {
   --bg-l: --value(--lum-*);
+  --bg-anchor-l: var(--bg-l);
   background-color: oklch(var(--bg-l) calc(var(--bg-c) * var(--bg-cs)) var(--bg-h));
 }
 @utility bg-lum-* {
   /* arbitrary bg-lum-[60]: auto-flip L = v + flip × (1 − 2v) */
   --bg-lv: calc(--value([integer]) / 100);
   --bg-l: calc(var(--bg-lv) + var(--lum-flip) * (1 - 2 * var(--bg-lv)));
+  --bg-anchor-l: var(--bg-l);
   background-color: oklch(var(--bg-l) calc(var(--bg-c) * var(--bg-cs)) var(--bg-h));
 }
 @utility bg-chroma-* {
@@ -250,11 +259,13 @@
 }
 @utility bg-lum-up-* {
   --bg-l-adj: --value(--lum-adj-*);
-  background-color: oklch(clamp(0, calc(var(--bg-l) + var(--lum-dir) * var(--bg-l-adj)), 1) calc(var(--bg-c) * var(--bg-cs)) var(--bg-h));
+  --bg-l: clamp(0, calc(var(--bg-anchor-l) + var(--lum-dir) * var(--bg-l-adj)), 1);
+  background-color: oklch(var(--bg-l) calc(var(--bg-c) * var(--bg-cs)) var(--bg-h));
 }
 @utility bg-lum-down-* {
   --bg-l-adj: --value(--lum-adj-*);
-  background-color: oklch(clamp(0, calc(var(--bg-l) - var(--lum-dir) * var(--bg-l-adj)), 1) calc(var(--bg-c) * var(--bg-cs)) var(--bg-h));
+  --bg-l: clamp(0, calc(var(--bg-anchor-l) - var(--lum-dir) * var(--bg-l-adj)), 1);
+  background-color: oklch(var(--bg-l) calc(var(--bg-c) * var(--bg-cs)) var(--bg-h));
 }
 
 /* ── Text ─────────────────────────────────────────────────── */

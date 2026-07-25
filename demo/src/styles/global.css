@@ -37,6 +37,9 @@
 @source inline("bg-lum-{0,1,2,3,4,5,6,7,8,9,10}");
 @source inline("bg-chroma-{low,mlow,mid,mhigh,high}");
 @source inline("bg-hue-{primary,accent,success,warning,danger,info}");
+@source inline("bg-lum-up-{1,2,3,4,5}");
+@source inline("text-con-{low,mlow,mid,mhigh,high}");
+@source inline("border-con-{low,mlow,mid,mhigh,high}");
 
 /* ── Page chrome ─────────────────────────────────────────────────────────
    A deliberately quiet neutral so the showcased colors carry the page. */
