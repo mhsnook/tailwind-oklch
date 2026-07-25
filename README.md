@@ -18,7 +18,7 @@ subtle, this part stands out, this border is faint."
 
 ```html
 <!-- "generally success-colored, generally low-key" — declared once… -->
-<div class="hue-success chr-mlo">
+<div class="hue-success chr-mlow">
   <!-- …then everything inside speaks only luminance -->
   <div class="bg-lum-2">
     <span class="text-lum-9">Saved to your deck</span>
@@ -67,15 +67,15 @@ their own. Put them near a component's root:
 | Seeder      | Sets for all descendants                          |
 | ----------- | ------------------------------------------------- |
 | `hue-*`     | hue — and its per-hue chroma scale (see below)    |
-| `chr-*`  | chroma (`chr-lo`, `chr-hi`, …)              |
+| `chr-*`  | chroma (`chr-low`, `chr-high`, …)              |
 
 **Per-property setters** paint exactly one CSS property from one axis. Luminance
 is the one you set constantly; chroma and hue inherit from a seeder (or the
 `:root` default) unless you set them explicitly:
 
 ```html
-<span class="bg-lum-2 bg-chr-mlo bg-hue-primary">all three explicit</span>
-<span class="text-lum-6 text-chr-hi text-hue-info">…</span>
+<span class="bg-lum-2 bg-chr-mlow bg-hue-primary">all three explicit</span>
+<span class="text-lum-6 text-chr-high text-hue-info">…</span>
 <span class="hover:bg-lum-up-1">luminance only; chroma + hue inherited</span>
 ```
 
@@ -93,8 +93,8 @@ character from the caller:
 
 ```html
 <article class="card hue-primary chr-mid">…</article>  <!-- middling -->
-<article class="card hue-warning chr-lo">…</article>    <!-- subtle -->
-<article class="card hue-success chr-hi">…</article>    <!-- bright -->
+<article class="card hue-warning chr-low">…</article>    <!-- subtle -->
+<article class="card hue-success chr-high">…</article>    <!-- bright -->
 ```
 
 Same markup, three identities. The author writes emphasis; the caller decides
@@ -129,15 +129,15 @@ Two things worth internalizing:
 
 ## Chroma stops (`chr`)
 
-`{prop}-chr-{lo | mlo | mid | mhi | hi}`, or the seeder `chr-{…}`:
+`{prop}-chr-{low | mlow | mid | mhigh | high}`, or the seeder `chr-{…}`:
 
-| Name  | Base value | Use for                            |
-| ----- | ---------- | ---------------------------------- |
-| `lo`  | 0.02       | Backgrounds, muted surfaces        |
-| `mlo` | 0.05       | Tinted backgrounds, subtle borders |
-| `mid` | 0.09       | Medium saturation                  |
-| `mhi` | 0.13       | Prominent accents                  |
-| `hi`  | 0.17       | Vivid, saturated colors            |
+| Name    | Base value | Use for                            |
+| ------- | ---------- | ---------------------------------- |
+| `low`   | 0.02       | Backgrounds, muted surfaces        |
+| `mlow`  | 0.05       | Tinted backgrounds, subtle borders |
+| `mid`   | 0.09       | Medium saturation                  |
+| `mhigh` | 0.13       | Prominent accents                  |
+| `high`  | 0.17       | Vivid, saturated colors            |
 
 These are _base_ values — the chroma actually painted is the base times the
 active hue's scale (next section).
@@ -168,7 +168,7 @@ These are calibrated by eye and easy to retune — override any `--cscale-*` in 
 ceiling is unknown; set `bg-chr-[n]` directly if you need to tame them.
 
 **There is no `neutral` hue.** A neutral is the _absence_ of chroma, not a color:
-reach for `chr-lo` (a faint temperature from whatever hue is seeded) or
+reach for `chr-low` (a faint temperature from whatever hue is seeded) or
 `chr-[0]` for a dead-flat gray. Keeping the axes decomposed means neutrality
 belongs to the chroma axis — folding it into the hue list would smuggle a chroma
 decision back into hue.
@@ -283,10 +283,13 @@ pre-1.0 — the API isn't settled, so pin the version and expect more churn.
   `{prop}-{L}-{C}[-{H}]` shorthands (`bg-3-mhi`, `bg-3-mhi-accent`) are gone;
   they re-pinned all three axes on every leaf, against the cascade. Split them
   into axes and hoist hue/chroma to a seeder: `bg-3-mhi-accent` →
-  `hue-accent` (on the parent) + `bg-lum-3 bg-chr-mhi`.
+  `hue-accent` (on the parent) + `bg-lum-3 bg-chr-mhigh`.
 - **Axis prefixes renamed for readability** — `lum` / `chr` / `hue`.
   `bg-lc-5` → `bg-lum-5`, `bg-c-mid` → `bg-chr-mid`, `bg-h-info` → `bg-hue-info`.
   The global seeders are `hue-*` and `chr-*`.
+- **Chroma stops spelled out** — `lo` / `mlo` / `mhi` / `hi` → `low` / `mlow` /
+  `mhigh` / `high` (`mid` unchanged). Words of five letters or fewer are written
+  in full; the same `low·mlow·mid·mhigh·high` scale is reused wherever it fits.
 - **The luminance scale is reindexed.** `lum-0` is now **pure white/black**, not
   the old near-page 0.95. The everyday surfaces shifted down a notch: a
   near-page background that was `lc-0` is now `lum-1`/`lum-2`; text at the old

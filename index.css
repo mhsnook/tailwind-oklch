@@ -11,12 +11,12 @@
  *
  *   - Cascade seeders set an axis for every descendant and paint nothing:
  *       hue-primary · hue-danger · …    seeds hue (and its chroma scale)
- *       chr-mlo · chr-hi · …            seeds chroma
+ *       chr-mlow · chr-high · …            seeds chroma
  *
  *   - Per-property setters paint one property from one axis; hue and chroma
  *     inherit from a seeder (or the :root default) unless set explicitly:
- *       bg-lum-2     bg-chr-mlo     bg-hue-accent
- *       text-lum-9   text-chr-hi    text-hue-info
+ *       bg-lum-2     bg-chr-mlow     bg-hue-accent
+ *       text-lum-9   text-chr-high    text-hue-info
  *       …plus border-*, border-b-*, accent-*, shadow-*, from-*, to-*
  *
  *   - Relative adjustments nudge off the inherited luminance without rewriting
@@ -67,11 +67,11 @@
   --lum-10: 0;
 
   /* ── Chroma stops (base, before per-hue scale) ────────────────────── */
-  --chr-lo: .02;
-  --chr-mlo: .05;
+  --chr-low: .02;
+  --chr-mlow: .05;
   --chr-mid: .09;
-  --chr-mhi: .13;
-  --chr-hi: .17;
+  --chr-mhigh: .13;
+  --chr-high: .17;
 
   /* ── Luminance adjustment steps (~one 0–10 position each) ─────────── */
   --lum-adj-1: .08;
@@ -108,22 +108,22 @@
   --lum-flip: 0;
 
   --bg-l: var(--lum-5);
-  --bg-c: var(--chr-lo);
+  --bg-c: var(--chr-low);
   --bg-cs: var(--cscale-primary);
   --bg-h: var(--hue-primary);
 
   --tx-l: var(--lum-10);
-  --tx-c: var(--chr-lo);
+  --tx-c: var(--chr-low);
   --tx-cs: var(--cscale-primary);
   --tx-h: var(--hue-primary);
 
   --bd-l: var(--lum-3);
-  --bd-c: var(--chr-lo);
+  --bd-c: var(--chr-low);
   --bd-cs: var(--cscale-primary);
   --bd-h: var(--hue-primary);
 
   --bdb-l: var(--lum-3);
-  --bdb-c: var(--chr-lo);
+  --bdb-c: var(--chr-low);
   --bdb-cs: var(--cscale-primary);
   --bdb-h: var(--hue-primary);
 
@@ -133,7 +133,7 @@
   --ac-h: var(--hue-primary);
 
   --sh-l: var(--lum-5);
-  --sh-c: var(--chr-lo);
+  --sh-c: var(--chr-low);
   --sh-cs: var(--cscale-primary);
   --sh-h: var(--hue-primary);
 

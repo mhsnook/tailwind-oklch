@@ -6,7 +6,7 @@
 // Axis prefixes: lum (luminance) · chr (chroma) · hue.
 
 // Named hues map to real hue angles. There is deliberately no "neutral" — a
-// neutral is the absence of chroma (chr-lo, or chr-[0] for a flat gray), not a
+// neutral is the absence of chroma (chr-low, or chr-[0] for a flat gray), not a
 // hue. Keeping the axes decomposed means neutrality lives on chroma.
 const HUES = [
   ['primary', 233], ['accent', 350], ['success', 145],
@@ -22,7 +22,7 @@ const CSCALE = {
 // Front-loaded near the page: 1–2 hug the page surface, steps open up lower down.
 const L_LIGHT = ['1', '.965', '.95', '.885', '.80', '.69', '.575', '.46', '.345', '.22', '0'];
 const L_DARK  = ['0', '.185', '.22', '.30', '.395', '.49', '.58', '.67', '.76', '.86', '1'];
-const CHROMA = [['lo', '.02'], ['mlo', '.05'], ['mid', '.09'], ['mhi', '.13'], ['hi', '.17']];
+const CHROMA = [['low', '.02'], ['mlow', '.05'], ['mid', '.09'], ['mhigh', '.13'], ['high', '.17']];
 const ADJ = [['1', '.08'], ['2', '.16'], ['3', '.24'], ['4', '.32'], ['5', '.40']];
 
 // property stem, utility prefix, and how it applies the resolved color.
@@ -68,12 +68,12 @@ w(`/* tailwind-oklch — a cascade-first OKLCH color system for Tailwind v4
  *
  *   - Cascade seeders set an axis for every descendant and paint nothing:
  *       hue-primary · hue-danger · …    seeds hue (and its chroma scale)
- *       chr-mlo · chr-hi · …            seeds chroma
+ *       chr-mlow · chr-high · …            seeds chroma
  *
  *   - Per-property setters paint one property from one axis; hue and chroma
  *     inherit from a seeder (or the :root default) unless set explicitly:
- *       bg-lum-2     bg-chr-mlo     bg-hue-accent
- *       text-lum-9   text-chr-hi    text-hue-info
+ *       bg-lum-2     bg-chr-mlow     bg-hue-accent
+ *       text-lum-9   text-chr-high    text-hue-info
  *       …plus border-*, border-b-*, accent-*, shadow-*, from-*, to-*
  *
  *   - Relative adjustments nudge off the inherited luminance without rewriting
@@ -133,7 +133,7 @@ w(`  --lum-dir: -1;`);
 w(`  --lum-flip: 0;`);
 w('');
 const defL = { bg: '5', tx: '10', bd: '3', bdb: '3', ac: '5', sh: '5', gf: '5', gt: '5' };
-const defC = { bg: 'lo', tx: 'lo', bd: 'lo', bdb: 'lo', ac: 'mid', sh: 'lo', gf: 'mid', gt: 'mid' };
+const defC = { bg: 'low', tx: 'low', bd: 'low', bdb: 'low', ac: 'mid', sh: 'low', gf: 'mid', gt: 'mid' };
 for (const p of PROPS) {
   w(`  --${p.stem}-l: var(--lum-${defL[p.stem]});`);
   w(`  --${p.stem}-c: var(--chr-${defC[p.stem]});`);

@@ -34,6 +34,9 @@ further churn.
   `{prop}-c-*` → `{prop}-chr-*`, `{prop}-h-*` → `{prop}-hue-*` (e.g. `bg-lc-5` →
   `bg-lum-5`, `bg-c-mid` → `bg-chr-mid`, `text-h-info` → `text-hue-info`). The
   global seeders are `hue-*` and `chr-*`.
+- **Chroma stops spelled out** — `lo`/`mlo`/`mhi`/`hi` → `low`/`mlow`/`mhigh`/`high`
+  (`mid` unchanged). Whole words for anything five letters or fewer; the same
+  `low·mlow·mid·mhigh·high` scale is reused across axes wherever it fits.
 - **Luminance scale reindexed to a plain white→black ramp.** `lum-0` is now pure
   white (light) / pure black (dark) — the page-ward extreme — instead of the old
   near-page 0.95. Everyday surfaces shift down: a near-page background is `lum-1`,
