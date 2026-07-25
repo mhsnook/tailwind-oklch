@@ -52,6 +52,20 @@ further churn.
   green). Override `--cscale-*` in `@theme` to retune.
 - `scripts/gen-index.js` generates `index.css`, keeping every painting utility's
   `oklch()` expression identical.
+- **Contrast utilities `text-con-*`, `border-con-*`, `outline-con-*`.** Unlike
+  `lum-up/down` (measured off the property's own inherited value), `con-*` is
+  measured off the element's background (`--bg-l`) and auto-directional — it
+  moves toward whichever pole gives contrast, so one class reads correctly on a
+  light or dark surface with no `dark:` variant. Strength stops reuse the
+  `low·mlow·mid·mhigh·high` scale (here: faint → stark). Inherited hue/chroma are
+  kept; only luminance is computed. A leaf utility — it doesn't cascade.
+- **`--bg-l` now tracks the real surface through relative nudges.** `bg-lum-up/down`
+  reads its step from a new `--bg-anchor-l` (the nearest absolute `bg-lum-N`) and
+  writes the result into `--bg-l`, so the contrast utilities always measure
+  against the background that actually exists — including a nudge above them —
+  while nudges still don't compound (they measure from the anchor, never from a
+  parent's already-nudged value). This is also a hard CSS constraint: a custom
+  property can't derive from its own inherited value without forming a cycle.
 
 ### Migration
 

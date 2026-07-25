@@ -208,6 +208,38 @@ more contrast with the page, "down" less — direction adapts to light/dark
 automatically. Adjustments **don't compound**: a grandchild's `lum-up-1` nudges
 from the nearest ancestor's _set_ luminance, not a parent's already-nudged value.
 
+## Contrast against the background (`con`)
+
+`lum-up/down` measures off the property's own inherited luminance. `con-*`
+measures off the element's **background** (`--bg-l`) instead — and picks its
+direction automatically, moving toward whichever pole (lighter or darker) gives
+contrast. One class reads correctly on a light _or_ dark surface, with no `dark:`
+variant.
+
+```html
+<!-- A readable border/text/outline against whatever surface it lands on -->
+<article class="card">              <!-- card sets its own bg-lum-* -->
+  <p class="text-con-high">Stark against the card.</p>
+  <hr class="border-con-mlow" />   <!-- a soft step off the surface -->
+</article>
+```
+
+`text-con-*` and `border-con-*` / `outline-con-*` share the
+`low·mlow·mid·mhigh·high` vocabulary, but here it reads as **how much contrast**
+(faint → stark), not saturation. `text-con` keeps the inherited text hue/chroma;
+`border-con` and `outline-con` keep the inherited border hue/chroma — only the
+luminance is computed, so the contrasting color still carries the seeded hue.
+
+`con` is the _only_ family always measured against the background; `lum` and
+`lum-up/down` measure against the property's own inherited value. `--bg-l` always
+holds the **real** surface — including a `bg-lum-up/down` nudge sitting above —
+so `con` stays contrast-compliant against the background that actually exists.
+That works without breaking the "nudges don't compound" rule: `bg-lum-up/down`
+reads its step from a separate anchor (the nearest absolute `bg-lum-N`) and
+writes the result into `--bg-l`. `con` itself paints only its one property and
+changes nothing descendants inherit. Arbitrary `con-[40]` sets ΔL directly
+(`n/100` off the background).
+
 ## Arbitrary values
 
 All three axes accept Tailwind's bracket syntax, on every setter and both

@@ -122,7 +122,7 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
         Just an example of the payoff — the same <span class="kbd">.card</span>, same
         class skeleton. Its interior speaks only luminance
         (<span class="kbd">text-lum-9</span>, <span class="kbd">bg-lum-6</span>,
-        <span class="kbd">border-lum-3</span>); its character — which hue, how loud —
+        <span class="kbd">border-con-mlow</span>); its character — which hue, how loud —
         is seeded once on the wrapper with two words and cascades down.
       </p>
 
@@ -169,8 +169,8 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
 
         <!-- warning, subtle -->
         <div class="flex flex-col gap-2">
-          <div class="kbd self-start">hue-warning chroma-low</div>
-          <article class="card hue-warning chroma-low">
+          <div class="kbd self-start">hue-warning chroma-mlow</div>
+          <article class="card hue-warning chroma-mlow">
             <div class="card-eyebrow">Heads up</div>
             <h3 class="card-title">Streak winding down</h3>
             <p class="card-body">
@@ -190,9 +190,11 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
 
       <p class="muted mt-4 max-w-[64ch] text-sm leading-relaxed">
         The <span class="kbd">card</span> bakes in <span class="kbd">bg-lum-2</span> and
-        <span class="kbd">border-lum-3</span>; the three articles differ only by their
-        two seeder words. Toggle the theme — every <span class="kbd">lum</span> value
-        inverts while keeping its relationship to the page. No
+        a <span class="kbd">border-con-mlow</span> — a border keyed off the card's own
+        surface, so it stays a soft step darker than whatever hue is seeded. The
+        three articles differ only by their two seeder words. Toggle the theme —
+        every <span class="kbd">lum</span> value inverts while keeping its relationship
+        to the page, and the border re-derives from the flipped surface. No
         <span class="kbd">dark:</span> classes anywhere.
       </p>
     </section>
