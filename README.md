@@ -129,7 +129,7 @@ Two things worth internalizing:
 
 ## Chroma stops (`chroma`)
 
-`{prop}-chroma-{low | mlow | mid | mhigh | high}`, or the seeder `chroma-{…}`:
+`{prop}-chroma-{low | mlow | mid | mhigh | high | max}`, or the seeder `chroma-{…}`:
 
 | Name    | Base value | Use for                            |
 | ------- | ---------- | ---------------------------------- |
@@ -138,9 +138,12 @@ Two things worth internalizing:
 | `mid`   | 0.09       | Medium saturation                  |
 | `mhigh` | 0.13       | Prominent accents                  |
 | `high`  | 0.17       | Vivid, saturated colors            |
+| `max`   | 0.25       | Full color — pushed past the gamut |
 
 These are _base_ values — the chroma actually painted is the base times the
-active hue's scale (next section).
+active hue's scale (next section). `max` deliberately overshoots the sRGB gamut,
+so `oklch()` gamut-maps it to the most saturated color each hue can display —
+"give me the full color, whatever that is here."
 
 ## Per-hue chroma
 
@@ -225,10 +228,14 @@ variant.
 ```
 
 `text-con-*` and `border-con-*` / `outline-con-*` share the
-`low·mlow·mid·mhigh·high` vocabulary, but here it reads as **how much contrast**
-(faint → stark), not saturation. `text-con` keeps the inherited text hue/chroma;
-`border-con` and `outline-con` keep the inherited border hue/chroma — only the
-luminance is computed, so the contrasting color still carries the seeded hue.
+`low·mlow·mid·mhigh·high·max` vocabulary, but here it reads as **how much
+contrast** (faint → stark), not saturation. `low`…`high` step a fixed perceptual
+distance in `L` (so `high` may or may not reach the extreme, depending on the
+surface); `max` uses an offset big enough to **always** clamp to pure black or
+white — a guaranteed `contrast-color()`, whatever the surface. `text-con` keeps
+the inherited text hue/chroma; `border-con` and `outline-con` keep the inherited
+border hue/chroma — only the luminance is computed, so the contrasting color
+still carries the seeded hue (except `max`, which lands on pure black/white).
 
 `con` is the _only_ family always measured against the background; `lum` and
 `lum-up/down` measure against the property's own inherited value. `--bg-l` always

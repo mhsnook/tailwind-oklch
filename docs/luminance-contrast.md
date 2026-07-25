@@ -105,9 +105,11 @@ the contrast. Instead, derive the direction from where `--bg-l` actually sits:
 }
 ```
 
-Each level is the same formula with a different offset. `text-con-high` uses an
-offset big enough (≥ ~0.55) that it always clamps to pure black or white — i.e.
-it _is_ `contrast-color()`. The lower levels stay graduated:
+Each level is the same formula with a different offset. `text-con-high` (0.55) is
+strong — it reaches pure black/white on mid-range surfaces but stays graded near
+the ends of the scale. `text-con-max` uses an offset of 1.0, which for any surface
+in `[0, 1]` always pushes past the clamp to pure black or white — i.e. it _is_
+`contrast-color()`. The rest stay graduated:
 
 | Utility          | Intent                              | ≈ ΔL offset |
 | ---------------- | ----------------------------------- | ----------- |
@@ -115,7 +117,8 @@ it _is_ `contrast-color()`. The lower levels stay graduated:
 | `text-con-mlow`  | Secondary, metadata                 | ~0.25       |
 | `text-con-mid`   | Body text, readable                 | ~0.32       |
 | `text-con-mhigh` | Headlines, emphasis                 | ~0.42       |
-| `text-con-high`  | Max contrast — snaps to black/white | ~0.55+      |
+| `text-con-high`  | Strong — near black/white mid-range | ~0.55       |
+| `text-con-max`   | Guaranteed pure black/white         | 1.0 (clamps) |
 
 This is a distance-in-`L` model, and it trusts OKLCH's perceptual uniformity: an
 equal `L` gap ≈ an equal perceived lightness step. That's a strong heuristic, not

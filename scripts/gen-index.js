@@ -22,11 +22,17 @@ const CSCALE = {
 // Front-loaded near the page: 1–2 hug the page surface, steps open up lower down.
 const L_LIGHT = ['1', '.965', '.95', '.885', '.80', '.69', '.575', '.46', '.345', '.22', '0'];
 const L_DARK  = ['0', '.185', '.22', '.30', '.395', '.49', '.58', '.67', '.76', '.86', '1'];
-const CHROMA = [['low', '.02'], ['mlow', '.05'], ['mid', '.09'], ['mhigh', '.13'], ['high', '.17']];
+// Chroma stops. `max` overshoots the sRGB gamut on purpose: oklch() gamut-maps
+// it to the most saturated displayable color at each L/H — "give me the full
+// color, whatever that is here" — so a given hue clamps to its own ceiling.
+const CHROMA = [['low', '.02'], ['mlow', '.05'], ['mid', '.09'], ['mhigh', '.13'], ['high', '.17'], ['max', '.25']];
 const ADJ = [['1', '.08'], ['2', '.16'], ['3', '.24'], ['4', '.32'], ['5', '.40']];
 // Contrast strength: ΔL stepped off the background, toward contrast. Reuses the
-// low·mlow·mid·mhigh·high vocabulary — here it means "how much contrast".
-const CON = [['low', '.18'], ['mlow', '.25'], ['mid', '.32'], ['mhigh', '.42'], ['high', '.55']];
+// low·mlow·mid·mhigh·high vocabulary — here it means "how much contrast". `high`
+// is a fixed ΔL that may or may not reach the extreme depending on the surface;
+// `max` uses a ≥1 offset so the clamp always snaps to pure black/white — a
+// guaranteed contrast-color(), regardless of surface.
+const CON = [['low', '.18'], ['mlow', '.25'], ['mid', '.32'], ['mhigh', '.42'], ['high', '.55'], ['max', '1']];
 
 // property stem, utility prefix, and how it applies the resolved color.
 const PROPS = [

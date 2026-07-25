@@ -33,7 +33,10 @@ const conSurfaces = [
   { cls: "hue-warning chroma-mid bg-lum-7", label: "hue-warning · bg-lum-7", note: "deep color → light ink" },
   { cls: "bg-lum-9", label: "bg-lum-9", note: "dark → light ink" },
 ];
-const conLevels = ["low", "mlow", "mid", "mhigh", "high"];
+const conLevels = ["low", "mlow", "mid", "mhigh", "high", "max"];
+// Calibration grids get an extra "max" (full-color) column; the picker keeps
+// the five perceptual stops.
+const gridStops = ["low", "mlow", "mid", "mhigh", "high", "max"];
 
 const anatomy = `<span class="k">.bg-lum-5</span> {
   --bg-l: <span class="k">var(--lum-5)</span>;              <span class="c">/* the scale — section 2 */</span>
@@ -307,15 +310,20 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
             </p>
 
             <h4>The wheel — fills (bg-lum-5)</h4>
+            <p>
+              The last column is <span class="kbd">chroma-max</span> — it overshoots the
+              sRGB gamut on purpose, so each hue clamps to the most saturated color it can
+              actually display: "full color, whatever that is here."
+            </p>
             <div class="overflow-x-auto">
-              <div class="grid min-w-[520px] grid-cols-[6.5rem_repeat(5,minmax(0,1fr))] gap-1">
+              <div class="grid min-w-[620px] grid-cols-[6.5rem_repeat(6,minmax(0,1fr))] gap-1">
                 <div></div>
-                {stops.map((s) => <div class="grid-head">chroma-{s}</div>)}
+                {gridStops.map((s) => <div class="grid-head">chroma-{s}</div>)}
                 {
                   wheel.map((w) => (
                     <Fragment>
                       <div class="row-label"><b>{w.name}</b><span>{w.deg}° ×{w.cs}</span></div>
-                      {stops.map((s) => <div class={`swatch hue-${w.name} chroma-${s} bg-lum-5`} />)}
+                      {gridStops.map((s) => <div class={`swatch hue-${w.name} chroma-${s} bg-lum-5`} />)}
                     </Fragment>
                   ))
                 }
@@ -324,14 +332,14 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
 
             <h4>As a surface (bg-lum-2 · text-lum-8)</h4>
             <div class="overflow-x-auto">
-              <div class="grid min-w-[520px] grid-cols-[6.5rem_repeat(5,minmax(0,1fr))] gap-1">
+              <div class="grid min-w-[620px] grid-cols-[6.5rem_repeat(6,minmax(0,1fr))] gap-1">
                 <div></div>
-                {stops.map((s) => <div class="grid-head">chroma-{s}</div>)}
+                {gridStops.map((s) => <div class="grid-head">chroma-{s}</div>)}
                 {
                   wheel.map((w) => (
                     <Fragment>
                       <div class="row-label"><b>{w.name}</b><span>{w.deg}° ×{w.cs}</span></div>
-                      {stops.map((s) => (
+                      {gridStops.map((s) => (
                         <div class={`chip-cell hue-${w.name} chroma-${s} bg-lum-2`}>
                           <span class="text-lum-8 text-xs font-semibold">Aa 24</span>
                         </div>
@@ -414,10 +422,12 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
 
             <h4>The contrast ladder</h4>
             <p>
-              The five stops are a graduated hierarchy, faint → stark. Here they are on a
-              single tinted surface — <span class="kbd">con-high</span> snaps to near
-              black/white (it <em>is</em> <span class="kbd">contrast-color()</span>), the
-              rest stay proportionally softer:
+              A graduated hierarchy, faint → stark, on a single tinted surface.
+              <span class="kbd">low</span>…<span class="kbd">high</span> step a fixed
+              perceptual distance (so <span class="kbd">high</span> is very dark here but
+              not pure black), while <span class="kbd">con-max</span> uses an offset big
+              enough to always clamp to pure black/white — a guaranteed
+              <span class="kbd">contrast-color()</span>:
             </p>
             <div class="con-ladder hue-primary chroma-mid bg-lum-3">
               {

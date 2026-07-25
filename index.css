@@ -78,6 +78,7 @@
   --chroma-mid: .09;
   --chroma-mhigh: .13;
   --chroma-high: .17;
+  --chroma-max: .25;
 
   /* ── Contrast strength (ΔL off the background, toward contrast) ─────── */
   --con-low: .18;
@@ -85,6 +86,7 @@
   --con-mid: .32;
   --con-mhigh: .42;
   --con-high: .55;
+  --con-max: 1;
 
   /* ── Luminance adjustment steps (~one 0–10 position each) ─────────── */
   --lum-adj-1: .08;
