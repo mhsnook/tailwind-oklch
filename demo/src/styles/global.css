@@ -86,6 +86,27 @@ body {
     padding: 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 550; cursor: pointer;
   }
 
+  /* ── "By example" — live render paired with its exact source ─────────── */
+  .ex-grid { display: grid; gap: 1rem; margin-top: 1.25rem; }
+  @media (min-width: 640px) { .ex-grid { grid-template-columns: repeat(2, 1fr); } }
+  .ex {
+    display: flex; flex-direction: column;
+    border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--chip);
+  }
+  .ex-note {
+    font-size: 0.8rem; color: var(--muted); line-height: 1.5;
+    padding: 0.8rem 0.95rem 0;
+  }
+  .ex-preview { padding: 1rem 0.95rem; }
+  .ex-code {
+    margin: 0; margin-top: auto; border-top: 1px solid var(--line);
+    background: var(--page);
+    font-family: var(--font-mono); font-size: 0.71rem; line-height: 1.55;
+    padding: 0.8rem 0.95rem; color: var(--ink);
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .ex-code code { font-family: inherit; }
+
   /* ── The L·C·H picker (click an axis value, watch it change) ─────────── */
   .lch { display: grid; gap: 1.1rem; }
   @media (min-width: 640px) {

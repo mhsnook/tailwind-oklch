@@ -38,6 +38,54 @@ const conLevels = ["low", "mlow", "mid", "mhigh", "high", "max"];
 // the five perceptual stops.
 const gridStops = ["low", "mlow", "mid", "mhigh", "high", "max"];
 
+// "By example" blocks. The exact same HTML string is rendered live (set:html)
+// and shown as code, so the two can never drift.
+const examples = [
+  {
+    title: "Seed once, cascade",
+    note: "Put the character on the wrapper; everything inside speaks only luminance.",
+    html: `<div class="hue-primary chroma-mid bg-lum-2 rounded-lg border border-lum-4 p-4">
+  <p class="text-lum-9 font-semibold">A little panel</p>
+  <p class="text-lum-6 text-sm mt-1">
+    The wrapper seeds hue + chroma; the text and
+    border just state a luminance.
+  </p>
+</div>`,
+  },
+  {
+    title: "Same markup, new character",
+    note: "One seeder swapped — nothing else on the panel moved.",
+    html: `<div class="hue-success chroma-mid bg-lum-2 rounded-lg border border-lum-4 p-4">
+  <p class="text-lum-9 font-semibold">A little panel</p>
+  <p class="text-lum-6 text-sm mt-1">
+    Identical to the left, but seeded
+    hue-success instead of hue-primary.
+  </p>
+</div>`,
+  },
+  {
+    title: "Nudge, don't restate",
+    note: "Relative steps off the inherited luminance — for ramps, hover, press.",
+    html: `<div class="hue-accent chroma-mid bg-lum-2 flex gap-2 rounded-lg p-3">
+  <span class="bg-lum-2 text-lum-9 rounded px-2 py-1 text-sm">lum-2</span>
+  <span class="bg-lum-up-1 text-lum-9 rounded px-2 py-1 text-sm">up-1</span>
+  <span class="bg-lum-up-2 text-lum-9 rounded px-2 py-1 text-sm">up-2</span>
+  <span class="bg-lum-up-3 text-lum-9 rounded px-2 py-1 text-sm">up-3</span>
+</div>`,
+  },
+  {
+    title: "Contrast against the fill",
+    note: "text-con-* solves for the surface behind it — readable anywhere, no dark:.",
+    html: `<div class="hue-danger chroma-high bg-lum-6 rounded-lg p-4">
+  <p class="text-con-max font-semibold">Reads on the fill</p>
+  <p class="text-con-mid text-sm mt-1">
+    Auto-directional; the same class works on a
+    light or dark surface.
+  </p>
+</div>`,
+  },
+];
+
 const anatomy = `<span class="k">.bg-lum-5</span> {
   --bg-l: <span class="k">var(--lum-5)</span>;              <span class="c">/* the scale — section 2 */</span>
   background-color: oklch(
@@ -85,6 +133,36 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
       once near its root and most elements inside only ever state their luminance.
       Pure CSS, one <span class="kbd">@import</span>, no plugin.
     </p>
+
+    <!-- ── By example ─────────────────────────────────────────────────── -->
+    <section class="mt-12">
+      <h2 class="text-xl font-semibold tracking-tight">Show, don't tell</h2>
+      <p class="muted mt-1 max-w-[64ch] text-sm leading-relaxed">
+        Each class states one fact about one axis. The whole surface, in miniature —
+        every block below renders the exact code shown beneath it. Toggle the theme;
+        none of these carry a <span class="kbd">dark:</span> variant.
+      </p>
+      <div class="ex-grid">
+        {
+          examples.map((ex) => (
+            <div class="ex">
+              <div class="ex-note">{ex.note}</div>
+              <div class="ex-preview" set:html={ex.html} />
+              <pre class="ex-code"><code>{ex.html}</code></pre>
+            </div>
+          ))
+        }
+      </div>
+      <p class="muted mt-4 max-w-[64ch] text-sm leading-relaxed">
+        That's the core: <span class="kbd">hue-*</span> / <span class="kbd">chroma-*</span>
+        seed and cascade; <span class="kbd">bg-lum-*</span>,
+        <span class="kbd">text-lum-*</span>, <span class="kbd">border-lum-*</span> (and
+        <span class="kbd">-chroma-*</span> / <span class="kbd">-hue-*</span>) paint one
+        property; <span class="kbd">lum-up/down-*</span> nudge; <span class="kbd">con-*</span>
+        contrasts. Full reference in the
+        <a class="accent-ink underline underline-offset-2" href="https://github.com/mhsnook/tailwind-oklch#readme">README</a>.
+      </p>
+    </section>
 
     <!-- ── The L·C·H picker ──────────────────────────────────────────── -->
     <section class="mt-14">
