@@ -59,6 +59,14 @@ further churn.
   light or dark surface with no `dark:` variant. Strength stops reuse the
   `low·mlow·mid·mhigh·high` scale (here: faint → stark). Inherited hue/chroma are
   kept; only luminance is computed. A leaf utility — it doesn't cascade.
+- **Chroma taper toward white (`--chroma-taper`).** A fixed chroma looks far more
+  saturated at high luminance, so light surfaces went neon and the lightest stop
+  couldn't reach clean white. Chroma is now multiplied by
+  `clamp(0, (1 − L) × --chroma-taper, 1)` (default 3): full below L ≈ 0.67,
+  ramping to 0 at white. A `chroma-*` stop now looks about equally saturated
+  across the scale, light surfaces stay subtle, and `lum-0` resolves to true
+  white. Keys on resolved `L`, so it also calms near-white text and works in dark
+  mode; tune `--chroma-taper` per theme.
 - **`max` stops for chroma and contrast.** `chroma-max` (base 0.25) overshoots the
   sRGB gamut so `oklch()` maps each hue to its most saturated displayable color —
   "full color, whatever that is here." `text-con-max` / `border-con-max` /

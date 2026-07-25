@@ -49,8 +49,15 @@ const PROPS = [
 const STOPS = 'var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position))';
 
 // col() builds an oklch() with a given luminance expression for a stem.
+// Chroma is tapered toward white: at high L a fixed chroma reads as far more
+// saturated (it fills more of the visible gamut), so we scale it down as L→1.
+// taper = clamp(0, (1 − L) × --chroma-taper, 1): full chroma below L ≈ 1−1/k,
+// falling to 0 at pure white — so a given chroma stop looks about equally
+// saturated across the scale, and the lightest stop resolves to clean white.
+const taper = (lExpr) =>
+  `clamp(0, calc((1 - (${lExpr})) * var(--chroma-taper)), 1)`;
 const col = (stem, lExpr) =>
-  `oklch(${lExpr} calc(var(--${stem}-c) * var(--${stem}-cs)) var(--${stem}-h))`;
+  `oklch(${lExpr} calc(var(--${stem}-c) * var(--${stem}-cs) * ${taper(lExpr)}) var(--${stem}-h))`;
 
 // applyColor emits the declaration(s) that paint `color` for a property.
 function applyColor(p, lExpr) {
@@ -122,6 +129,11 @@ for (let i = 0; i <= 10; i++) w(`  --lum-${i}: ${L_LIGHT[i]};`);
 w('');
 w(`  /* ── Chroma stops (base, before per-hue scale) ────────────────────── */`);
 for (const [n, v] of CHROMA) w(`  --chroma-${n}: ${v};`);
+w('');
+w(`  /* ── Chroma taper toward white: full chroma below L ≈ 0.67, → 0 at L=1,`);
+w(`     so a chroma stop looks about equally saturated across the scale and the`);
+w(`     lightest surfaces stay subtle. Higher = chroma survives closer to white. ─ */`);
+w(`  --chroma-taper: 3;`);
 w('');
 w(`  /* ── Contrast strength (ΔL off the background, toward contrast) ─────── */`);
 for (const [n, v] of CON) w(`  --con-${n}: ${v};`);

@@ -176,6 +176,20 @@ reach for `chroma-low` (a faint temperature from whatever hue is seeded) or
 belongs to the chroma axis — folding it into the hue list would smuggle a chroma
 decision back into hue.
 
+## Chroma taper toward white
+
+At high luminance a fixed chroma reads as _much_ more saturated — it fills more
+of the visible gamut — so the same `chroma-*` stop that looks right at mid
+luminance turns neon on a near-white surface (and can't resolve to clean white at
+all). So chroma is tapered toward the light end: every color multiplies its
+chroma by `clamp(0, (1 − L) × --chroma-taper, 1)`. With the default
+`--chroma-taper: 3`, chroma is at full below L ≈ 0.67 and ramps to 0 at pure
+white, so a stop looks about **equally saturated across the scale**, light
+surfaces stay subtle, and the lightest stop resolves to true white. Raise
+`--chroma-taper` to let color survive closer to white; lower it for more muted
+lights. (The taper keys on the resolved `L`, so it also calms near-white text and
+works the same in dark mode.)
+
 ## Per-property setters
 
 Every property carries the full trio (`lum` / `chroma` / `hue`). Set only the axes
