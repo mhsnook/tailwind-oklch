@@ -11,7 +11,7 @@ const wheel = [
   { name: "green", deg: 145, cs: 1.0 },
   { name: "bluegreen", deg: 195, cs: 0.92 },
 ];
-const stops = ["low", "mlow", "mid", "mhigh", "high"];
+const stops = ["low", "mlow", "mid", "mhigh", "high", "max"];
 const lums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const pickHues = ["primary", "accent", "success", "warning", "danger", "info"];
 
@@ -34,8 +34,8 @@ const conSurfaces = [
   { cls: "bg-lum-9", label: "bg-lum-9", note: "dark → light ink" },
 ];
 const conLevels = ["low", "mlow", "mid", "mhigh", "high", "max"];
-// Calibration grids get an extra "max" (full-color) column; the picker keeps
-// the five perceptual stops.
+// Full chroma/contrast vocabulary, including "max" (full-color): used by the
+// calibration grids and the picker strip alike.
 const gridStops = ["low", "mlow", "mid", "mhigh", "high", "max"];
 
 // Guided walkthrough. Each step renders its exact HTML live (set:html) and shows
@@ -52,7 +52,7 @@ const walk = [
   {
     n: "2",
     title: "Compose with hue and chroma",
-    note: `<code>bg-lum-1</code> is scoped to a property — it paints only <em>this</em> div's background. But <code>hue-primary</code> and <code>chroma-mid</code> carry <em>no</em> property: they set hue and chroma for every LCH calculation below them, so the paragraph inherited both and only had to pick a luminance. Change <code>hue-primary</code> to <code>hue-success</code> and everything re-tints — nothing inside changed. (You can scope hue and chroma to a property too — <code>text-hue-*</code>, <code>bg-chroma-*</code> — but the property-less form is the common move.)`,
+    note: `<code>bg-lum-1</code> is scoped to a property — it paints only this div's <em>background</em>. But <code>hue-primary</code> and <code>chroma-mid</code> carry <em>no</em> property: they set hue and chroma for every LCH calculation below them, so the paragraph inherited both and only had to pick a luminance. Change <code>hue-primary</code> to <code>hue-success</code> and everything re-tints — nothing inside changed. (You can scope hue and chroma to a property too — <code>text-hue-*</code>, <code>bg-chroma-*</code> — but the property-less form is the common move.)`,
     html: `<div class="flex flex-wrap gap-3">
   <div class="bg-lum-1 hue-primary chroma-mid rounded-xl p-4">
     <p class="text-lum-7">hue-primary</p>
