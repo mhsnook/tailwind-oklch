@@ -2,7 +2,7 @@
 
 A cascade-first OKLCH color system for Tailwind CSS v4. Pure CSS, no JavaScript
 plugin. Instead of hand-picking hundreds of static color tokens, you **compose**
-colors from three independent axes — **luminance** (`lum`), **chroma** (`chr`),
+colors from three independent axes — **luminance** (`lum`), **chroma**,
 and **hue** — and let two of them flow down the DOM tree so most elements only
 ever state one thing about themselves.
 
@@ -18,7 +18,7 @@ subtle, this part stands out, this border is faint."
 
 ```html
 <!-- "generally success-colored, generally low-key" — declared once… -->
-<div class="hue-success chr-mlow">
+<div class="hue-success chroma-mlow">
   <!-- …then everything inside speaks only luminance -->
   <div class="bg-lum-2">
     <span class="text-lum-9">Saved to your deck</span>
@@ -67,15 +67,15 @@ their own. Put them near a component's root:
 | Seeder      | Sets for all descendants                          |
 | ----------- | ------------------------------------------------- |
 | `hue-*`     | hue — and its per-hue chroma scale (see below)    |
-| `chr-*`  | chroma (`chr-low`, `chr-high`, …)              |
+| `chroma-*`  | chroma (`chroma-low`, `chroma-high`, …)              |
 
 **Per-property setters** paint exactly one CSS property from one axis. Luminance
 is the one you set constantly; chroma and hue inherit from a seeder (or the
 `:root` default) unless you set them explicitly:
 
 ```html
-<span class="bg-lum-2 bg-chr-mlow bg-hue-primary">all three explicit</span>
-<span class="text-lum-6 text-chr-high text-hue-info">…</span>
+<span class="bg-lum-2 bg-chroma-mlow bg-hue-primary">all three explicit</span>
+<span class="text-lum-6 text-chroma-high text-hue-info">…</span>
 <span class="hover:bg-lum-up-1">luminance only; chroma + hue inherited</span>
 ```
 
@@ -92,9 +92,9 @@ character from the caller:
 ```
 
 ```html
-<article class="card hue-primary chr-mid">…</article>  <!-- middling -->
-<article class="card hue-warning chr-low">…</article>    <!-- subtle -->
-<article class="card hue-success chr-high">…</article>    <!-- bright -->
+<article class="card hue-primary chroma-mid">…</article>  <!-- middling -->
+<article class="card hue-warning chroma-low">…</article>    <!-- subtle -->
+<article class="card hue-success chroma-high">…</article>    <!-- bright -->
 ```
 
 Same markup, three identities. The author writes emphasis; the caller decides
@@ -127,9 +127,9 @@ Two things worth internalizing:
   toward the dark end. That's why a "subtle card" is a real, distinct stop
   rather than something you have to reach for with an arbitrary value.
 
-## Chroma stops (`chr`)
+## Chroma stops (`chroma`)
 
-`{prop}-chr-{low | mlow | mid | mhigh | high}`, or the seeder `chr-{…}`:
+`{prop}-chroma-{low | mlow | mid | mhigh | high}`, or the seeder `chroma-{…}`:
 
 | Name    | Base value | Use for                            |
 | ------- | ---------- | ---------------------------------- |
@@ -146,7 +146,7 @@ active hue's scale (next section).
 
 Hues don't reach perceived saturation at the same chroma: blue and purple look
 vivid at a low chroma, while yellow and green need more to read as colorful. A
-single flat chroma scale therefore looks uneven — `chr-mid` that's right for
+single flat chroma scale therefore looks uneven — `chroma-mid` that's right for
 green is garish on blue.
 
 So each hue carries a **`--cscale-*` multiplier**, and every color resolves its
@@ -165,29 +165,29 @@ scale automatically.
 
 These are calibrated by eye and easy to retune — override any `--cscale-*` in a
 `@theme` block. Arbitrary hues (`hue-[280]`) use a scale of `1` since their
-ceiling is unknown; set `bg-chr-[n]` directly if you need to tame them.
+ceiling is unknown; set `bg-chroma-[n]` directly if you need to tame them.
 
 **There is no `neutral` hue.** A neutral is the _absence_ of chroma, not a color:
-reach for `chr-low` (a faint temperature from whatever hue is seeded) or
-`chr-[0]` for a dead-flat gray. Keeping the axes decomposed means neutrality
+reach for `chroma-low` (a faint temperature from whatever hue is seeded) or
+`chroma-[0]` for a dead-flat gray. Keeping the axes decomposed means neutrality
 belongs to the chroma axis — folding it into the hue list would smuggle a chroma
 decision back into hue.
 
 ## Per-property setters
 
-Every property carries the full trio (`lum` / `chr` / `hue`). Set only the axes
+Every property carries the full trio (`lum` / `chroma` / `hue`). Set only the axes
 that differ from what's inherited.
 
 | Prefix     | CSS property           | Setters                                          |
 | ---------- | ---------------------- | ------------------------------------------------ |
-| `bg`       | `background-color`     | `bg-lum-*` · `bg-chr-*` · `bg-hue-*`           |
-| `text`     | `color`                | `text-lum-*` · `text-chr-*` · `text-hue-*`     |
-| `border`   | `border-color`         | `border-lum-*` · `border-chr-*` · `border-hue-*` |
-| `border-b` | `border-bottom-color`  | `border-b-lum-*` · `border-b-chr-*` · `border-b-hue-*` |
-| `accent`   | `accent-color`         | `accent-lum-*` · `accent-chr-*` · `accent-hue-*` |
-| `shadow`   | shadow color           | `shadow-lum-*` · `shadow-chr-*` · `shadow-hue-*` |
-| `from`     | gradient from          | `from-lum-*` · `from-chr-*` · `from-hue-*`     |
-| `to`       | gradient to            | `to-lum-*` · `to-chr-*` · `to-hue-*`           |
+| `bg`       | `background-color`     | `bg-lum-*` · `bg-chroma-*` · `bg-hue-*`           |
+| `text`     | `color`                | `text-lum-*` · `text-chroma-*` · `text-hue-*`     |
+| `border`   | `border-color`         | `border-lum-*` · `border-chroma-*` · `border-hue-*` |
+| `border-b` | `border-bottom-color`  | `border-b-lum-*` · `border-b-chroma-*` · `border-b-hue-*` |
+| `accent`   | `accent-color`         | `accent-lum-*` · `accent-chroma-*` · `accent-hue-*` |
+| `shadow`   | shadow color           | `shadow-lum-*` · `shadow-chroma-*` · `shadow-hue-*` |
+| `from`     | gradient from          | `from-lum-*` · `from-chroma-*` · `from-hue-*`     |
+| `to`       | gradient to            | `to-lum-*` · `to-chroma-*` · `to-hue-*`           |
 
 All setters work with standard Tailwind modifiers (`hover:`, `focus:`, `md:`, …).
 
@@ -219,8 +219,8 @@ seeders.
 <div class="bg-hue-[280] text-hue-[40]">Purple bg, orange text</div>
 
 <!-- Chroma: integer 0–100, mapped to OKLCH 0.00–1.00 (practical range ~0–25) -->
-<div class="chr-[8] bg-lum-3">Everything at chroma 0.08</div>
-<div class="bg-chr-[15]">Background chroma 0.15</div>
+<div class="chroma-[8] bg-lum-3">Everything at chroma 0.08</div>
+<div class="bg-chroma-[15]">Background chroma 0.15</div>
 
 <!-- Luminance: integer 0–100 = direct L, auto-flips in dark mode -->
 <div class="bg-lum-[70]">Light: L=0.70 · Dark: L=0.30</div>
@@ -283,10 +283,10 @@ pre-1.0 — the API isn't settled, so pin the version and expect more churn.
   `{prop}-{L}-{C}[-{H}]` shorthands (`bg-3-mhi`, `bg-3-mhi-accent`) are gone;
   they re-pinned all three axes on every leaf, against the cascade. Split them
   into axes and hoist hue/chroma to a seeder: `bg-3-mhi-accent` →
-  `hue-accent` (on the parent) + `bg-lum-3 bg-chr-mhigh`.
-- **Axis prefixes renamed for readability** — `lum` / `chr` / `hue`.
-  `bg-lc-5` → `bg-lum-5`, `bg-c-mid` → `bg-chr-mid`, `bg-h-info` → `bg-hue-info`.
-  The global seeders are `hue-*` and `chr-*`.
+  `hue-accent` (on the parent) + `bg-lum-3 bg-chroma-mhigh`.
+- **Axis prefixes renamed for readability** — `lum` / `chroma` / `hue`.
+  `bg-lc-5` → `bg-lum-5`, `bg-c-mid` → `bg-chroma-mid`, `bg-h-info` → `bg-hue-info`.
+  The global seeders are `hue-*` and `chroma-*`.
 - **Chroma stops spelled out** — `lo` / `mlo` / `mhi` / `hi` → `low` / `mlow` /
   `mhigh` / `high` (`mid` unchanged). Words of five letters or fewer are written
   in full; the same `low·mlow·mid·mhigh·high` scale is reused wherever it fits.
@@ -298,9 +298,9 @@ pre-1.0 — the API isn't settled, so pin the version and expect more churn.
 - **The `none` / `base` / `fore` / `full` aliases are gone.** The scale is just
   `0`–`10`, with `0` and `10` as the pure extremes. Replace `lc-base` → `lum-1`,
   `lc-fore` → `lum-9`/`lum-10`, `lc-none` → `lum-0`, `lc-full` → `lum-10`.
-- **Chroma is now scaled per hue.** A given `chr-*` stop paints less on blue
+- **Chroma is now scaled per hue.** A given `chroma-*` stop paints less on blue
   than it used to (and about the same on green). If a color looks off, retune
-  its `--cscale-*` or set an explicit `*-chr-[n]`.
+  its `--cscale-*` or set an explicit `*-chroma-[n]`.
 
 ## Building
 

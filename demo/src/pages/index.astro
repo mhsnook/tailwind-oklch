@@ -60,7 +60,7 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
         from the page color, on a 0–10 white→black ramp that auto-flips for dark mode
       </li>
       <li>
-        <b class="accent-ink">chroma</b> (<span class="kbd">chr</span>) — how saturated
+        <b class="accent-ink">chroma</b> — how saturated
       </li>
       <li>
         <b class="accent-ink">hue</b> (<span class="kbd">hue</span>) — which color
@@ -77,15 +77,15 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
       <h2 class="text-xl font-semibold tracking-tight">Pick a color, one axis at a time</h2>
       <p class="muted mt-1 max-w-[66ch] text-sm leading-relaxed">
         Every swatch below is a real utility — <span class="kbd">bg-lum-*</span>,
-        <span class="kbd">bg-chr-*</span>, <span class="kbd">bg-hue-*</span>. Click a value to
+        <span class="kbd">bg-chroma-*</span>, <span class="kbd">bg-hue-*</span>. Click a value to
         set that axis; the other two strips re-seed through the cascade, exactly like they
         would in your markup. The class that builds this color is shown beside it.
       </p>
 
       <div class="lch mt-5">
         <div class="lch-side">
-          <div class="lch-preview hue-primary chr-mid bg-lum-5" id="lchPrev">
-            <span class="lch-pv-label" id="lchLabel">lum 5 · chr mid · primary</span>
+          <div class="lch-preview hue-primary chroma-mid bg-lum-5" id="lchPrev">
+            <span class="lch-pv-label" id="lchLabel">lum 5 · chroma mid · primary</span>
           </div>
           <div class="lch-out" id="lchOut"></div>
         </div>
@@ -93,19 +93,19 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
         <div class="lch-rows">
           <div class="lch-axis">
             <div class="lch-label"><span>Luminance</span> <b id="lLbl">5</b></div>
-            <div class="lch-track hue-primary chr-mid" id="rowL">
+            <div class="lch-track hue-primary chroma-mid" id="rowL">
               {lums.map((i) => <button class={`lch-sw bg-lum-${i}`} data-l={i} type="button" aria-label={`luminance ${i}`} />)}
             </div>
           </div>
           <div class="lch-axis">
             <div class="lch-label"><span>Chroma</span> <b id="cLbl">mid</b></div>
             <div class="lch-track hue-primary" id="rowC" style="--bg-l: var(--lum-5)">
-              {stops.map((s) => <button class={`lch-sw bg-chr-${s}`} data-c={s} type="button" aria-label={`chroma ${s}`} />)}
+              {stops.map((s) => <button class={`lch-sw bg-chroma-${s}`} data-c={s} type="button" aria-label={`chroma ${s}`} />)}
             </div>
           </div>
           <div class="lch-axis">
             <div class="lch-label"><span>Hue</span> <b id="hLbl">primary</b></div>
-            <div class="lch-track" id="rowH" style="--bg-l: var(--lum-5); --bg-c: var(--chr-mid)">
+            <div class="lch-track" id="rowH" style="--bg-l: var(--lum-5); --bg-c: var(--chroma-mid)">
               {pickHues.map((h) => <button class={`lch-sw bg-hue-${h}`} data-h={h} type="button" aria-label={`hue ${h}`} />)}
             </div>
           </div>
@@ -129,8 +129,8 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
       <div class="mt-6 grid gap-4 sm:grid-cols-3">
         <!-- success, bright -->
         <div class="flex flex-col gap-2">
-          <div class="kbd self-start">hue-success chr-high</div>
-          <article class="card hue-success chr-high">
+          <div class="kbd self-start">hue-success chroma-high</div>
+          <article class="card hue-success chroma-high">
             <div class="card-eyebrow">Milestone</div>
             <h3 class="card-title">Practice complete!</h3>
             <p class="card-body">
@@ -149,8 +149,8 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
 
         <!-- primary, middling -->
         <div class="flex flex-col gap-2">
-          <div class="kbd self-start">hue-primary chr-mid</div>
-          <article class="card hue-primary chr-mid">
+          <div class="kbd self-start">hue-primary chroma-mid</div>
+          <article class="card hue-primary chroma-mid">
             <div class="card-eyebrow">Today</div>
             <h3 class="card-title">Continue your lesson</h3>
             <p class="card-body">
@@ -169,8 +169,8 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
 
         <!-- warning, subtle -->
         <div class="flex flex-col gap-2">
-          <div class="kbd self-start">hue-warning chr-low</div>
-          <article class="card hue-warning chr-low">
+          <div class="kbd self-start">hue-warning chroma-low</div>
+          <article class="card hue-warning chroma-low">
             <div class="card-eyebrow">Heads up</div>
             <h3 class="card-title">Streak winding down</h3>
             <p class="card-body">
@@ -248,7 +248,7 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
             </p>
             <h4>The stops (grayscale)</h4>
             <div class="gen-ramp">
-              {lums.map((i) => <div class={`bg-lum-${i} bg-chr-[0]`} title={`lum-${i}`} />)}
+              {lums.map((i) => <div class={`bg-lum-${i} bg-chroma-[0]`} title={`lum-${i}`} />)}
             </div>
             <h4>Roll your own scale — codegen</h4>
             <p>
@@ -283,7 +283,7 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
               Hues don't reach perceived saturation at the same chroma — blue looks vivid at a
               low chroma, yellow needs far more. So each hue carries a
               <span class="kbd">--cscale-*</span> multiplier and every color resolves chroma as
-              <span class="kbd">calc(base × scale)</span>. A given <span class="kbd">chr-*</span>
+              <span class="kbd">calc(base × scale)</span>. A given <span class="kbd">chroma-*</span>
               stop then looks about equally saturated all the way around the wheel.
             </p>
             <p>
@@ -297,12 +297,12 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
             <div class="overflow-x-auto">
               <div class="grid min-w-[520px] grid-cols-[6.5rem_repeat(5,minmax(0,1fr))] gap-1">
                 <div></div>
-                {stops.map((s) => <div class="grid-head">chr-{s}</div>)}
+                {stops.map((s) => <div class="grid-head">chroma-{s}</div>)}
                 {
                   wheel.map((w) => (
                     <Fragment>
                       <div class="row-label"><b>{w.name}</b><span>{w.deg}° ×{w.cs}</span></div>
-                      {stops.map((s) => <div class={`swatch hue-${w.name} chr-${s} bg-lum-5`} />)}
+                      {stops.map((s) => <div class={`swatch hue-${w.name} chroma-${s} bg-lum-5`} />)}
                     </Fragment>
                   ))
                 }
@@ -313,13 +313,13 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
             <div class="overflow-x-auto">
               <div class="grid min-w-[520px] grid-cols-[6.5rem_repeat(5,minmax(0,1fr))] gap-1">
                 <div></div>
-                {stops.map((s) => <div class="grid-head">chr-{s}</div>)}
+                {stops.map((s) => <div class="grid-head">chroma-{s}</div>)}
                 {
                   wheel.map((w) => (
                     <Fragment>
                       <div class="row-label"><b>{w.name}</b><span>{w.deg}° ×{w.cs}</span></div>
                       {stops.map((s) => (
-                        <div class={`chip-cell hue-${w.name} chr-${s} bg-lum-2`}>
+                        <div class={`chip-cell hue-${w.name} chroma-${s} bg-lum-2`}>
                           <span class="text-lum-8 text-xs font-semibold">Aa 24</span>
                         </div>
                       ))}
@@ -386,15 +386,15 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
       }
       function render() {
         // preview paints; the three strips re-seed via the cascade
-        prev.className = "lch-preview hue-" + H + " chr-" + C + " bg-lum-" + L;
-        rowL.className = "lch-track hue-" + H + " chr-" + C;
+        prev.className = "lch-preview hue-" + H + " chroma-" + C + " bg-lum-" + L;
+        rowL.className = "lch-track hue-" + H + " chroma-" + C;
         rowC.className = "lch-track hue-" + H;
         rowC.style.setProperty("--bg-l", "var(--lum-" + L + ")");
         rowH.className = "lch-track";
         rowH.style.setProperty("--bg-l", "var(--lum-" + L + ")");
-        rowH.style.setProperty("--bg-c", "var(--chr-" + C + ")");
-        out.innerHTML = "hue-<b>" + H + "</b> chr-<b>" + C + "</b> bg-lum-<b>" + L + "</b>";
-        label.textContent = "lum " + L + " · chr " + C + " · " + H;
+        rowH.style.setProperty("--bg-c", "var(--chroma-" + C + ")");
+        out.innerHTML = "hue-<b>" + H + "</b> chroma-<b>" + C + "</b> bg-lum-<b>" + L + "</b>";
+        label.textContent = "lum " + L + " · chroma " + C + " · " + H;
         lLbl.textContent = L; cLbl.textContent = C; hLbl.textContent = H;
         mark(rowL, "l", String(L));
         mark(rowC, "c", C);

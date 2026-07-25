@@ -3,10 +3,10 @@
 // Emits readable, commented CSS. Every color-painting utility resolves chroma
 // as calc(var(--X-c) * var(--X-cs)) so per-hue normalization applies uniformly.
 //
-// Axis prefixes: lum (luminance) · chr (chroma) · hue.
+// Axis prefixes: lum (luminance) · chroma · hue.
 
 // Named hues map to real hue angles. There is deliberately no "neutral" — a
-// neutral is the absence of chroma (chr-low, or chr-[0] for a flat gray), not a
+// neutral is the absence of chroma (chroma-low, or chroma-[0] for a flat gray), not a
 // hue. Keeping the axes decomposed means neutrality lives on chroma.
 const HUES = [
   ['primary', 233], ['accent', 350], ['success', 145],
@@ -63,17 +63,17 @@ w(`/* tailwind-oklch — a cascade-first OKLCH color system for Tailwind v4
  *   @import "tailwind-oklch";
  *
  * Each class states ONE fact about ONE axis. Every color is composed from three
- * independent axes — luminance (lum), chroma (chr), and hue — two of which
+ * independent axes — luminance (lum), chroma, and hue — two of which
  * cascade, so most elements only ever state their luminance.
  *
  *   - Cascade seeders set an axis for every descendant and paint nothing:
  *       hue-primary · hue-danger · …    seeds hue (and its chroma scale)
- *       chr-mlow · chr-high · …            seeds chroma
+ *       chroma-mlow · chroma-high · …            seeds chroma
  *
  *   - Per-property setters paint one property from one axis; hue and chroma
  *     inherit from a seeder (or the :root default) unless set explicitly:
- *       bg-lum-2     bg-chr-mlow     bg-hue-accent
- *       text-lum-9   text-chr-high    text-hue-info
+ *       bg-lum-2     bg-chroma-mlow     bg-hue-accent
+ *       text-lum-9   text-chroma-high    text-hue-info
  *       …plus border-*, border-b-*, accent-*, shadow-*, from-*, to-*
  *
  *   - Relative adjustments nudge off the inherited luminance without rewriting
@@ -106,7 +106,7 @@ w(`  /* ── Luminance scale (light): 0 = white … 10 = black ─────
 for (let i = 0; i <= 10; i++) w(`  --lum-${i}: ${L_LIGHT[i]};`);
 w('');
 w(`  /* ── Chroma stops (base, before per-hue scale) ────────────────────── */`);
-for (const [n, v] of CHROMA) w(`  --chr-${n}: ${v};`);
+for (const [n, v] of CHROMA) w(`  --chroma-${n}: ${v};`);
 w('');
 w(`  /* ── Luminance adjustment steps (~one 0–10 position each) ─────────── */`);
 for (const [n, v] of ADJ) w(`  --lum-adj-${n}: ${v};`);
@@ -136,7 +136,7 @@ const defL = { bg: '5', tx: '10', bd: '3', bdb: '3', ac: '5', sh: '5', gf: '5', 
 const defC = { bg: 'low', tx: 'low', bd: 'low', bdb: 'low', ac: 'mid', sh: 'low', gf: 'mid', gt: 'mid' };
 for (const p of PROPS) {
   w(`  --${p.stem}-l: var(--lum-${defL[p.stem]});`);
-  w(`  --${p.stem}-c: var(--chr-${defC[p.stem]});`);
+  w(`  --${p.stem}-c: var(--chroma-${defC[p.stem]});`);
   w(`  --${p.stem}-cs: var(--cscale-primary);`);
   w(`  --${p.stem}-h: var(--hue-primary);`);
   if (p.stem !== 'gt') w('');
@@ -159,11 +159,11 @@ w(`}`);
 w('');
 w(`/* ── Global chroma seeder — sets chroma for every property, painting nothing.
    Per-property chroma utilities still override. ─────────────────────────── */`);
-w(`@utility chr-* {`);
-for (const p of PROPS) w(`  --${p.stem}-c: --value(--chr-*);`);
+w(`@utility chroma-* {`);
+for (const p of PROPS) w(`  --${p.stem}-c: --value(--chroma-*);`);
 w(`}`);
-w(`@utility chr-* {`);
-w(`  /* arbitrary chr-[8]: chroma = n / 100 */`);
+w(`@utility chroma-* {`);
+w(`  /* arbitrary chroma-[8]: chroma = n / 100 */`);
 for (const p of PROPS) w(`  --${p.stem}-c: calc(--value([integer]) / 100);`);
 w(`}`);
 w('');
@@ -188,11 +188,11 @@ for (const p of PROPS) {
   w(applyColor(p, `var(--${s}-l)`));
   w(`}`);
   // chroma (named + arbitrary)
-  w(`@utility ${p.pre}-chr-* {`);
-  w(`  --${s}-c: --value(--chr-*);`);
+  w(`@utility ${p.pre}-chroma-* {`);
+  w(`  --${s}-c: --value(--chroma-*);`);
   w(applyColor(p, `var(--${s}-l)`));
   w(`}`);
-  w(`@utility ${p.pre}-chr-* {`);
+  w(`@utility ${p.pre}-chroma-* {`);
   w(`  --${s}-c: calc(--value([integer]) / 100);`);
   w(applyColor(p, `var(--${s}-l)`));
   w(`}`);

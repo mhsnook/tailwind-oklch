@@ -22,7 +22,7 @@ emphasis all relative within a component:
 
 ```tsx
 // calling context knows how bright this should be
-;<div class="bg-lum-2 bg-chr-mid bg-hue-primary">
+;<div class="bg-lum-2 bg-chroma-mid bg-hue-primary">
 	<Card content={content} />
 </div>
 
@@ -36,8 +36,8 @@ function Card(props) {
 			</h3>
 			<div className="text-con-mhigh">{props.text}</div>
 			<Row>
-				<a className="hue-mhi bg-lum-8 text-lum-1">Read more</a>
-				<a className="hue-mhi bg-lum-up1 text-con-mhigh">Go Back</a>
+				<a className="chroma-mhigh bg-lum-8 text-lum-1">Read more</a>
+				<a className="chroma-mhigh bg-lum-up1 text-con-mhigh">Go Back</a>
 			</Row>
 		</div>
 	)
@@ -58,8 +58,8 @@ The relative / derived utilities — `text-con-*`, `border-con-*`, and the nudge
 element only**. They never rewrite the cascading variable, so they don't compound
 down the tree and don't change what descendants inherit.
 
-Only the axis classes change what cascades: the **seeders** (`hue-*`, `chr-*`)
-and the **direct setters** (`bg-lum-N`, `text-chr-N`, `border-hue-N`, …), which
+Only the axis classes change what cascades: the **seeders** (`hue-*`, `chroma-*`)
+and the **direct setters** (`bg-lum-N`, `text-chroma-N`, `border-hue-N`, …), which
 assign `--bg-l` / `--bg-c` / `--bg-h` (and the per-hue `--*-cs`). A child's
 `text-con-*` therefore reads the nearest ancestor's _set_ `--bg-l`, never a
 parent's already-nudged one — the same "no compounding" rule the `lum-up`/`down`
