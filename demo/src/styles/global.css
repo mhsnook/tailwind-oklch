@@ -165,4 +165,68 @@ body {
   }
   .row-label b { font-size: 0.78rem; }
   .row-label span { font-family: var(--font-mono); font-size: 0.6rem; color: var(--muted); }
+
+  /* ── "Under the hood" accordion + codegen tooling ───────────────────── */
+  .uh { display: flex; flex-direction: column; gap: 0.75rem; }
+  .uh-item {
+    border: 1px solid var(--line); border-radius: 14px;
+    background: var(--chip); overflow: hidden;
+  }
+  .uh-item > summary {
+    cursor: pointer; list-style: none; user-select: none;
+    padding: 1rem 1.25rem; font-weight: 650; font-size: 1.02rem;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  }
+  .uh-item > summary::-webkit-details-marker { display: none; }
+  .uh-item > summary::after { content: "＋"; color: var(--muted); font-weight: 400; }
+  .uh-item[open] > summary::after { content: "－"; }
+  .uh-item > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .uh-body { padding: 0 1.25rem 1.35rem; }
+  .uh-body p { color: var(--ink); font-size: 0.92rem; line-height: 1.62; max-width: 70ch; }
+  .uh-body p + p { margin-top: 0.7rem; }
+  .uh-body h4 {
+    font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+    margin: 1.4rem 0 0.5rem;
+  }
+
+  .codeblock {
+    font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.6;
+    background: var(--page); border: 1px solid var(--line); border-radius: 10px;
+    padding: 0.85rem 1rem; overflow-x: auto; white-space: pre; color: var(--ink);
+  }
+  .codeblock .c { color: var(--muted); }
+  .codeblock .k { color: var(--accent); font-weight: 600; }
+
+  /* codegen widget */
+  .gen { margin-top: 1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--page); padding: 1rem 1.1rem 1.2rem; }
+  .gen-controls { display: flex; flex-wrap: wrap; gap: 1.1rem 1.5rem; align-items: center; }
+  .gen-controls label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.82rem; font-weight: 600; }
+  .gen-controls label small { color: var(--muted); font-weight: 500; font-family: var(--font-mono); }
+  .gen-controls input[type="range"] { width: 11rem; accent-color: var(--accent); }
+  .gen-ramp { display: flex; gap: 2px; margin-top: 0.9rem; border-radius: 7px; overflow: hidden; }
+  .gen-ramp > div { flex: 1; min-width: 0; height: 2.5rem; }
+  .gen-pal { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.9rem; }
+  .gen-pal > div {
+    flex: 1 1 66px; height: 3rem; border-radius: 7px;
+    box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.1);
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 3px;
+  }
+  .gen-pal > div span {
+    font-family: var(--font-mono); font-size: 0.6rem;
+    color: #fff; mix-blend-mode: difference; /* legible on any fill */
+  }
+  .gen-outwrap { position: relative; margin-top: 0.9rem; }
+  .gen-outwrap pre {
+    font-family: var(--font-mono); font-size: 0.74rem; line-height: 1.5;
+    background: var(--chip); border: 1px solid var(--line); border-radius: 8px;
+    padding: 0.85rem 1rem; overflow: auto; max-height: 15rem; margin: 0;
+  }
+  .gen-copy {
+    position: absolute; top: 0.5rem; right: 0.5rem;
+    background: var(--page); color: var(--ink); border: 1px solid var(--line);
+    border-radius: 7px; padding: 0.3rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer;
+  }
+  .gen-copy:hover { border-color: var(--accent); }
 }

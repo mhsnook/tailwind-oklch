@@ -23,6 +23,15 @@ const semantic = [
   { name: "success", deg: 145, cs: 1.0 },
   { name: "warning", deg: 55, cs: 1.0 },
 ];
+
+const anatomy = `<span class="k">.bg-lum-5</span> {
+  --bg-l: <span class="k">var(--lum-5)</span>;              <span class="c">/* the scale — section 2 */</span>
+  background-color: oklch(
+    var(--bg-l)                          <span class="c">/* luminance */</span>
+    calc(var(--bg-c) * var(--bg-cs))     <span class="c">/* chroma × per-hue scale — section 3 */</span>
+    var(--bg-h)                          <span class="c">/* hue */</span>
+  );
+}`;
 ---
 
 <Layout title="tailwind-oklch — a cascade-first OKLCH color system">
@@ -188,74 +197,170 @@ const semantic = [
       </p>
     </section>
 
-    <!-- ── Per-hue chroma ────────────────────────────────────────────── -->
+    <!-- ── Under the hood (collapsible detail sections) ──────────────── -->
     <section class="mt-16">
-      <h2 class="text-xl font-semibold tracking-tight">Per-hue chroma</h2>
-      <p class="muted mt-1 max-w-[68ch] text-sm leading-relaxed">
-        Hues don't reach perceived saturation at the same chroma — blue looks vivid at
-        a low chroma, yellow needs much more. So each hue carries a
-        <span class="kbd">--cscale-*</span> multiplier and resolves chroma as
-        <span class="kbd">calc(base × scale)</span>, so a stop looks about equally
-        saturated all the way around the wheel. (Raw colors below; the library maps
-        semantic tokens onto angles like these.)
+      <h2 class="text-xl font-semibold tracking-tight">Under the hood</h2>
+      <p class="muted mt-1 max-w-[64ch] text-sm leading-relaxed">
+        The good stuff, folded away. Three questions, expandable — including two
+        little code generators that spit out theme CSS you can paste.
       </p>
 
-      <h3 class="muted mt-6 font-mono text-[0.7rem] font-semibold tracking-wide uppercase">
-        Mid-luminance fills — bg-lum-5
-      </h3>
-      <div class="mt-2 overflow-x-auto">
-        <div class="grid min-w-[520px] grid-cols-[6.5rem_repeat(5,minmax(0,1fr))] gap-1">
-          <div></div>
-          {stops.map((s) => <div class="grid-head">chr-{s}</div>)}
-          {
-            wheel.map((w) => (
-              <Fragment>
-                <div class="row-label">
-                  <b>{w.name}</b>
-                  <span>{w.deg}° ×{w.cs}</span>
-                </div>
-                {stops.map((s) => (
-                  <div class={`swatch hue-${w.name} chr-${s} bg-lum-5`} />
-                ))}
-              </Fragment>
-            ))
-          }
-        </div>
-      </div>
+      <div class="uh mt-5">
+        <!-- 1 · How it works -->
+        <details class="uh-item">
+          <summary>How the heck does it work?</summary>
+          <div class="uh-body">
+            <p>
+              Every color on this page is one <span class="kbd">oklch()</span> call. Its
+              three inputs aren't hard-coded — they're CSS variables, and a utility class
+              sets exactly one of them, then repaints:
+            </p>
+            <div class="codeblock mt-3" set:html={anatomy} />
+            <p>
+              So <span class="kbd">bg-lum-5</span> only touches <span class="kbd">--bg-l</span>
+              — hue and chroma are left alone. And because the inputs are CSS variables, they
+              <b>inherit</b>: put <span class="kbd">hue-success</span> on a parent and every
+              descendant resolves its hue to it until something overrides. That's the cascade,
+              and it's why you seed a component's character once near the top and speak only
+              luminance inside.
+            </p>
+            <p>
+              Each property keeps its <em>own</em> trio of variables —
+              <span class="kbd">--bg-*</span>, <span class="kbd">--tx-*</span>,
+              <span class="kbd">--bd-*</span>, … — so a surface and its text can sit at
+              different luminances while sharing one seeded hue. Two of those inputs are
+              themselves tiny abstractions computed in pure CSS: a <b>luminance scale</b> and a
+              <b>per-hue chroma multiplier</b>. Those are the next two questions.
+            </p>
+          </div>
+        </details>
 
-      <h3 class="muted mt-6 font-mono text-[0.7rem] font-semibold tracking-wide uppercase">
-        As a surface — bg-lum-2 with text-lum-8
-      </h3>
-      <div class="mt-2 overflow-x-auto">
-        <div class="grid min-w-[520px] grid-cols-[6.5rem_repeat(5,minmax(0,1fr))] gap-1">
-          <div></div>
-          {stops.map((s) => <div class="grid-head">chr-{s}</div>)}
-          {
-            wheel.map((w) => (
-              <Fragment>
-                <div class="row-label">
-                  <b>{w.name}</b>
-                  <span>{w.deg}° ×{w.cs}</span>
-                </div>
-                {stops.map((s) => (
-                  <div class={`chip-cell hue-${w.name} chr-${s} bg-lum-2`}>
-                    <span class="text-lum-8 text-xs font-semibold">Aa 24</span>
-                  </div>
-                ))}
-              </Fragment>
-            ))
-          }
-        </div>
-      </div>
+        <!-- 2 · The luminance scale -->
+        <details class="uh-item">
+          <summary>How does the luminance scale work?</summary>
+          <div class="uh-body">
+            <p>
+              <span class="kbd">--lum-0…10</span> is a plain white→black ramp that measures
+              contrast <em>with the page</em>, not absolute lightness. It's front-loaded — tiny
+              steps near the page (where the eye is most sensitive), opening up toward the dark
+              end — and it auto-flips because <span class="kbd">.dark</span> just redefines each
+              <span class="kbd">--lum-N</span>. All CSS, no runtime JS.
+            </p>
+            <h4>The stops (grayscale)</h4>
+            <div class="gen-ramp">
+              {lums.map((i) => <div class={`bg-lum-${i} bg-chr-[0]`} title={`lum-${i}`} />)}
+            </div>
+            <h4>Roll your own scale — codegen</h4>
+            <p>
+              The utilities read <span class="kbd">--lum-N</span> straight from your theme, so
+              you can have as many stops as you like — <span class="kbd">bg-lum-14</span> exists
+              the moment <span class="kbd">--lum-14</span> does. Pick a count and a front-loading
+              curve; paste the output into your <span class="kbd">@theme</span>.
+            </p>
+            <div class="gen">
+              <div class="gen-controls">
+                <label>Stops <small id="lgNlbl">10</small>
+                  <input type="range" id="lgN" min="4" max="16" value="10" />
+                </label>
+                <label>Front-loading <small id="lgPlbl">1.5</small>
+                  <input type="range" id="lgP" min="10" max="26" value="15" />
+                </label>
+              </div>
+              <div class="gen-ramp" id="lgRamp"></div>
+              <div class="gen-outwrap">
+                <button class="gen-copy" data-copy="lgOut" type="button">Copy</button>
+                <pre id="lgOut"></pre>
+              </div>
+            </div>
+          </div>
+        </details>
 
-      <div class="mt-5 flex flex-wrap gap-2">
-        {
-          semantic.map((h) => (
-            <span class="kbd">
-              {h.name} · {h.deg}° · ×{h.cs}
-            </span>
-          ))
-        }
+        <!-- 3 · Per-hue chroma -->
+        <details class="uh-item">
+          <summary>How do the hue-chroma multipliers work?</summary>
+          <div class="uh-body">
+            <p>
+              Hues don't reach perceived saturation at the same chroma — blue looks vivid at a
+              low chroma, yellow needs far more. So each hue carries a
+              <span class="kbd">--cscale-*</span> multiplier and every color resolves chroma as
+              <span class="kbd">calc(base × scale)</span>. A given <span class="kbd">chr-*</span>
+              stop then looks about equally saturated all the way around the wheel.
+            </p>
+            <p>
+              <b>What doesn't work (yet):</b> the multipliers are eyeballed, not derived; at very
+              high luminance a high chroma still clamps out of sRGB; and a hue you invent
+              (<span class="kbd">hue-[300]</span>) gets a scale of <span class="kbd">1</span>
+              until you give it one. The generator below fixes that last part.
+            </p>
+
+            <h4>The wheel — fills (bg-lum-5)</h4>
+            <div class="overflow-x-auto">
+              <div class="grid min-w-[520px] grid-cols-[6.5rem_repeat(5,minmax(0,1fr))] gap-1">
+                <div></div>
+                {stops.map((s) => <div class="grid-head">chr-{s}</div>)}
+                {
+                  wheel.map((w) => (
+                    <Fragment>
+                      <div class="row-label"><b>{w.name}</b><span>{w.deg}° ×{w.cs}</span></div>
+                      {stops.map((s) => <div class={`swatch hue-${w.name} chr-${s} bg-lum-5`} />)}
+                    </Fragment>
+                  ))
+                }
+              </div>
+            </div>
+
+            <h4>As a surface (bg-lum-2 · text-lum-8)</h4>
+            <div class="overflow-x-auto">
+              <div class="grid min-w-[520px] grid-cols-[6.5rem_repeat(5,minmax(0,1fr))] gap-1">
+                <div></div>
+                {stops.map((s) => <div class="grid-head">chr-{s}</div>)}
+                {
+                  wheel.map((w) => (
+                    <Fragment>
+                      <div class="row-label"><b>{w.name}</b><span>{w.deg}° ×{w.cs}</span></div>
+                      {stops.map((s) => (
+                        <div class={`chip-cell hue-${w.name} chr-${s} bg-lum-2`}>
+                          <span class="text-lum-8 text-xs font-semibold">Aa 24</span>
+                        </div>
+                      ))}
+                    </Fragment>
+                  ))
+                }
+              </div>
+            </div>
+
+            <div class="mt-4 flex flex-wrap gap-2">
+              {semantic.map((h) => <span class="kbd">{h.name} · {h.deg}° · ×{h.cs}</span>)}
+            </div>
+
+            <h4>Generate a palette — codegen</h4>
+            <p>
+              Pick how many hues; the tool samples the multiplier curve at each evenly-spaced
+              angle, names them roughly, and emits <span class="kbd">--hue-*</span> plus a matching
+              <span class="kbd">--cscale-*</span>. Paste into <span class="kbd">@theme</span> and
+              your custom colors are normalized too. (Rename freely afterward.)
+            </p>
+            <div class="gen">
+              <div class="gen-controls">
+                <label>Hues <small id="pgNlbl">6</small>
+                  <input type="range" id="pgN" min="3" max="12" value="6" />
+                </label>
+                <label>Rotate <small id="pgRlbl">15°</small>
+                  <input type="range" id="pgR" min="0" max="359" value="15" />
+                </label>
+              </div>
+              <div class="gen-pal" id="pgPal"></div>
+              <div class="gen-outwrap">
+                <button class="gen-copy" data-copy="pgOut" type="button">Copy</button>
+                <pre id="pgOut"></pre>
+              </div>
+              <p class="muted mt-3 text-xs">
+                Coming soon: <span class="kbd">npx twok gen <span id="pgBlob">…</span></span> —
+                the same palette as a shareable string.
+              </p>
+            </div>
+          </div>
+        </details>
       </div>
     </section>
   </main>
@@ -304,6 +409,99 @@ const semantic = [
       bind(rowC, function (d) { C = d.c; });
       bind(rowH, function (d) { H = d.h; });
       render();
+    })();
+  </script>
+
+  <script is:inline>
+    (function () {
+      function el(id) { return document.getElementById(id); }
+      function round(x, d) { d = d || 3; var f = Math.pow(10, d); return String(Math.round(x * f) / f); }
+
+      // copy buttons
+      document.querySelectorAll(".gen-copy").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var pre = document.getElementById(btn.dataset.copy);
+          if (!pre || !navigator.clipboard) return;
+          navigator.clipboard.writeText(pre.textContent);
+          var t = btn.textContent; btn.textContent = "Copied!";
+          setTimeout(function () { btn.textContent = t; }, 1200);
+        });
+      });
+
+      // ── luminance scale codegen ──────────────────────────────────────
+      var lgN = el("lgN"), lgP = el("lgP");
+      if (lgN) {
+        var lgOut = el("lgOut"), lgRamp = el("lgRamp"), lgNlbl = el("lgNlbl"), lgPlbl = el("lgPlbl");
+        function lgRender() {
+          var N = +lgN.value, p = +lgP.value / 10, light = [], dark = [], i, t;
+          for (i = 0; i <= N; i++) { t = i / N; light.push(1 - Math.pow(t, p)); dark.push(Math.pow(t, p)); }
+          var css = "@theme {\n";
+          for (i = 0; i <= N; i++) css += "  --lum-" + i + ": " + round(light[i]) + ";\n";
+          css += "}\n.dark {\n";
+          for (i = 0; i <= N; i++) css += "  --lum-" + i + ": " + round(dark[i]) + ";\n";
+          css += "}";
+          lgOut.textContent = css;
+          lgRamp.innerHTML = light.map(function (L) {
+            return '<div style="background:oklch(' + round(L) + ' 0 0)"></div>';
+          }).join("");
+          lgNlbl.textContent = N; lgPlbl.textContent = p.toFixed(1);
+        }
+        lgN.addEventListener("input", lgRender);
+        lgP.addEventListener("input", lgRender);
+        lgRender();
+      }
+
+      // ── per-hue chroma codegen ───────────────────────────────────────
+      var pgN = el("pgN"), pgR = el("pgR");
+      if (pgN) {
+        var pgOut = el("pgOut"), pgPal = el("pgPal"), pgNlbl = el("pgNlbl"), pgRlbl = el("pgRlbl"), pgBlob = el("pgBlob");
+        // calibrated multiplier curve (deg -> cscale), interpolated around the wheel
+        var CAL = [[25, .95], [55, 1.0], [100, 1.1], [145, 1.0], [195, .92], [245, .85], [300, .86], [350, .90]];
+        function cscaleFor(h) {
+          h = ((h % 360) + 360) % 360;
+          for (var i = 0; i < CAL.length; i++) {
+            var a = CAL[i], b = CAL[(i + 1) % CAL.length], lo = a[0], hi = b[0];
+            if (hi <= lo) hi += 360;
+            var hh = h; if (hh < lo) hh += 360;
+            if (hh >= lo && hh <= hi) { var t = (hh - lo) / (hi - lo); return a[1] + (b[1] - a[1]) * t; }
+          }
+          return 1;
+        }
+        var NAMES = [[25, "red"], [55, "orange"], [90, "yellow"], [140, "green"], [195, "teal"], [245, "blue"], [300, "purple"], [335, "pink"]];
+        function dist(a, b) { var d = Math.abs(a - b); return Math.min(d, 360 - d); }
+        function hueName(h) {
+          h = ((h % 360) + 360) % 360;
+          var s = NAMES.map(function (a) { return { n: a[1], d: dist(h, a[0]) }; }).sort(function (x, y) { return x.d - y.d; });
+          return s[0].d < 14 ? s[0].n : s[0].n + "-" + s[1].n;
+        }
+        function uniq(names) {
+          var seen = {};
+          return names.map(function (n) {
+            if (seen[n] == null) { seen[n] = 1; return n; }
+            seen[n]++; return n + "-" + seen[n];
+          });
+        }
+        function pgRender() {
+          var N = +pgN.value, rot = +pgR.value, hues = [], i;
+          for (i = 0; i < N; i++) hues.push(Math.round((rot + i * 360 / N) % 360));
+          var names = uniq(hues.map(hueName));
+          var css = "@theme {\n";
+          hues.forEach(function (h, i) { css += "  --hue-" + names[i] + ": " + h + ";\n"; });
+          css += "\n";
+          hues.forEach(function (h, i) { css += "  --cscale-" + names[i] + ": " + round(cscaleFor(h), 2) + ";\n"; });
+          css += "}";
+          pgOut.textContent = css;
+          pgPal.innerHTML = hues.map(function (h, i) {
+            var c = 0.14 * cscaleFor(h);
+            return '<div style="background:oklch(0.66 ' + round(c) + " " + h + ')"><span>' + names[i] + "</span></div>";
+          }).join("");
+          pgNlbl.textContent = N; pgRlbl.textContent = rot + "°";
+          try { pgBlob.textContent = btoa(JSON.stringify({ h: hues })).replace(/=+$/, ""); } catch (e) {}
+        }
+        pgN.addEventListener("input", pgRender);
+        pgR.addEventListener("input", pgRender);
+        pgRender();
+      }
     })();
   </script>
 </Layout>
