@@ -81,8 +81,8 @@ const walk = [
     note: `Sometimes you want "one step up from <em>here</em>," wherever here is — a raised chip, a hover, a press. <code>bg-lum-up-1</code> nudges one step off the inherited luminance; <code>up-2</code> goes two. Neither needs to know the surface was <code>lum-2</code>, and nudges don't compound down the tree.`,
     html: `<div class="bg-lum-2 hue-accent chroma-mid flex items-center gap-3 rounded-xl p-4">
   <span class="text-lum-8 text-sm">surface at lum-2</span>
-  <span class="bg-lum-up-1 text-con-high rounded-lg px-3 py-1.5 text-sm">bg-lum-up-1</span>
-  <span class="bg-lum-up-2 text-con-high rounded px-2 py-1 text-xs">up-2</span>
+  <span class="bg-lum-up-1 text-con-high ml-auto rounded-lg px-3 py-1.5 text-sm">bg-lum-up-1</span>
+  <span class="bg-lum-up-2 text-con-high rounded-lg px-3 py-1.5 text-sm">up-2</span>
 </div>`,
   },
 ];
@@ -284,10 +284,6 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
     <!-- ── Under the hood (collapsible detail sections) ──────────────── -->
     <section class="mt-16">
       <h2 class="text-xl font-semibold tracking-tight">Under the hood</h2>
-      <p class="muted mt-1 max-w-[64ch] text-sm leading-relaxed">
-        The good stuff, folded away. Four questions, expandable — including two
-        little code generators that spit out theme CSS you can paste.
-      </p>
 
       <div class="uh mt-5">
         <!-- 1 · How it works -->
