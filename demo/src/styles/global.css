@@ -86,26 +86,44 @@ body {
     padding: 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 550; cursor: pointer;
   }
 
-  /* ── "By example" — live render paired with its exact source ─────────── */
-  .ex-grid { display: grid; gap: 1rem; margin-top: 1.25rem; }
-  @media (min-width: 640px) { .ex-grid { grid-template-columns: repeat(2, 1fr); } }
-  .ex {
-    display: flex; flex-direction: column;
-    border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--chip);
+  /* ── Guided walkthrough — numbered steps, live render + exact source ─── */
+  .walk { display: flex; flex-direction: column; gap: 2.75rem; margin-top: 1.75rem; }
+  .walk-head { display: flex; align-items: center; gap: 0.7rem; }
+  .walk-n {
+    flex: none; width: 1.7rem; height: 1.7rem; border-radius: 999px;
+    background: var(--accent); color: var(--page);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-weight: 700; font-size: 0.82rem;
   }
-  .ex-note {
-    font-size: 0.8rem; color: var(--muted); line-height: 1.5;
-    padding: 0.8rem 0.95rem 0;
+  .walk-title { font-size: 1.12rem; font-weight: 650; letter-spacing: -0.01em; }
+  .walk-note {
+    color: var(--ink); font-size: 0.95rem; line-height: 1.62; max-width: 66ch;
+    margin-top: 0.65rem;
   }
-  .ex-preview { padding: 1rem 0.95rem; }
-  .ex-code {
-    margin: 0; margin-top: auto; border-top: 1px solid var(--line);
-    background: var(--page);
-    font-family: var(--font-mono); font-size: 0.71rem; line-height: 1.55;
-    padding: 0.8rem 0.95rem; color: var(--ink);
+  .walk-note em { font-style: italic; }
+  .walk-note code {
+    font-family: var(--font-mono); font-size: 0.85em;
+    background: var(--chip); border: 1px solid var(--line);
+    border-radius: 5px; padding: 0.05em 0.35em;
+  }
+  .walk-demo {
+    margin-top: 1.05rem; display: grid; gap: 1px;
+    border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+    background: var(--line);
+  }
+  @media (min-width: 720px) { .walk-demo { grid-template-columns: 1fr 1fr; } }
+  .walk-preview {
+    background: var(--chip); padding: 1.5rem 1.25rem;
+    display: flex; align-items: center;
+  }
+  .walk-preview > * { width: 100%; }
+  .walk-code {
+    margin: 0; background: var(--page);
+    font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.55;
+    padding: 1rem 1.15rem; color: var(--ink);
     white-space: pre-wrap; word-break: break-word;
   }
-  .ex-code code { font-family: inherit; }
+  .walk-code code { font-family: inherit; }
 
   /* ── The L·C·H picker (click an axis value, watch it change) ─────────── */
   .lch { display: grid; gap: 1.1rem; }
