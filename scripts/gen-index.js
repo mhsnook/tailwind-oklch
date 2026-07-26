@@ -64,6 +64,8 @@ const PROPS = [
   { stem: 'bdb', pre: 'border-b', apply: (col) => `border-bottom-color: ${col};` },
   { stem: 'ac',  pre: 'accent',   apply: (col) => `accent-color: ${col};` },
   { stem: 'sh',  pre: 'shadow',   apply: (col) => `--tw-shadow-color: ${col};` },
+  { stem: 'rg',  pre: 'ring',     apply: (col) => `--tw-ring-color: ${col};` },
+  { stem: 'ro',  pre: 'ring-offset', apply: (col) => `--tw-ring-offset-color: ${col};` },
   { stem: 'gf',  pre: 'from',     grad: 'from' },
   { stem: 'gt',  pre: 'to',       grad: 'to' },
 ];
@@ -114,7 +116,7 @@ w(`/* tailwind-oklch — a cascade-first OKLCH color system for Tailwind v4
  *     inherit from an ancestor (or the :root default) unless set explicitly:
  *       bg-lum-2     bg-chroma-mlow     bg-hue-accent
  *       text-lum-9   text-chroma-high    text-hue-info
- *       …plus border-*, border-b-*, accent-*, shadow-*, from-*, to-*
+ *       …plus border-*, border-b-*, accent-*, shadow-*, ring-*, ring-offset-*, from-*, to-*
  *
  *   - Relative adjustments nudge off the nearest absolute luminance, and DON'T
  *     compound: bg-lum-up-1 · text-lum-down-1 · …. The numbered stops are your
@@ -183,8 +185,11 @@ w(`  --lum-dir: -1;`);
 w(`  --lum-flip: 0;`);
 w(`  --con-flip: ${CON_MID[0]};`);
 w('');
-const defL = { bg: '5', tx: '10', dc: '6', bd: '3', bdb: '3', ac: '5', sh: '5', gf: '5', gt: '5' };
-const defC = { bg: 'low', tx: 'low', dc: 'low', bd: 'low', bdb: 'low', ac: 'mid', sh: 'low', gf: 'mid', gt: 'mid' };
+// ring-offset defaults to the page pole (lum-none): the offset is the gap the
+// ring sits in, so matching the page reads as a detached ring — and it auto-flips
+// white↔black for dark mode, unlike Tailwind's static white default.
+const defL = { bg: '5', tx: '10', dc: '6', bd: '3', bdb: '3', ac: '5', sh: '5', rg: '5', ro: 'none', gf: '5', gt: '5' };
+const defC = { bg: 'low', tx: 'low', dc: 'low', bd: 'low', bdb: 'low', ac: 'mid', sh: 'low', rg: 'low', ro: 'low', gf: 'mid', gt: 'mid' };
 for (const p of PROPS) {
   w(`  --${p.stem}-l: var(--lum-${defL[p.stem]});`);
   if (p.stem === 'bg') w(`  --bg-anchor-l: var(--bg-l);`);
@@ -239,7 +244,8 @@ w('');
 // ── per-property setters ───────────────────────────────────────────────────
 const titleOf = {
   bg: 'Background', tx: 'Text', dc: 'Text Decoration', bd: 'Border', bdb: 'Border Bottom',
-  ac: 'Accent Color', sh: 'Shadow Color', gf: 'Gradient From', gt: 'Gradient To',
+  ac: 'Accent Color', sh: 'Shadow Color', rg: 'Ring Color', ro: 'Ring Offset Color',
+  gf: 'Gradient From', gt: 'Gradient To',
 };
 for (const p of PROPS) {
   const s = p.stem;
@@ -309,12 +315,14 @@ for (const p of PROPS) {
 // with the element's own inherited background (--bg-l), moving toward whichever
 // pole (lighter/darker) gives contrast. One class works on a light OR dark
 // surface. Chroma/hue are inherited (text-con reads --tx-*, border/outline read
-// --bd-*); only luminance is computed. Like lum-up/down it's a leaf utility —
+// --bd-*, ring reads --rg-*); only luminance is computed. A contrast-aware ring
+// is ideal for focus states. Like lum-up/down it's a leaf utility —
 // it paints without rewriting the cascading axis vars.
 const CON_PROPS = [
   { pre: 'text',    stem: 'tx', apply: (c) => `  color: ${c};` },
   { pre: 'border',  stem: 'bd', apply: (c) => `  border-color: ${c};` },
   { pre: 'outline', stem: 'bd', apply: (c) => `  outline-color: ${c};` },
+  { pre: 'ring',    stem: 'rg', apply: (c) => `  --tw-ring-color: ${c};` },
 ];
 // direction: +1 when the background is dark (go lighter), −1 when light (go
 // darker); the ×1000 makes the clamp snap hard at the 0.6 luminance midpoint.

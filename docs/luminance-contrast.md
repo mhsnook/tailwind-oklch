@@ -124,11 +124,12 @@ This is a distance-in-`L` model, and it trusts OKLCH's perceptual uniformity: an
 equal `L` gap ≈ an equal perceived lightness step. That's a strong heuristic, not
 a WCAG/APCA guarantee — contrast perception is polarity-asymmetric (see APCA
 below) — but it reads correctly in the overwhelming majority of cases, and any
-level is a one-word bump away. Borders and outlines get the same treatment via
-`border-con-*` and `outline-con-*` (reading the inherited border hue/chroma).
+level is a one-word bump away. Borders, outlines, and rings get the same
+treatment via `border-con-*`, `outline-con-*`, and `ring-con-*` (reading the
+inherited border/ring hue/chroma).
 
-**Shipped in 0.7.** `text-con-*`, `border-con-*`, and `outline-con-*` are live
-with exactly the offsets tabled above. They compute the luminance inline and
+**Shipped in 0.7 (rings added in 0.8).** `text-con-*`, `border-con-*`,
+`outline-con-*`, and `ring-con-*` are live with exactly the offsets tabled above. They compute the luminance inline and
 paint a single property — a leaf, changing nothing descendants inherit. `con` is
 the one family always measured against the background (`--bg-l`); `lum` and
 `lum-up/down` are measured against the property's own inherited value. See
