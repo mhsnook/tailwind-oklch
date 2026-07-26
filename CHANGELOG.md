@@ -10,6 +10,13 @@ but it is pre-1.0 so we are informal and almost everything gets a minor version 
 
 ### Added
 
+- **Per-side border color utilities.** The full set of border sides now carries
+  the trio, matching Tailwind's own border-side utilities: `border-t-*` ·
+  `border-r-*` · `border-l-*` (physical), `border-x-*` · `border-y-*` (axis, via
+  `border-inline-color` / `border-block-color`), and `border-s-*` · `border-e-*`
+  (logical). Each takes hue/chroma from the cascade and states its own luminance,
+  and a per-side setter overrides the all-sides `border-*` on that edge. (`border-b-*`
+  already shipped in 0.7.)
 - **Ring color utilities.** `ring-lum-*` · `ring-chroma-*` · `ring-hue-*` compose
   Tailwind's `--tw-ring-color` from the same three axes as every other property,
   so a ring takes its hue and chroma from the cascade and states only its own
