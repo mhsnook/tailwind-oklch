@@ -19,7 +19,7 @@
  *     inherit from an ancestor (or the :root default) unless set explicitly:
  *       bg-lum-2     bg-chroma-mlow     bg-hue-accent
  *       text-lum-9   text-chroma-high    text-hue-info
- *       …plus border-*, border-b-*, accent-*, shadow-*, from-*, to-*
+ *       …plus border-*, border-b-*, accent-*, shadow-*, ring-*, ring-offset-*, from-*, to-*
  *
  *   - Relative adjustments nudge off the nearest absolute luminance, and DON'T
  *     compound: bg-lum-up-1 · text-lum-down-1 · …. The numbered stops are your
@@ -150,6 +150,16 @@
   --sh-cs: var(--cscale-primary);
   --sh-h: var(--hue-primary);
 
+  --rg-l: var(--lum-5);
+  --rg-c: var(--chroma-low);
+  --rg-cs: var(--cscale-primary);
+  --rg-h: var(--hue-primary);
+
+  --ro-l: var(--lum-none);
+  --ro-c: var(--chroma-low);
+  --ro-cs: var(--cscale-primary);
+  --ro-h: var(--hue-primary);
+
   --gf-l: var(--lum-5);
   --gf-c: var(--chroma-mid);
   --gf-cs: var(--cscale-primary);
@@ -193,6 +203,8 @@
   --bdb-h: --value(--hue-*);
   --ac-h: --value(--hue-*);
   --sh-h: --value(--hue-*);
+  --rg-h: --value(--hue-*);
+  --ro-h: --value(--hue-*);
   --gf-h: --value(--hue-*);
   --gt-h: --value(--hue-*);
   --bg-cs: --value(--cscale-*);
@@ -202,6 +214,8 @@
   --bdb-cs: --value(--cscale-*);
   --ac-cs: --value(--cscale-*);
   --sh-cs: --value(--cscale-*);
+  --rg-cs: --value(--cscale-*);
+  --ro-cs: --value(--cscale-*);
   --gf-cs: --value(--cscale-*);
   --gt-cs: --value(--cscale-*);
 }
@@ -214,6 +228,8 @@
   --bdb-h: --value([integer]);
   --ac-h: --value([integer]);
   --sh-h: --value([integer]);
+  --rg-h: --value([integer]);
+  --ro-h: --value([integer]);
   --gf-h: --value([integer]);
   --gt-h: --value([integer]);
   --bg-cs: 1;
@@ -223,6 +239,8 @@
   --bdb-cs: 1;
   --ac-cs: 1;
   --sh-cs: 1;
+  --rg-cs: 1;
+  --ro-cs: 1;
   --gf-cs: 1;
   --gt-cs: 1;
 }
@@ -238,6 +256,8 @@
   --bdb-c: --value(--chroma-*);
   --ac-c: --value(--chroma-*);
   --sh-c: --value(--chroma-*);
+  --rg-c: --value(--chroma-*);
+  --ro-c: --value(--chroma-*);
   --gf-c: --value(--chroma-*);
   --gt-c: --value(--chroma-*);
 }
@@ -250,6 +270,8 @@
   --bdb-c: calc(--value([integer]) / 100);
   --ac-c: calc(--value([integer]) / 100);
   --sh-c: calc(--value([integer]) / 100);
+  --rg-c: calc(--value([integer]) / 100);
+  --ro-c: calc(--value([integer]) / 100);
   --gf-c: calc(--value([integer]) / 100);
   --gt-c: calc(--value([integer]) / 100);
 }
@@ -484,6 +506,66 @@
   --tw-shadow-color: oklch(var(--sh-l) calc(var(--sh-c) * var(--sh-cs) * clamp(0, calc((1 - (var(--sh-l))) * var(--chroma-taper)), 1)) var(--sh-h));
 }
 
+/* ── Ring Color ─────────────────────────────────────────────────── */
+@utility ring-lum-* {
+  --rg-l: --value(--lum-*);
+  --tw-ring-color: oklch(var(--rg-l) calc(var(--rg-c) * var(--rg-cs) * clamp(0, calc((1 - (var(--rg-l))) * var(--chroma-taper)), 1)) var(--rg-h));
+}
+@utility ring-lum-* {
+  /* arbitrary ring-lum-[60]: auto-flip L = v + flip × (1 − 2v) */
+  --rg-lv: calc(--value([integer]) / 100);
+  --rg-l: calc(var(--rg-lv) + var(--lum-flip) * (1 - 2 * var(--rg-lv)));
+  --tw-ring-color: oklch(var(--rg-l) calc(var(--rg-c) * var(--rg-cs) * clamp(0, calc((1 - (var(--rg-l))) * var(--chroma-taper)), 1)) var(--rg-h));
+}
+@utility ring-chroma-* {
+  --rg-c: --value(--chroma-*);
+  --tw-ring-color: oklch(var(--rg-l) calc(var(--rg-c) * var(--rg-cs) * clamp(0, calc((1 - (var(--rg-l))) * var(--chroma-taper)), 1)) var(--rg-h));
+}
+@utility ring-chroma-* {
+  --rg-c: calc(--value([integer]) / 100);
+  --tw-ring-color: oklch(var(--rg-l) calc(var(--rg-c) * var(--rg-cs) * clamp(0, calc((1 - (var(--rg-l))) * var(--chroma-taper)), 1)) var(--rg-h));
+}
+@utility ring-hue-* {
+  --rg-h: --value(--hue-*);
+  --rg-cs: --value(--cscale-*);
+  --tw-ring-color: oklch(var(--rg-l) calc(var(--rg-c) * var(--rg-cs) * clamp(0, calc((1 - (var(--rg-l))) * var(--chroma-taper)), 1)) var(--rg-h));
+}
+@utility ring-hue-* {
+  --rg-h: --value([integer]);
+  --rg-cs: 1;
+  --tw-ring-color: oklch(var(--rg-l) calc(var(--rg-c) * var(--rg-cs) * clamp(0, calc((1 - (var(--rg-l))) * var(--chroma-taper)), 1)) var(--rg-h));
+}
+
+/* ── Ring Offset Color ─────────────────────────────────────────────────── */
+@utility ring-offset-lum-* {
+  --ro-l: --value(--lum-*);
+  --tw-ring-offset-color: oklch(var(--ro-l) calc(var(--ro-c) * var(--ro-cs) * clamp(0, calc((1 - (var(--ro-l))) * var(--chroma-taper)), 1)) var(--ro-h));
+}
+@utility ring-offset-lum-* {
+  /* arbitrary ring-offset-lum-[60]: auto-flip L = v + flip × (1 − 2v) */
+  --ro-lv: calc(--value([integer]) / 100);
+  --ro-l: calc(var(--ro-lv) + var(--lum-flip) * (1 - 2 * var(--ro-lv)));
+  --tw-ring-offset-color: oklch(var(--ro-l) calc(var(--ro-c) * var(--ro-cs) * clamp(0, calc((1 - (var(--ro-l))) * var(--chroma-taper)), 1)) var(--ro-h));
+}
+@utility ring-offset-chroma-* {
+  --ro-c: --value(--chroma-*);
+  --tw-ring-offset-color: oklch(var(--ro-l) calc(var(--ro-c) * var(--ro-cs) * clamp(0, calc((1 - (var(--ro-l))) * var(--chroma-taper)), 1)) var(--ro-h));
+}
+@utility ring-offset-chroma-* {
+  --ro-c: calc(--value([integer]) / 100);
+  --tw-ring-offset-color: oklch(var(--ro-l) calc(var(--ro-c) * var(--ro-cs) * clamp(0, calc((1 - (var(--ro-l))) * var(--chroma-taper)), 1)) var(--ro-h));
+}
+@utility ring-offset-hue-* {
+  --ro-h: --value(--hue-*);
+  --ro-cs: --value(--cscale-*);
+  --tw-ring-offset-color: oklch(var(--ro-l) calc(var(--ro-c) * var(--ro-cs) * clamp(0, calc((1 - (var(--ro-l))) * var(--chroma-taper)), 1)) var(--ro-h));
+}
+@utility ring-offset-hue-* {
+  --ro-h: --value([integer]);
+  --ro-cs: 1;
+  --tw-ring-offset-color: oklch(var(--ro-l) calc(var(--ro-c) * var(--ro-cs) * clamp(0, calc((1 - (var(--ro-l))) * var(--chroma-taper)), 1)) var(--ro-h));
+}
+
 /* ── Gradient From ─────────────────────────────────────────────────── */
 @utility from-lum-* {
   --gf-l: --value(--lum-*);
@@ -594,4 +676,16 @@
   --con-off: calc(--value([integer]) / 100);
   --con-dir: clamp(-1, calc((var(--con-flip) - var(--bg-l)) * 1000), 1);
   outline-color: oklch(clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1) calc(var(--bd-c) * var(--bd-cs) * clamp(0, calc((1 - (clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1))) * var(--chroma-taper)), 1)) var(--bd-h));
+}
+
+@utility ring-con-* {
+  --con-off: --value(--con-*);
+  --con-dir: clamp(-1, calc((var(--con-flip) - var(--bg-l)) * 1000), 1);
+  --tw-ring-color: oklch(clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1) calc(var(--rg-c) * var(--rg-cs) * clamp(0, calc((1 - (clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1))) * var(--chroma-taper)), 1)) var(--rg-h));
+}
+@utility ring-con-* {
+  /* arbitrary ring-con-[40]: ΔL = n / 100 off the background */
+  --con-off: calc(--value([integer]) / 100);
+  --con-dir: clamp(-1, calc((var(--con-flip) - var(--bg-l)) * 1000), 1);
+  --tw-ring-color: oklch(clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1) calc(var(--rg-c) * var(--rg-cs) * clamp(0, calc((1 - (clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1))) * var(--chroma-taper)), 1)) var(--rg-h));
 }

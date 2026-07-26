@@ -154,10 +154,11 @@ with the page; direction adapts to light/dark. Nudges **don't compound**.
 </div>
 ```
 
-**Let it solve its own contrast — `con-*`.** `text-con-*`, `border-con-*`, and
-`outline-con-*` read the element's **background** and pick a luminance that
-contrasts — in whichever direction is needed, on a light _or_ dark surface, with
-no `dark:`. One class, readable anywhere.
+**Let it solve its own contrast — `con-*`.** `text-con-*`, `border-con-*`,
+`outline-con-*`, and `ring-con-*` read the element's **background** and pick a
+luminance that contrasts — in whichever direction is needed, on a light _or_
+dark surface, with no `dark:`. One class, readable anywhere — a `ring-con-*`
+gives a focus ring that stays visible on any surface.
 
 ```html
 <article class="card">            <!-- card sets its own bg-lum-* -->
@@ -269,10 +270,22 @@ axes that differ from what's inherited.
 | `border-b`   | `border-bottom-color`   | `border-b-lum-*` · `border-b-chroma-*` · `border-b-hue-*`       |
 | `accent`     | `accent-color`          | `accent-lum-*` · `accent-chroma-*` · `accent-hue-*`             |
 | `shadow`     | shadow color            | `shadow-lum-*` · `shadow-chroma-*` · `shadow-hue-*`             |
+| `ring`       | `--tw-ring-color`       | `ring-lum-*` · `ring-chroma-*` · `ring-hue-*`                   |
+| `ring-offset`| `--tw-ring-offset-color`| `ring-offset-lum-*` · `ring-offset-chroma-*` · `ring-offset-hue-*` |
 | `from`       | gradient from           | `from-lum-*` · `from-chroma-*` · `from-hue-*`                    |
 | `to`         | gradient to             | `to-lum-*` · `to-chroma-*` · `to-hue-*`                          |
 
 All setters work with standard Tailwind modifiers (`hover:`, `focus:`, `md:`, …).
+
+`shadow-*`, `ring-*`, and `ring-offset-*` only set the _color_ — pair them with
+Tailwind's own size utilities (`shadow-md`, `ring-2`, `ring-offset-2`) to paint,
+just like Tailwind's built-in color utilities do:
+
+```html
+<button class="ring-2 ring-lum-6 ring-offset-2 ring-offset-lum-none">focus ring in the section's hue</button>
+<button class="focus:ring-2 focus:ring-con-high">ring that auto-contrasts with the surface</button>
+<div class="shadow-lg shadow-lum-8 shadow-chroma-mid">a shadow tinted by the cascade</div>
+```
 
 **Chroma stops:** `low` (0.02) · `mlow` (0.05) · `mid` (0.09) · `mhigh` (0.13) ·
 `high` (0.17) · `max` (0.25). These are _base_ values, before the per-hue scale.
