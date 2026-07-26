@@ -1,6 +1,6 @@
 {
   "name": "tailwind-oklch",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Cascade-first OKLCH color composition system for Tailwind CSS v4",
   "style": "index.css",
   "main": "index.css",

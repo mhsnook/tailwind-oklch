@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html),
 but it is pre-1.0 so we are informal and almost everything gets a minor version bump.
 
+## [0.8.0] - 2026-07-26
+
+### Added
+
+- **Ring color utilities.** `ring-lum-*` · `ring-chroma-*` · `ring-hue-*` compose
+  Tailwind's `--tw-ring-color` from the same three axes as every other property,
+  so a ring takes its hue and chroma from the cascade and states only its own
+  luminance. Pair with Tailwind's own `ring-2` / `ring` to paint.
+- **`ring-con-*`.** A contrast-aware ring — like `text-con-*` / `outline-con-*`,
+  it reads the element's background and picks a luminance that contrasts on a
+  light _or_ dark surface, with no `dark:`. Ideal for focus rings that stay
+  visible wherever a component lands.
+- **Ring-offset color utilities.** `ring-offset-lum-*` · `ring-offset-chroma-*` ·
+  `ring-offset-hue-*` set `--tw-ring-offset-color`. The offset defaults to the
+  page pole (`lum-none`), so it auto-flips white↔black for dark mode instead of
+  Tailwind's static white.
+
+(Shadow color — `shadow-lum-*` / `shadow-chroma-*` / `shadow-hue-*`, setting
+`--tw-shadow-color` — already shipped in 0.7.0.)
+
 ## [0.7.0] - 2026-07-24
 
 A cascade-first overhaul: pure CSS, a re-cut luminance scale, and per-hue chroma.
