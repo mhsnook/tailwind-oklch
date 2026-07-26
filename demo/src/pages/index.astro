@@ -78,7 +78,7 @@ const walk = [
   {
     n: "4",
     title: "Nudge, relative to right here",
-    note: `Sometimes you want "one step up from <em>here</em>," wherever here is — a raised chip, a hover, a press. <code>bg-lum-up-1</code> nudges one step off the inherited luminance; <code>up-2</code> goes two. Neither needs to know the surface was <code>lum-2</code>, and nudges don't compound down the tree.`,
+    note: `Sometimes you want "one step up from <em>here</em>," wherever here is — a raised chip, a hover, a press. <code>bg-lum-up-1</code> nudges one step off the inherited luminance; <code>up-2</code> goes two. Neither needs to know the surface was <code>lum-2</code>, and nudges don't compound down the tree. (The nudge has to read relative to the explicit <code>lum</code> value declared on a parent — an element can't set a luminance and bump off it at once without a circular reference.)`,
     html: `<div class="bg-lum-2 hue-accent chroma-mid flex items-center gap-3 rounded-xl p-4">
   <span class="text-lum-8 text-sm">surface at lum-2</span>
   <span class="bg-lum-up-1 text-con-high ml-auto rounded-lg px-3 py-1.5 text-sm">bg-lum-up-1</span>
@@ -95,14 +95,6 @@ const anatomy = `<span class="k">.bg-lum-5</span> {
     var(--bg-h)                          <span class="c">/* hue */</span>
   );
 }`;
-
-const circular = `<span class="k">.bg-lum-up-1</span> {
-  <span class="c">/* ✗ can't read the value you're setting */</span>
-  --bg-l: calc(<span class="k">var(--bg-l)</span> + var(--lum-dir) * .08);
-}
-<span class="c">→ dependency cycle → --bg-l is guaranteed-invalid</span>
-<span class="c">→ background-color falls back to transparent, and the</span>
-<span class="c">  broken value inherits down and kills con too</span>`;
 ---
 
 <Layout title="tailwind-oklch — a cascade-first OKLCH color system">
@@ -472,6 +464,11 @@ const circular = `<span class="k">.bg-lum-up-1</span> {
               of classes yields the same readable type hierarchy on <em>any</em> background.
               No <span class="kbd">dark:</span>, no per-surface overrides.
             </p>
+            <p>
+              Unlike the <span class="kbd">up-*</span> nudges, <span class="kbd">*-con-*</span> is
+              decided not against an ancestor's declared value but against the element's own
+              computed background value — as suits an accessibility tool.
+            </p>
 
             <h4>One type scale, four surfaces</h4>
             <p>
@@ -521,38 +518,6 @@ const circular = `<span class="k">.bg-lum-up-1</span> {
               but it trusts OKLCH's perceptual uniformity and reads correctly across the
               range. Borders and outlines get the same treatment via
               <span class="kbd">border-con-*</span> / <span class="kbd">outline-con-*</span>.
-            </p>
-          </div>
-        </details>
-
-        <!-- 5 · Relative values need a parent -->
-        <details class="uh-item" name="uh">
-          <summary>Why relative values must come from a parent</summary>
-          <div class="uh-body">
-            <p>
-              Every relative move — a <span class="kbd">bg-lum-up/down</span> nudge, or any
-              <span class="kbd">con-*</span> reading the surface behind it — measures against a
-              value it <em>inherited</em> from an ancestor. That isn't a style preference; it's the
-              only thing CSS permits. A custom property can't be defined in terms of its own value
-              on the same element:
-            </p>
-            <div class="codeblock mt-3" set:html={circular} />
-            <p>
-              <span class="kbd">--bg-l: calc(var(--bg-l) + …)</span> is a dependency cycle, so per
-              spec <span class="kbd">--bg-l</span> computes to its guaranteed-invalid value: the
-              <span class="kbd">oklch()</span> falls back to <span class="kbd">transparent</span>,
-              and the broken value inherits down and takes <span class="kbd">con</span> with it.
-              (Verified in-browser — the element renders with no background.) The upshot: a single
-              element can't set a new luminance <em>and</em> bump relative to it in the same breath.
-            </p>
-            <p>
-              That's the whole reason a nudge reads a separate anchor variable. The reference value
-              has to come from a <b>parent</b> — the nearest absolute <span class="kbd">bg-lum-N</span>
-              — never from the element doing the bump. So the pattern is always: set the reference
-              point on one element, do the relative move on a child. Any future
-              <span class="kbd">bg-con-*</span> would obey the same rule — it could only contrast
-              against the <em>parent's</em> anchored surface, because the surface it paints is the
-              one value it isn't allowed to read.
             </p>
           </div>
         </details>
