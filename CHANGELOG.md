@@ -10,28 +10,15 @@ but it is pre-1.0 so we are informal and almost everything gets a minor version 
 
 ### Added
 
-- **Per-side border color utilities.** The full set of border sides now carries
-  the trio, matching Tailwind's own border-side utilities: `border-t-*` ·
-  `border-r-*` · `border-l-*` (physical), `border-x-*` · `border-y-*` (axis, via
-  `border-inline-color` / `border-block-color`), and `border-s-*` · `border-e-*`
-  (logical). Each takes hue/chroma from the cascade and states its own luminance,
-  and a per-side setter overrides the all-sides `border-*` on that edge. (`border-b-*`
-  already shipped in 0.7.)
-- **Ring color utilities.** `ring-lum-*` · `ring-chroma-*` · `ring-hue-*` compose
-  Tailwind's `--tw-ring-color` from the same three axes as every other property,
-  so a ring takes its hue and chroma from the cascade and states only its own
-  luminance. Pair with Tailwind's own `ring-2` / `ring` to paint.
-- **`ring-con-*`.** A contrast-aware ring — like `text-con-*` / `outline-con-*`,
-  it reads the element's background and picks a luminance that contrasts on a
-  light _or_ dark surface, with no `dark:`. Ideal for focus rings that stay
-  visible wherever a component lands.
-- **Ring-offset color utilities.** `ring-offset-lum-*` · `ring-offset-chroma-*` ·
-  `ring-offset-hue-*` set `--tw-ring-offset-color`. The offset defaults to the
-  page pole (`lum-none`), so it auto-flips white↔black for dark mode instead of
-  Tailwind's static white.
-
-(Shadow color — `shadow-lum-*` / `shadow-chroma-*` / `shadow-hue-*`, setting
-`--tw-shadow-color` — already shipped in 0.7.0.)
+- **Per-side border colors** — `border-{t,r,b,l}-*` (physical), `border-{x,y}-*`
+  (axis), `border-{s,e}-*` (logical), each carrying the full lum/chroma/hue trio;
+  a per-side setter overrides all-sides `border-*` on that edge.
+- **Ring colors** — `ring-lum/chroma/hue-*` set `--tw-ring-color`; pair with
+  Tailwind's `ring-2` to paint.
+- **`ring-con-*`** — a contrast-aware ring that auto-picks a luminance against the
+  surface, for focus rings that stay visible anywhere.
+- **Ring-offset colors** — `ring-offset-lum/chroma/hue-*` set
+  `--tw-ring-offset-color`, defaulting to the page pole so it auto-flips for dark mode.
 
 ## [0.7.0] - 2026-07-24
 
