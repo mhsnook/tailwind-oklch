@@ -135,10 +135,45 @@
   --bd-cs: var(--cscale-primary);
   --bd-h: var(--hue-primary);
 
+  --bdt-l: var(--lum-3);
+  --bdt-c: var(--chroma-low);
+  --bdt-cs: var(--cscale-primary);
+  --bdt-h: var(--hue-primary);
+
+  --bdr-l: var(--lum-3);
+  --bdr-c: var(--chroma-low);
+  --bdr-cs: var(--cscale-primary);
+  --bdr-h: var(--hue-primary);
+
   --bdb-l: var(--lum-3);
   --bdb-c: var(--chroma-low);
   --bdb-cs: var(--cscale-primary);
   --bdb-h: var(--hue-primary);
+
+  --bdl-l: var(--lum-3);
+  --bdl-c: var(--chroma-low);
+  --bdl-cs: var(--cscale-primary);
+  --bdl-h: var(--hue-primary);
+
+  --bdx-l: var(--lum-3);
+  --bdx-c: var(--chroma-low);
+  --bdx-cs: var(--cscale-primary);
+  --bdx-h: var(--hue-primary);
+
+  --bdy-l: var(--lum-3);
+  --bdy-c: var(--chroma-low);
+  --bdy-cs: var(--cscale-primary);
+  --bdy-h: var(--hue-primary);
+
+  --bds-l: var(--lum-3);
+  --bds-c: var(--chroma-low);
+  --bds-cs: var(--cscale-primary);
+  --bds-h: var(--hue-primary);
+
+  --bde-l: var(--lum-3);
+  --bde-c: var(--chroma-low);
+  --bde-cs: var(--cscale-primary);
+  --bde-h: var(--hue-primary);
 
   --ac-l: var(--lum-5);
   --ac-c: var(--chroma-mid);
@@ -200,7 +235,14 @@
   --tx-h: --value(--hue-*);
   --dc-h: --value(--hue-*);
   --bd-h: --value(--hue-*);
+  --bdt-h: --value(--hue-*);
+  --bdr-h: --value(--hue-*);
   --bdb-h: --value(--hue-*);
+  --bdl-h: --value(--hue-*);
+  --bdx-h: --value(--hue-*);
+  --bdy-h: --value(--hue-*);
+  --bds-h: --value(--hue-*);
+  --bde-h: --value(--hue-*);
   --ac-h: --value(--hue-*);
   --sh-h: --value(--hue-*);
   --rg-h: --value(--hue-*);
@@ -211,7 +253,14 @@
   --tx-cs: --value(--cscale-*);
   --dc-cs: --value(--cscale-*);
   --bd-cs: --value(--cscale-*);
+  --bdt-cs: --value(--cscale-*);
+  --bdr-cs: --value(--cscale-*);
   --bdb-cs: --value(--cscale-*);
+  --bdl-cs: --value(--cscale-*);
+  --bdx-cs: --value(--cscale-*);
+  --bdy-cs: --value(--cscale-*);
+  --bds-cs: --value(--cscale-*);
+  --bde-cs: --value(--cscale-*);
   --ac-cs: --value(--cscale-*);
   --sh-cs: --value(--cscale-*);
   --rg-cs: --value(--cscale-*);
@@ -225,7 +274,14 @@
   --tx-h: --value([integer]);
   --dc-h: --value([integer]);
   --bd-h: --value([integer]);
+  --bdt-h: --value([integer]);
+  --bdr-h: --value([integer]);
   --bdb-h: --value([integer]);
+  --bdl-h: --value([integer]);
+  --bdx-h: --value([integer]);
+  --bdy-h: --value([integer]);
+  --bds-h: --value([integer]);
+  --bde-h: --value([integer]);
   --ac-h: --value([integer]);
   --sh-h: --value([integer]);
   --rg-h: --value([integer]);
@@ -236,7 +292,14 @@
   --tx-cs: 1;
   --dc-cs: 1;
   --bd-cs: 1;
+  --bdt-cs: 1;
+  --bdr-cs: 1;
   --bdb-cs: 1;
+  --bdl-cs: 1;
+  --bdx-cs: 1;
+  --bdy-cs: 1;
+  --bds-cs: 1;
+  --bde-cs: 1;
   --ac-cs: 1;
   --sh-cs: 1;
   --rg-cs: 1;
@@ -253,7 +316,14 @@
   --tx-c: --value(--chroma-*);
   --dc-c: --value(--chroma-*);
   --bd-c: --value(--chroma-*);
+  --bdt-c: --value(--chroma-*);
+  --bdr-c: --value(--chroma-*);
   --bdb-c: --value(--chroma-*);
+  --bdl-c: --value(--chroma-*);
+  --bdx-c: --value(--chroma-*);
+  --bdy-c: --value(--chroma-*);
+  --bds-c: --value(--chroma-*);
+  --bde-c: --value(--chroma-*);
   --ac-c: --value(--chroma-*);
   --sh-c: --value(--chroma-*);
   --rg-c: --value(--chroma-*);
@@ -267,7 +337,14 @@
   --tx-c: calc(--value([integer]) / 100);
   --dc-c: calc(--value([integer]) / 100);
   --bd-c: calc(--value([integer]) / 100);
+  --bdt-c: calc(--value([integer]) / 100);
+  --bdr-c: calc(--value([integer]) / 100);
   --bdb-c: calc(--value([integer]) / 100);
+  --bdl-c: calc(--value([integer]) / 100);
+  --bdx-c: calc(--value([integer]) / 100);
+  --bdy-c: calc(--value([integer]) / 100);
+  --bds-c: calc(--value([integer]) / 100);
+  --bde-c: calc(--value([integer]) / 100);
   --ac-c: calc(--value([integer]) / 100);
   --sh-c: calc(--value([integer]) / 100);
   --rg-c: calc(--value([integer]) / 100);
@@ -416,6 +493,66 @@
   border-color: oklch(var(--bd-l) calc(var(--bd-c) * var(--bd-cs) * clamp(0, calc((1 - (var(--bd-l))) * var(--chroma-taper)), 1)) var(--bd-h));
 }
 
+/* ── Border Top ─────────────────────────────────────────────────── */
+@utility border-t-lum-* {
+  --bdt-l: --value(--lum-*);
+  border-top-color: oklch(var(--bdt-l) calc(var(--bdt-c) * var(--bdt-cs) * clamp(0, calc((1 - (var(--bdt-l))) * var(--chroma-taper)), 1)) var(--bdt-h));
+}
+@utility border-t-lum-* {
+  /* arbitrary border-t-lum-[60]: auto-flip L = v + flip × (1 − 2v) */
+  --bdt-lv: calc(--value([integer]) / 100);
+  --bdt-l: calc(var(--bdt-lv) + var(--lum-flip) * (1 - 2 * var(--bdt-lv)));
+  border-top-color: oklch(var(--bdt-l) calc(var(--bdt-c) * var(--bdt-cs) * clamp(0, calc((1 - (var(--bdt-l))) * var(--chroma-taper)), 1)) var(--bdt-h));
+}
+@utility border-t-chroma-* {
+  --bdt-c: --value(--chroma-*);
+  border-top-color: oklch(var(--bdt-l) calc(var(--bdt-c) * var(--bdt-cs) * clamp(0, calc((1 - (var(--bdt-l))) * var(--chroma-taper)), 1)) var(--bdt-h));
+}
+@utility border-t-chroma-* {
+  --bdt-c: calc(--value([integer]) / 100);
+  border-top-color: oklch(var(--bdt-l) calc(var(--bdt-c) * var(--bdt-cs) * clamp(0, calc((1 - (var(--bdt-l))) * var(--chroma-taper)), 1)) var(--bdt-h));
+}
+@utility border-t-hue-* {
+  --bdt-h: --value(--hue-*);
+  --bdt-cs: --value(--cscale-*);
+  border-top-color: oklch(var(--bdt-l) calc(var(--bdt-c) * var(--bdt-cs) * clamp(0, calc((1 - (var(--bdt-l))) * var(--chroma-taper)), 1)) var(--bdt-h));
+}
+@utility border-t-hue-* {
+  --bdt-h: --value([integer]);
+  --bdt-cs: 1;
+  border-top-color: oklch(var(--bdt-l) calc(var(--bdt-c) * var(--bdt-cs) * clamp(0, calc((1 - (var(--bdt-l))) * var(--chroma-taper)), 1)) var(--bdt-h));
+}
+
+/* ── Border Right ─────────────────────────────────────────────────── */
+@utility border-r-lum-* {
+  --bdr-l: --value(--lum-*);
+  border-right-color: oklch(var(--bdr-l) calc(var(--bdr-c) * var(--bdr-cs) * clamp(0, calc((1 - (var(--bdr-l))) * var(--chroma-taper)), 1)) var(--bdr-h));
+}
+@utility border-r-lum-* {
+  /* arbitrary border-r-lum-[60]: auto-flip L = v + flip × (1 − 2v) */
+  --bdr-lv: calc(--value([integer]) / 100);
+  --bdr-l: calc(var(--bdr-lv) + var(--lum-flip) * (1 - 2 * var(--bdr-lv)));
+  border-right-color: oklch(var(--bdr-l) calc(var(--bdr-c) * var(--bdr-cs) * clamp(0, calc((1 - (var(--bdr-l))) * var(--chroma-taper)), 1)) var(--bdr-h));
+}
+@utility border-r-chroma-* {
+  --bdr-c: --value(--chroma-*);
+  border-right-color: oklch(var(--bdr-l) calc(var(--bdr-c) * var(--bdr-cs) * clamp(0, calc((1 - (var(--bdr-l))) * var(--chroma-taper)), 1)) var(--bdr-h));
+}
+@utility border-r-chroma-* {
+  --bdr-c: calc(--value([integer]) / 100);
+  border-right-color: oklch(var(--bdr-l) calc(var(--bdr-c) * var(--bdr-cs) * clamp(0, calc((1 - (var(--bdr-l))) * var(--chroma-taper)), 1)) var(--bdr-h));
+}
+@utility border-r-hue-* {
+  --bdr-h: --value(--hue-*);
+  --bdr-cs: --value(--cscale-*);
+  border-right-color: oklch(var(--bdr-l) calc(var(--bdr-c) * var(--bdr-cs) * clamp(0, calc((1 - (var(--bdr-l))) * var(--chroma-taper)), 1)) var(--bdr-h));
+}
+@utility border-r-hue-* {
+  --bdr-h: --value([integer]);
+  --bdr-cs: 1;
+  border-right-color: oklch(var(--bdr-l) calc(var(--bdr-c) * var(--bdr-cs) * clamp(0, calc((1 - (var(--bdr-l))) * var(--chroma-taper)), 1)) var(--bdr-h));
+}
+
 /* ── Border Bottom ─────────────────────────────────────────────────── */
 @utility border-b-lum-* {
   --bdb-l: --value(--lum-*);
@@ -444,6 +581,156 @@
   --bdb-h: --value([integer]);
   --bdb-cs: 1;
   border-bottom-color: oklch(var(--bdb-l) calc(var(--bdb-c) * var(--bdb-cs) * clamp(0, calc((1 - (var(--bdb-l))) * var(--chroma-taper)), 1)) var(--bdb-h));
+}
+
+/* ── Border Left ─────────────────────────────────────────────────── */
+@utility border-l-lum-* {
+  --bdl-l: --value(--lum-*);
+  border-left-color: oklch(var(--bdl-l) calc(var(--bdl-c) * var(--bdl-cs) * clamp(0, calc((1 - (var(--bdl-l))) * var(--chroma-taper)), 1)) var(--bdl-h));
+}
+@utility border-l-lum-* {
+  /* arbitrary border-l-lum-[60]: auto-flip L = v + flip × (1 − 2v) */
+  --bdl-lv: calc(--value([integer]) / 100);
+  --bdl-l: calc(var(--bdl-lv) + var(--lum-flip) * (1 - 2 * var(--bdl-lv)));
+  border-left-color: oklch(var(--bdl-l) calc(var(--bdl-c) * var(--bdl-cs) * clamp(0, calc((1 - (var(--bdl-l))) * var(--chroma-taper)), 1)) var(--bdl-h));
+}
+@utility border-l-chroma-* {
+  --bdl-c: --value(--chroma-*);
+  border-left-color: oklch(var(--bdl-l) calc(var(--bdl-c) * var(--bdl-cs) * clamp(0, calc((1 - (var(--bdl-l))) * var(--chroma-taper)), 1)) var(--bdl-h));
+}
+@utility border-l-chroma-* {
+  --bdl-c: calc(--value([integer]) / 100);
+  border-left-color: oklch(var(--bdl-l) calc(var(--bdl-c) * var(--bdl-cs) * clamp(0, calc((1 - (var(--bdl-l))) * var(--chroma-taper)), 1)) var(--bdl-h));
+}
+@utility border-l-hue-* {
+  --bdl-h: --value(--hue-*);
+  --bdl-cs: --value(--cscale-*);
+  border-left-color: oklch(var(--bdl-l) calc(var(--bdl-c) * var(--bdl-cs) * clamp(0, calc((1 - (var(--bdl-l))) * var(--chroma-taper)), 1)) var(--bdl-h));
+}
+@utility border-l-hue-* {
+  --bdl-h: --value([integer]);
+  --bdl-cs: 1;
+  border-left-color: oklch(var(--bdl-l) calc(var(--bdl-c) * var(--bdl-cs) * clamp(0, calc((1 - (var(--bdl-l))) * var(--chroma-taper)), 1)) var(--bdl-h));
+}
+
+/* ── Border Inline (x) ─────────────────────────────────────────────────── */
+@utility border-x-lum-* {
+  --bdx-l: --value(--lum-*);
+  border-inline-color: oklch(var(--bdx-l) calc(var(--bdx-c) * var(--bdx-cs) * clamp(0, calc((1 - (var(--bdx-l))) * var(--chroma-taper)), 1)) var(--bdx-h));
+}
+@utility border-x-lum-* {
+  /* arbitrary border-x-lum-[60]: auto-flip L = v + flip × (1 − 2v) */
+  --bdx-lv: calc(--value([integer]) / 100);
+  --bdx-l: calc(var(--bdx-lv) + var(--lum-flip) * (1 - 2 * var(--bdx-lv)));
+  border-inline-color: oklch(var(--bdx-l) calc(var(--bdx-c) * var(--bdx-cs) * clamp(0, calc((1 - (var(--bdx-l))) * var(--chroma-taper)), 1)) var(--bdx-h));
+}
+@utility border-x-chroma-* {
+  --bdx-c: --value(--chroma-*);
+  border-inline-color: oklch(var(--bdx-l) calc(var(--bdx-c) * var(--bdx-cs) * clamp(0, calc((1 - (var(--bdx-l))) * var(--chroma-taper)), 1)) var(--bdx-h));
+}
+@utility border-x-chroma-* {
+  --bdx-c: calc(--value([integer]) / 100);
+  border-inline-color: oklch(var(--bdx-l) calc(var(--bdx-c) * var(--bdx-cs) * clamp(0, calc((1 - (var(--bdx-l))) * var(--chroma-taper)), 1)) var(--bdx-h));
+}
+@utility border-x-hue-* {
+  --bdx-h: --value(--hue-*);
+  --bdx-cs: --value(--cscale-*);
+  border-inline-color: oklch(var(--bdx-l) calc(var(--bdx-c) * var(--bdx-cs) * clamp(0, calc((1 - (var(--bdx-l))) * var(--chroma-taper)), 1)) var(--bdx-h));
+}
+@utility border-x-hue-* {
+  --bdx-h: --value([integer]);
+  --bdx-cs: 1;
+  border-inline-color: oklch(var(--bdx-l) calc(var(--bdx-c) * var(--bdx-cs) * clamp(0, calc((1 - (var(--bdx-l))) * var(--chroma-taper)), 1)) var(--bdx-h));
+}
+
+/* ── Border Block (y) ─────────────────────────────────────────────────── */
+@utility border-y-lum-* {
+  --bdy-l: --value(--lum-*);
+  border-block-color: oklch(var(--bdy-l) calc(var(--bdy-c) * var(--bdy-cs) * clamp(0, calc((1 - (var(--bdy-l))) * var(--chroma-taper)), 1)) var(--bdy-h));
+}
+@utility border-y-lum-* {
+  /* arbitrary border-y-lum-[60]: auto-flip L = v + flip × (1 − 2v) */
+  --bdy-lv: calc(--value([integer]) / 100);
+  --bdy-l: calc(var(--bdy-lv) + var(--lum-flip) * (1 - 2 * var(--bdy-lv)));
+  border-block-color: oklch(var(--bdy-l) calc(var(--bdy-c) * var(--bdy-cs) * clamp(0, calc((1 - (var(--bdy-l))) * var(--chroma-taper)), 1)) var(--bdy-h));
+}
+@utility border-y-chroma-* {
+  --bdy-c: --value(--chroma-*);
+  border-block-color: oklch(var(--bdy-l) calc(var(--bdy-c) * var(--bdy-cs) * clamp(0, calc((1 - (var(--bdy-l))) * var(--chroma-taper)), 1)) var(--bdy-h));
+}
+@utility border-y-chroma-* {
+  --bdy-c: calc(--value([integer]) / 100);
+  border-block-color: oklch(var(--bdy-l) calc(var(--bdy-c) * var(--bdy-cs) * clamp(0, calc((1 - (var(--bdy-l))) * var(--chroma-taper)), 1)) var(--bdy-h));
+}
+@utility border-y-hue-* {
+  --bdy-h: --value(--hue-*);
+  --bdy-cs: --value(--cscale-*);
+  border-block-color: oklch(var(--bdy-l) calc(var(--bdy-c) * var(--bdy-cs) * clamp(0, calc((1 - (var(--bdy-l))) * var(--chroma-taper)), 1)) var(--bdy-h));
+}
+@utility border-y-hue-* {
+  --bdy-h: --value([integer]);
+  --bdy-cs: 1;
+  border-block-color: oklch(var(--bdy-l) calc(var(--bdy-c) * var(--bdy-cs) * clamp(0, calc((1 - (var(--bdy-l))) * var(--chroma-taper)), 1)) var(--bdy-h));
+}
+
+/* ── Border Inline Start ─────────────────────────────────────────────────── */
+@utility border-s-lum-* {
+  --bds-l: --value(--lum-*);
+  border-inline-start-color: oklch(var(--bds-l) calc(var(--bds-c) * var(--bds-cs) * clamp(0, calc((1 - (var(--bds-l))) * var(--chroma-taper)), 1)) var(--bds-h));
+}
+@utility border-s-lum-* {
+  /* arbitrary border-s-lum-[60]: auto-flip L = v + flip × (1 − 2v) */
+  --bds-lv: calc(--value([integer]) / 100);
+  --bds-l: calc(var(--bds-lv) + var(--lum-flip) * (1 - 2 * var(--bds-lv)));
+  border-inline-start-color: oklch(var(--bds-l) calc(var(--bds-c) * var(--bds-cs) * clamp(0, calc((1 - (var(--bds-l))) * var(--chroma-taper)), 1)) var(--bds-h));
+}
+@utility border-s-chroma-* {
+  --bds-c: --value(--chroma-*);
+  border-inline-start-color: oklch(var(--bds-l) calc(var(--bds-c) * var(--bds-cs) * clamp(0, calc((1 - (var(--bds-l))) * var(--chroma-taper)), 1)) var(--bds-h));
+}
+@utility border-s-chroma-* {
+  --bds-c: calc(--value([integer]) / 100);
+  border-inline-start-color: oklch(var(--bds-l) calc(var(--bds-c) * var(--bds-cs) * clamp(0, calc((1 - (var(--bds-l))) * var(--chroma-taper)), 1)) var(--bds-h));
+}
+@utility border-s-hue-* {
+  --bds-h: --value(--hue-*);
+  --bds-cs: --value(--cscale-*);
+  border-inline-start-color: oklch(var(--bds-l) calc(var(--bds-c) * var(--bds-cs) * clamp(0, calc((1 - (var(--bds-l))) * var(--chroma-taper)), 1)) var(--bds-h));
+}
+@utility border-s-hue-* {
+  --bds-h: --value([integer]);
+  --bds-cs: 1;
+  border-inline-start-color: oklch(var(--bds-l) calc(var(--bds-c) * var(--bds-cs) * clamp(0, calc((1 - (var(--bds-l))) * var(--chroma-taper)), 1)) var(--bds-h));
+}
+
+/* ── Border Inline End ─────────────────────────────────────────────────── */
+@utility border-e-lum-* {
+  --bde-l: --value(--lum-*);
+  border-inline-end-color: oklch(var(--bde-l) calc(var(--bde-c) * var(--bde-cs) * clamp(0, calc((1 - (var(--bde-l))) * var(--chroma-taper)), 1)) var(--bde-h));
+}
+@utility border-e-lum-* {
+  /* arbitrary border-e-lum-[60]: auto-flip L = v + flip × (1 − 2v) */
+  --bde-lv: calc(--value([integer]) / 100);
+  --bde-l: calc(var(--bde-lv) + var(--lum-flip) * (1 - 2 * var(--bde-lv)));
+  border-inline-end-color: oklch(var(--bde-l) calc(var(--bde-c) * var(--bde-cs) * clamp(0, calc((1 - (var(--bde-l))) * var(--chroma-taper)), 1)) var(--bde-h));
+}
+@utility border-e-chroma-* {
+  --bde-c: --value(--chroma-*);
+  border-inline-end-color: oklch(var(--bde-l) calc(var(--bde-c) * var(--bde-cs) * clamp(0, calc((1 - (var(--bde-l))) * var(--chroma-taper)), 1)) var(--bde-h));
+}
+@utility border-e-chroma-* {
+  --bde-c: calc(--value([integer]) / 100);
+  border-inline-end-color: oklch(var(--bde-l) calc(var(--bde-c) * var(--bde-cs) * clamp(0, calc((1 - (var(--bde-l))) * var(--chroma-taper)), 1)) var(--bde-h));
+}
+@utility border-e-hue-* {
+  --bde-h: --value(--hue-*);
+  --bde-cs: --value(--cscale-*);
+  border-inline-end-color: oklch(var(--bde-l) calc(var(--bde-c) * var(--bde-cs) * clamp(0, calc((1 - (var(--bde-l))) * var(--chroma-taper)), 1)) var(--bde-h));
+}
+@utility border-e-hue-* {
+  --bde-h: --value([integer]);
+  --bde-cs: 1;
+  border-inline-end-color: oklch(var(--bde-l) calc(var(--bde-c) * var(--bde-cs) * clamp(0, calc((1 - (var(--bde-l))) * var(--chroma-taper)), 1)) var(--bde-h));
 }
 
 /* ── Accent Color ─────────────────────────────────────────────────── */

@@ -267,7 +267,9 @@ axes that differ from what's inherited.
 | `text`       | `color`                 | `text-lum-*` · `text-chroma-*` · `text-hue-*`                    |
 | `decoration` | `text-decoration-color` | `decoration-lum-*` · `decoration-chroma-*` · `decoration-hue-*` |
 | `border`     | `border-color`          | `border-lum-*` · `border-chroma-*` · `border-hue-*`             |
-| `border-b`   | `border-bottom-color`   | `border-b-lum-*` · `border-b-chroma-*` · `border-b-hue-*`       |
+| `border-{t,r,b,l}` | `border-{side}-color` | per side — e.g. `border-t-lum-*` · `border-l-chroma-*` · `border-r-hue-*` |
+| `border-{x,y}` | `border-{inline,block}-color` | axis pairs — `border-x-lum-*` · `border-y-chroma-*` · …    |
+| `border-{s,e}` | `border-inline-{start,end}-color` | logical — `border-s-lum-*` · `border-e-hue-*` · …       |
 | `accent`     | `accent-color`          | `accent-lum-*` · `accent-chroma-*` · `accent-hue-*`             |
 | `shadow`     | shadow color            | `shadow-lum-*` · `shadow-chroma-*` · `shadow-hue-*`             |
 | `ring`       | `--tw-ring-color`       | `ring-lum-*` · `ring-chroma-*` · `ring-hue-*`                   |

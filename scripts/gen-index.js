@@ -61,7 +61,14 @@ const PROPS = [
   { stem: 'tx',  pre: 'text',     apply: (col) => `color: ${col};` },
   { stem: 'dc',  pre: 'decoration', apply: (col) => `text-decoration-color: ${col};` },
   { stem: 'bd',  pre: 'border',   apply: (col) => `border-color: ${col};` },
+  { stem: 'bdt', pre: 'border-t', apply: (col) => `border-top-color: ${col};` },
+  { stem: 'bdr', pre: 'border-r', apply: (col) => `border-right-color: ${col};` },
   { stem: 'bdb', pre: 'border-b', apply: (col) => `border-bottom-color: ${col};` },
+  { stem: 'bdl', pre: 'border-l', apply: (col) => `border-left-color: ${col};` },
+  { stem: 'bdx', pre: 'border-x', apply: (col) => `border-inline-color: ${col};` },
+  { stem: 'bdy', pre: 'border-y', apply: (col) => `border-block-color: ${col};` },
+  { stem: 'bds', pre: 'border-s', apply: (col) => `border-inline-start-color: ${col};` },
+  { stem: 'bde', pre: 'border-e', apply: (col) => `border-inline-end-color: ${col};` },
   { stem: 'ac',  pre: 'accent',   apply: (col) => `accent-color: ${col};` },
   { stem: 'sh',  pre: 'shadow',   apply: (col) => `--tw-shadow-color: ${col};` },
   { stem: 'rg',  pre: 'ring',     apply: (col) => `--tw-ring-color: ${col};` },
@@ -188,8 +195,8 @@ w('');
 // ring-offset defaults to the page pole (lum-none): the offset is the gap the
 // ring sits in, so matching the page reads as a detached ring — and it auto-flips
 // white↔black for dark mode, unlike Tailwind's static white default.
-const defL = { bg: '5', tx: '10', dc: '6', bd: '3', bdb: '3', ac: '5', sh: '5', rg: '5', ro: 'none', gf: '5', gt: '5' };
-const defC = { bg: 'low', tx: 'low', dc: 'low', bd: 'low', bdb: 'low', ac: 'mid', sh: 'low', rg: 'low', ro: 'low', gf: 'mid', gt: 'mid' };
+const defL = { bg: '5', tx: '10', dc: '6', bd: '3', bdt: '3', bdr: '3', bdb: '3', bdl: '3', bdx: '3', bdy: '3', bds: '3', bde: '3', ac: '5', sh: '5', rg: '5', ro: 'none', gf: '5', gt: '5' };
+const defC = { bg: 'low', tx: 'low', dc: 'low', bd: 'low', bdt: 'low', bdr: 'low', bdb: 'low', bdl: 'low', bdx: 'low', bdy: 'low', bds: 'low', bde: 'low', ac: 'mid', sh: 'low', rg: 'low', ro: 'low', gf: 'mid', gt: 'mid' };
 for (const p of PROPS) {
   w(`  --${p.stem}-l: var(--lum-${defL[p.stem]});`);
   if (p.stem === 'bg') w(`  --bg-anchor-l: var(--bg-l);`);
@@ -243,7 +250,9 @@ w('');
 
 // ── per-property setters ───────────────────────────────────────────────────
 const titleOf = {
-  bg: 'Background', tx: 'Text', dc: 'Text Decoration', bd: 'Border', bdb: 'Border Bottom',
+  bg: 'Background', tx: 'Text', dc: 'Text Decoration',
+  bd: 'Border', bdt: 'Border Top', bdr: 'Border Right', bdb: 'Border Bottom', bdl: 'Border Left',
+  bdx: 'Border Inline (x)', bdy: 'Border Block (y)', bds: 'Border Inline Start', bde: 'Border Inline End',
   ac: 'Accent Color', sh: 'Shadow Color', rg: 'Ring Color', ro: 'Ring Offset Color',
   gf: 'Gradient From', gt: 'Gradient To',
 };
