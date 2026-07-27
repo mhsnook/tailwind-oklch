@@ -55,6 +55,17 @@ const ADJ = [['1', '.08'], ['2', '.16'], ['3', '.24'], ['4', '.32'], ['5', '.40'
 // guaranteed contrast-color(), regardless of surface.
 const CON = [['low', '.18'], ['mlow', '.25'], ['mid', '.32'], ['mhigh', '.42'], ['high', '.55'], ['max', '1']];
 
+// Per-property :root defaults, as scale-stop names. Used both for the cascade
+// defaults (the :root block below) and for each axis var's @property
+// initial-value, so the two never drift.
+const defL = { bg: '5', tx: '10', dc: '6', bd: '3', bdt: '3', bdr: '3', bdb: '3', bdl: '3', bdx: '3', bdy: '3', bds: '3', bde: '3', ac: '5', sh: '5', rg: '5', ro: 'none', gf: '5', gt: '5' };
+const defC = { bg: 'low', tx: 'low', dc: 'low', bd: 'low', bdt: 'low', bdr: 'low', bdb: 'low', bdl: 'low', bdx: 'low', bdy: 'low', bds: 'low', bde: 'low', ac: 'mid', sh: 'low', rg: 'low', ro: 'low', gf: 'mid', gt: 'mid' };
+// Resolve a scale-stop name to its literal light-mode number, for use as an
+// @property initial-value (must be a plain literal — no var()).
+const lumInit = (stop) =>
+  stop === 'none' ? L_NONE[0] : stop === 'max' ? L_MAX[0] : L_LIGHT[Number(stop) - 1];
+const chromaInit = (name) => CHROMA.find(([n]) => n === name)[1];
+
 // property stem, utility prefix, and how it applies the resolved color.
 const PROPS = [
   { stem: 'bg',  pre: 'bg',       apply: (col) => `background-color: ${col};` },
@@ -180,6 +191,43 @@ for (const [n, v] of ADJ) w(`  --lum-adj-${n}: ${v};`);
 w(`}`);
 w('');
 
+// ── @property registration of the inherited axis vars ─────────────────────
+// Every axis var is a typed <number>. Three payoffs:
+//   • parse once — the engine stores a typed value instead of re-parsing a token
+//     stream at every var() resolution, and this system resolves var() heavily
+//     (one oklch() per painting utility, each reading four axis vars).
+//   • interpolation — registered props transition and animate, so luminance and
+//     hue can be animated directly rather than through the resolved color.
+//   • graceful cycles — a custom-property cycle resolves to the property's
+//     initial-value when the property is REGISTERED, instead of making the whole
+//     declaration invalid-at-computed-value (which paints transparent). So a
+//     relative nudge stacked on an absolute stop (bg-lum-8 hover:bg-lum-up-1,
+//     where --bg-anchor-l and --bg-l reference each other) falls back to a real
+//     luminance instead of voiding the background.
+// inherits:true across the board — the cascade IS the system: hue/chroma flow to
+// descendants, and con-* reads the inherited --bg-l as "the surface". Each
+// initial-value is the stem's light-mode :root default, so the cycle/unset
+// fallback lands close to intent; dark mode overrides through the cascade, so
+// initial-value only ever surfaces in those degenerate cases.
+w(`/* ── Typed axis vars — registered <number>s: parsed once, interpolable, and
+   cycle-safe (a var() cycle falls back to initial-value instead of painting
+   transparent). inherits:true because the cascade is the system. ─────────── */`);
+const prop = (name, init) =>
+  w(`@property --${name} { syntax: "<number>"; inherits: true; initial-value: ${init}; }`);
+for (const p of PROPS) {
+  const s = p.stem;
+  prop(`${s}-l`, lumInit(defL[s]));
+  if (s === 'bg') prop('bg-anchor-l', lumInit(defL.bg));
+  prop(`${s}-c`, chromaInit(defC[s]));
+  prop(`${s}-cs`, CSCALE.primary);
+  prop(`${s}-h`, HUES[0][1]);
+}
+// Inherited scale/direction vars the axis calcs read on every element.
+prop('lum-dir', -1);
+prop('lum-flip', 0);
+prop('con-flip', CON_MID[0]);
+w('');
+
 // ── :root defaults ───────────────────────────────────────────────────────
 // NOTE: :root is emitted BEFORE .dark on purpose. :root and .dark have equal
 // specificity, so for any variable set in both, source order decides — the dark
@@ -195,8 +243,6 @@ w('');
 // ring-offset defaults to the page pole (lum-none): the offset is the gap the
 // ring sits in, so matching the page reads as a detached ring — and it auto-flips
 // white↔black for dark mode, unlike Tailwind's static white default.
-const defL = { bg: '5', tx: '10', dc: '6', bd: '3', bdt: '3', bdr: '3', bdb: '3', bdl: '3', bdx: '3', bdy: '3', bds: '3', bde: '3', ac: '5', sh: '5', rg: '5', ro: 'none', gf: '5', gt: '5' };
-const defC = { bg: 'low', tx: 'low', dc: 'low', bd: 'low', bdt: 'low', bdr: 'low', bdb: 'low', bdl: 'low', bdx: 'low', bdy: 'low', bds: 'low', bde: 'low', ac: 'mid', sh: 'low', rg: 'low', ro: 'low', gf: 'mid', gt: 'mid' };
 for (const p of PROPS) {
   w(`  --${p.stem}-l: var(--lum-${defL[p.stem]});`);
   if (p.stem === 'bg') w(`  --bg-anchor-l: var(--bg-l);`);

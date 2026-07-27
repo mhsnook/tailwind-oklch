@@ -106,6 +106,86 @@
   --lum-adj-5: .40;
 }
 
+/* ── Typed axis vars — registered <number>s: parsed once, interpolable, and
+   cycle-safe (a var() cycle falls back to initial-value instead of painting
+   transparent). inherits:true because the cascade is the system. ─────────── */
+@property --bg-l { syntax: "<number>"; inherits: true; initial-value: .676; }
+@property --bg-anchor-l { syntax: "<number>"; inherits: true; initial-value: .676; }
+@property --bg-c { syntax: "<number>"; inherits: true; initial-value: .02; }
+@property --bg-cs { syntax: "<number>"; inherits: true; initial-value: 0.86; }
+@property --bg-h { syntax: "<number>"; inherits: true; initial-value: 233; }
+@property --tx-l { syntax: "<number>"; inherits: true; initial-value: .13; }
+@property --tx-c { syntax: "<number>"; inherits: true; initial-value: .02; }
+@property --tx-cs { syntax: "<number>"; inherits: true; initial-value: 0.86; }
+@property --tx-h { syntax: "<number>"; inherits: true; initial-value: 233; }
+@property --dc-l { syntax: "<number>"; inherits: true; initial-value: .583; }
+@property --dc-c { syntax: "<number>"; inherits: true; initial-value: .02; }
+@property --dc-cs { syntax: "<number>"; inherits: true; initial-value: 0.86; }
+@property --dc-h { syntax: "<number>"; inherits: true; initial-value: 233; }
+@property --bd-l { syntax: "<number>"; inherits: true; initial-value: .831; }
+@property --bd-c { syntax: "<number>"; inherits: true; initial-value: .02; }
+@property --bd-cs { syntax: "<number>"; inherits: true; initial-value: 0.86; }
+@property --bd-h { syntax: "<number>"; inherits: true; initial-value: 233; }
+@property --bdt-l { syntax: "<number>"; inherits: true; initial-value: .831; }
+@property --bdt-c { syntax: "<number>"; inherits: true; initial-value: .02; }
+@property --bdt-cs { syntax: "<number>"; inherits: true; initial-value: 0.86; }
+@property --bdt-h { syntax: "<number>"; inherits: true; initial-value: 233; }
+@property --bdr-l { syntax: "<number>"; inherits: true; initial-value: .831; }
+@property --bdr-c { syntax: "<number>"; inherits: true; initial-value: .02; }
+@property --bdr-cs { syntax: "<number>"; inherits: true; initial-value: 0.86; }
+@property --bdr-h { syntax: "<number>"; inherits: true; initial-value: 233; }
+@property --bdb-l { syntax: "<number>"; inherits: true; initial-value: .831; }
+@property --bdb-c { syntax: "<number>"; inherits: true; initial-value: .02; }
+@property --bdb-cs { syntax: "<number>"; inherits: true; initial-value: 0.86; }
+@property --bdb-h { syntax: "<number>"; inherits: true; initial-value: 233; }
+@property --bdl-l { syntax: "<number>"; inherits: true; initial-value: .831; }
+@property --bdl-c { syntax: "<number>"; inherits: true; initial-value: .02; }
+@property --bdl-cs { syntax: "<number>"; inherits: true; initial-value: 0.86; }
+@property --bdl-h { syntax: "<number>"; inherits: true; initial-value: 233; }
+@property --bdx-l { syntax: "<number>"; inherits: true; initial-value: .831; }
+@property --bdx-c { syntax: "<number>"; inherits: true; initial-value: .02; }
+@property --bdx-cs { syntax: "<number>"; inherits: true; initial-value: 0.86; }
+@property --bdx-h { syntax: "<number>"; inherits: true; initial-value: 233; }
+@property --bdy-l { syntax: "<number>"; inherits: true; initial-value: .831; }
+@property --bdy-c { syntax: "<number>"; inherits: true; initial-value: .02; }
+@property --bdy-cs { syntax: "<number>"; inherits: true; initial-value: 0.86; }
+@property --bdy-h { syntax: "<number>"; inherits: true; initial-value: 233; }
+@property --bds-l { syntax: "<number>"; inherits: true; initial-value: .831; }
+@property --bds-c { syntax: "<number>"; inherits: true; initial-value: .02; }
+@property --bds-cs { syntax: "<number>"; inherits: true; initial-value: 0.86; }
+@property --bds-h { syntax: "<number>"; inherits: true; initial-value: 233; }
+@property --bde-l { syntax: "<number>"; inherits: true; initial-value: .831; }
+@property --bde-c { syntax: "<number>"; inherits: true; initial-value: .02; }
+@property --bde-cs { syntax: "<number>"; inherits: true; initial-value: 0.86; }
+@property --bde-h { syntax: "<number>"; inherits: true; initial-value: 233; }
+@property --ac-l { syntax: "<number>"; inherits: true; initial-value: .676; }
+@property --ac-c { syntax: "<number>"; inherits: true; initial-value: .09; }
+@property --ac-cs { syntax: "<number>"; inherits: true; initial-value: 0.86; }
+@property --ac-h { syntax: "<number>"; inherits: true; initial-value: 233; }
+@property --sh-l { syntax: "<number>"; inherits: true; initial-value: .676; }
+@property --sh-c { syntax: "<number>"; inherits: true; initial-value: .02; }
+@property --sh-cs { syntax: "<number>"; inherits: true; initial-value: 0.86; }
+@property --sh-h { syntax: "<number>"; inherits: true; initial-value: 233; }
+@property --rg-l { syntax: "<number>"; inherits: true; initial-value: .676; }
+@property --rg-c { syntax: "<number>"; inherits: true; initial-value: .02; }
+@property --rg-cs { syntax: "<number>"; inherits: true; initial-value: 0.86; }
+@property --rg-h { syntax: "<number>"; inherits: true; initial-value: 233; }
+@property --ro-l { syntax: "<number>"; inherits: true; initial-value: 1; }
+@property --ro-c { syntax: "<number>"; inherits: true; initial-value: .02; }
+@property --ro-cs { syntax: "<number>"; inherits: true; initial-value: 0.86; }
+@property --ro-h { syntax: "<number>"; inherits: true; initial-value: 233; }
+@property --gf-l { syntax: "<number>"; inherits: true; initial-value: .676; }
+@property --gf-c { syntax: "<number>"; inherits: true; initial-value: .09; }
+@property --gf-cs { syntax: "<number>"; inherits: true; initial-value: 0.86; }
+@property --gf-h { syntax: "<number>"; inherits: true; initial-value: 233; }
+@property --gt-l { syntax: "<number>"; inherits: true; initial-value: .676; }
+@property --gt-c { syntax: "<number>"; inherits: true; initial-value: .09; }
+@property --gt-cs { syntax: "<number>"; inherits: true; initial-value: 0.86; }
+@property --gt-h { syntax: "<number>"; inherits: true; initial-value: 233; }
+@property --lum-dir { syntax: "<number>"; inherits: true; initial-value: -1; }
+@property --lum-flip { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --con-flip { syntax: "<number>"; inherits: true; initial-value: .63; }
+
 /* ── Cascade defaults ──────────────────────────────────────────────────
    Sensible fallbacks so any single-axis setter resolves immediately. These
    inherit down the DOM, so a parent's hue/chroma flows to children. */

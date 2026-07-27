@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html),
 but it is pre-1.0 so we are informal and almost everything gets a minor version bump.
 
+## [0.9.0] - 2026-07-27
+
+### Added
+
+- **Typed `@property` registration for every axis var.** All inherited axis
+  custom properties — `--{stem}-{l,c,cs,h}` across every painting property, plus
+  `--bg-anchor-l` and the `--lum-dir` / `--lum-flip` / `--con-flip` scale vars —
+  are now registered as `syntax: "<number>"; inherits: true` with a sensible
+  light-mode `initial-value`. Three payoffs:
+  - **Parsed once.** The engine stores a typed value instead of re-parsing a
+    token stream at each `var()` resolution. This system leans on `var()` hard
+    (one `oklch()` per painting utility, each reading four axis vars).
+  - **Interpolable.** Registered properties animate and transition, so luminance
+    and hue can now be transitioned directly rather than through the resolved
+    `color` / `background-color`.
+  - **Cycle-safe.** A custom-property cycle resolves to the property's
+    `initial-value` when the property is registered, instead of voiding the whole
+    declaration (which paints transparent). A relative nudge stacked on an
+    absolute stop — e.g. `bg-lum-8 hover:bg-lum-up-1`, where `--bg-anchor-l` and
+    `--bg-l` reference each other — now falls back to a real luminance instead of
+    a transparent background. (Verified in-browser: the cycle resolves to the
+    `initial-value` surface rather than `rgba(0,0,0,0)`. Note the fallback is the
+    static `initial-value`, not the intended un-nudged stop — sane, not exact.)
+
 ## [0.8.0] - 2026-07-26
 
 ### Added
