@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html),
 but it is pre-1.0 so we are informal and almost everything gets a minor version bump.
 
-## [0.9.0] - 2026-07-27
+## [0.8.0] - 2026-07-26
 
 ### Added
 
@@ -29,10 +29,6 @@ but it is pre-1.0 so we are informal and almost everything gets a minor version 
     a transparent background. (Verified in-browser: the cycle resolves to the
     `initial-value` surface rather than `rgba(0,0,0,0)`. Note the fallback is the
     static `initial-value`, not the intended un-nudged stop — sane, not exact.)
-
-## [0.8.0] - 2026-07-26
-
-### Added
 
 - **Per-side border colors** — `border-{t,r,b,l}-*` (physical), `border-{x,y}-*`
   (axis), `border-{s,e}-*` (logical), each carrying the full lum/chroma/hue trio;
