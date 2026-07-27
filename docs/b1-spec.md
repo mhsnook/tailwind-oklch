@@ -35,6 +35,14 @@ another surface off its parent; everything else **sits on** a surface, so its re
 is measured against that surface. Bumps make surfaces; contrast reads them. Neither can do
 the other's job.
 
+> **`con` is local, not portable — this is deliberate.** Contrast reads the *immediate*
+> surface and nothing more; there is no cascading "contrast level" that follows text across
+> surfaces. The model has exactly the locality of plain CSS: change a surface and you restate
+> the text on it. `con`'s only convenience is "compute my luminance off whatever surface I'm
+> sitting on" — it spares you a hardcoded light/dark value, not a restatement of intent when
+> the surface changes. (Hue and chroma cascade as moods because they answer *what color*;
+> luminance does not, because it answers *how light* — which is structural and local.)
+
 ---
 
 ## 2. The two cascades
@@ -139,8 +147,11 @@ Notes:
   hover states use absolute stops or CSS filters.
 - **Contrast leaf** reads `--bg-l` (own or inherited), never writes it. `bg` has no contrast
   utility (a surface can't contrast itself); non-bg props have no bump (they don't make surfaces).
-- **Gradients** (`from-lum-*`/`to-lum-*`) paint the gradient stops as leaves. The gradient
-  element must also publish a `--bg-l` so contrast works on it — see open question (Q2).
+- **Gradients** (`from-lum-*`/`to-lum-*`) are pure leaves — they paint the stops and do
+  **not** touch `--bg-l`. To get contrast on a gradient tile, state `bg-lum-N` alongside
+  (it paints a real background under the gradient *and* declares the contrast surface):
+  `from-lum-1 to-lum-5 bg-lum-3 text-con-high`. With no `bg-lum-*`, the tile inherits its
+  parent surface for contrast. This keeps gradients under invariant 2 with no special-casing.
 
 ---
 
@@ -187,7 +198,8 @@ exist and paint exactly as before — they simply become leaves.
 **Promoted to prerequisites** (the cost of leaning everything on the surface):
 
 - **#3** — default `--bg-l` = `lum-1`; the "surfaces must be `bg-lum-*`" rule (invariant 2).
-- **#2** — gradients must publish a `--bg-l` (Q2).
+- **#2** — folds into invariant 2: a gradient tile you want contrast on states `bg-lum-*`;
+  gradient stops themselves never touch `--bg-l`.
 
 ---
 
@@ -216,18 +228,27 @@ Most of the app is untouched. From the usage survey on the v0.7 conversion:
 
 ---
 
-## 10. Open questions (to settle before/while implementing)
+## 10. Resolved decisions
 
-- **Q1 — named `con` = readability guarantee, or fixed ΔL offsets?** Today `con-low..max`
-  are fixed luminance offsets (no contrast-ratio math; `max` guarantees the pole). Since
-  they're the accessibility tier, should named `con` *guarantee* a WCAG/APCA ratio against
-  the surface? (Feature, not a rename.) **TBD.**
-- **Q2 — gradient surface for contrast.** A gradient has two luminances; contrast needs one.
-  Proposal: `from-lum-*` also sets `--bg-l` (treat the `from` stop as "the surface").
-- **Q3 — declaring a surface without painting it.** For backgrounds painted by an image,
-  token, or gradient, offer a reference-only `surface-lum-N` that sets `--bg-l` for contrast
-  without emitting `background-color`? (Weigh against "invisible surface" incoherence.)
-- **Q4 — default luminance for a leaf that states only chroma/hue.** `text-chroma-max` alone
-  has no luminance source. Options: (a) a default absolute foreground (`lum` ~10, auto-flip),
-  (b) a default *contrast* foreground (readable on the surface). (b) is more consistent with
-  the model; (a) matches today. **TBD.**
+- **Q1 — named `con` readability guarantee: deferred.** Named `con-low..max` stay as fixed
+  ΔL offsets (with `max` guaranteeing the pole). A tier that *guarantees* a WCAG/APCA ratio
+  against the surface is a worthwhile later feature, not part of this revision.
+- **Q2 — gradients don't set `--bg-l`.** Gradient stops are pure leaves; declare `bg-lum-*`
+  on a gradient tile to give it a contrast surface (see §5). This keeps
+  `from-lum-1 to-lum-5 bg-lum-3` fully controllable and folds #2 into invariant 2.
+- **Q3 — no `surface-lum-N`.** Rejected: a `--bg-l` that doesn't correspond to painted
+  pixels makes contrast *lie*. Surfaces must actually paint. Backgrounds drawn by an image
+  or token simply don't get trustworthy `con`; use absolute `text-lum-*` there.
+- **Q4 — contrast is a leaf; no cascading contrast level.** Considered and rejected a
+  cascading `--con` mood. Contrast reads only the immediate surface — the model has plain
+  CSS's locality (change a surface → restate its text). A leaf that states only chroma/hue
+  therefore paints its luminance from a **default contrast off the surface** (a readable
+  foreground), still a per-element leaf, no cascade. The moods remain exactly two: `--hue`
+  and `--chroma`.
+
+## 11. Still to decide during implementation
+
+- Exact default-contrast offset for a chroma/hue-only leaf (Q4) — pick the ΔL that reads as
+  a comfortable default foreground; confirm against a few real surfaces.
+- Whether `border` shares the text default or wants its own (borders are ~always explicit in
+  practice, so likely moot).
