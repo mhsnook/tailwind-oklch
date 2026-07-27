@@ -2,78 +2,87 @@
 
 **Status:** draft spec · target for the next major model revision · **breaking** (pre-1.0, expected).
 
-This is the design we converged on for making the system as small and as explainable
-as possible: **one surface, one mood, everything else a leaf.** It removes ~66 of the
-~72 cascading axis variables, dissolves several known bugs by construction, and reduces
-the developer's mental model to a handful of one-sentence rules.
+The design we converged on for making the system as small and as explainable as possible:
+**one surface, one foreground, one mood; everything else a leaf.** It collapses the ~72
+cascading axis variables to a handful, dissolves several known bugs by construction, and
+reduces the developer's model to a few one-sentence rules.
 
 ---
 
 ## 1. One-page overview
 
 A color is `oklch(L C H)`. The three axes are sourced differently, and that difference
-*is* the model:
+*is* the model.
 
-- **Luminance (`L`)** — belongs to **surfaces**. Only a background carries a luminance
-  that cascades. Everything else either states an absolute luminance or (the usual case)
-  computes one by **contrast** against the surface it sits on. Luminance is *referenced*
-  by descendants, never *adopted*.
-- **Hue (`H`) and Chroma (`C`)** — are a **mood**. Set them property-less (`hue-danger`,
-  `chroma-high`) and they cascade to everything below. Set them with a property
-  (`text-hue-danger`) and they're a **leaf** — they paint one element and enter no cascade.
+**Two things cascade (the "environment" — see §2):**
 
-Two rules cover luminance, one covers hue/chroma:
+- **Luminance cascades as two references:** a **surface** (`--surface-l`, set by `bg-lum-*`)
+  and a **foreground** (`--text-l`, set by `text-lum-*`). A surface is what descendants
+  *contrast against*; the foreground is the ambient text lightness they *adopt*.
+- **Hue and chroma cascade as a mood** (`--mood-hue`, `--mood-chroma`), set property-less
+  (`hue-danger`, `chroma-high`).
 
-1. **Absolute luminance, anywhere:** `bg-lum-3`, `text-lum-9`, `border-lum-4`, …
-2. **Relative luminance, anywhere — but the operator forks by target:**
-   - **backgrounds → bumps** (`bg-lum-up/down-N`): a *new surface*, relative to the **parent** surface.
-   - **everything else → contrast** (`text-con-*`, `border-con-*`): a *leaf color*, relative to the **immediate** surface.
+**Everything else is a leaf** — it paints one element from the environment and writes no
+cascading variable.
+
+The rules, flat:
+
+1. **Absolute luminance, anywhere:** `bg-lum-3`, `text-lum-9`, `border-lum-4`. Absolute
+   *background* luminance cascades as `--surface-l`; absolute *text* luminance cascades as
+   `--text-l`; absolute luminance on any other property is a pure leaf.
+2. **Relative luminance forks by target:**
+   - **backgrounds → bumps** (`bg-lum-up/down-N`): a *new surface*, off the **parent** surface.
+   - **everything else → contrast** (`text-con-*`, `border-con-*`): a *leaf color*, off the
+     **immediate** surface. Contrast never cascades — it is local, like plain CSS.
 3. **Hue/chroma:** property-less → cascades (mood); property-full → variable-leaf (paints, no cascade).
 
-The fork in rule 2 is principled: a background **is** a surface, so its relative move is
-another surface off its parent; everything else **sits on** a surface, so its relative move
-is measured against that surface. Bumps make surfaces; contrast reads them. Neither can do
-the other's job.
+The fork in rule 2 is principled: a background **is** a surface (its relative move is another
+surface off its parent); everything else **sits on** a surface (its relative move is measured
+against that surface). Bumps make surfaces; contrast reads them.
 
-> **`con` is local, not portable — this is deliberate.** Contrast reads the *immediate*
-> surface and nothing more; there is no cascading "contrast level" that follows text across
-> surfaces. The model has exactly the locality of plain CSS: change a surface and you restate
-> the text on it. `con`'s only convenience is "compute my luminance off whatever surface I'm
-> sitting on" — it spares you a hardcoded light/dark value, not a restatement of intent when
-> the surface changes. (Hue and chroma cascade as moods because they answer *what color*;
-> luminance does not, because it answers *how light* — which is structural and local.)
+> **Why luminance cascades in two places but hue/chroma in one.** Hue and chroma have a
+> property-less *mood* form to carry their cascade, so `text-hue-*`/`text-chroma-*` can be pure
+> leaves. Luminance has no mood form (bare `lum-*` would be an "invisible surface" that lies to
+> contrast — rejected), so the cascade vehicles are the setters themselves: `bg-lum-*` for the
+> surface, `text-lum-*` for the foreground.
 
 ---
 
-## 2. The two cascades
+## 2. The two planes (why the model behaves as it does)
 
-The one genuinely subtle thing in the model, named precisely. Two independent inheritance
-channels are in play:
+Everything follows from CSS having **two independent inheritance systems**, and our using
+them for two different jobs.
 
-- **Variable cascade** — the axis custom properties (`--bg-l`, `--hue`, `--cscale`,
-  `--chroma`). This is "the mood + the surface." A **variable-leaf writes nothing here.**
-- **Color cascade** — CSS's own native inheritance of a *computed* color value. This
-  inherits only for properties CSS inherits, which among colors is essentially just
-  **`color`** (text). `border-color`, `--tw-ring-color`, `text-decoration-color` do **not**
-  inherit natively.
+**Plane 1 — Variables (the signals / context).** Custom properties (`--surface-l`,
+`--text-l`, `--mood-hue`, `--mood-chroma`). They **all inherit by default** — the reactive
+context flowing down the tree. This is the only plane that carries state.
 
-From which the leaf rule falls out:
+**Plane 2 — Painted colors (the rendered output).** The actual `color`, `background-color`,
+`border-color`, … computed *from* Plane 1. Among them **only `color` (text) inherits**;
+`background-color`, `border-color`, and the rest are per-element and inherit nothing.
 
-> A **variable-leaf** (`text-chroma-max`, `text-hue-danger`, …) writes no variable; its
-> **resolved color still rides the color cascade.** So a *text* leaf shows on itself and on
-> descendants that inherit `color` untouched; a *non-text* leaf shows on itself only; and in
-> both cases, the instant a descendant **repaints** that property it **re-resolves all three
-> axes from the variable cascade** — the leaf's value evaporates.
+**The one-way rule:**
 
-Worked example: `chroma-mhigh > text-chroma-mlow > …`
+> A color calculation reads **only Plane-1 variables**, never the inherited computed color.
+> The painted color is a *terminal output* — it flows to descendants that don't paint, and it
+> is never an input to anything.
 
-- A plain `<span>` under the `text-chroma-mlow` element shows **mlow** (inherited `color`).
-- A `<p class="text-con-mid">` under the same element shows **mhigh** — repainting pulls C
-  (and H) from the ambient mood, not from the parent's leaf.
+So an element that repaints throws away the inherited `color` and re-derives from the
+variables (a color is atomic — you can't decompose an inherited `oklch()` back to L/C/H).
+That is why repainting *any* text axis re-resolves *all three* from the current environment.
 
-One paint = one `oklch()` = all three axes resolved fresh from the variable cascade, plus
-this element's own overrides. **The cascade is mood + surface; leaves are paint-deep, not
-axis-deep.**
+Think of it as Solid-style signals: **variables are signals; a painting element is a
+component that reads the signals and renders a color; the rendered `color` is handed to
+children only as an inert default for children that don't render their own.** The one bridge
+back from Plane 2 is CSS's `currentColor` (e.g. SVG `fill-current`) — that's CSS's mechanism,
+not ours.
+
+**Consequence to design around:** a mood (or any signal) only shows through elements that
+**paint**. `<div class="hue-accent"><p>x</p></div>` leaves the bare `<p>` untinted — nothing
+read the signal. Add `text-con-*` to the `<p>` and it subscribes. In practice text is painted
+almost everywhere, so this rarely surprises — but it's why the library should establish a
+**default text paint at `:root`** (a baseline `color`, e.g. `text-lum-10`), so all text starts
+painted, readable, and seeded with `--text-l`.
 
 ---
 
@@ -81,24 +90,25 @@ axis-deep.**
 
 The entire variable cascade (registered via `@property`, `<number>`, `inherits: true`):
 
-| Var           | Meaning                              | `:root` default        | `.dark`         |
-|---------------|--------------------------------------|------------------------|-----------------|
-| `--bg-l`      | the **surface** luminance            | `lum-1` (page-hugging) | flips           |
-| `--hue`       | ambient hue angle                    | `--hue-primary` (233)  | —               |
-| `--cscale`    | ambient per-hue chroma multiplier    | `--cscale-primary`     | —               |
-| `--chroma`    | ambient chroma                       | `--chroma-low`         | —               |
-| `--lum-dir`   | contrast/bump direction (−1 / +1)    | `-1`                   | `1`             |
-| `--lum-flip`  | arbitrary-value auto-flip (0 / 1)    | `0`                    | `1`             |
-| `--con-flip`  | surface L where contrast flips pole  | mid(lum-5,lum-6) light | dark midpoint   |
+| Var             | Meaning                              | `:root` default        | `.dark`        |
+|-----------------|--------------------------------------|------------------------|----------------|
+| `--surface-l`   | the **surface** luminance            | `lum-1` (page-hugging) | flips          |
+| `--text-l`      | the **foreground** (text) luminance  | `lum-10` (strong fg)   | flips          |
+| `--mood-hue`    | ambient hue angle                    | `--hue-primary` (233)  | —              |
+| `--mood-chroma` | ambient chroma                       | `--chroma-low`         | —              |
+| `--mood-cscale` | ambient per-hue chroma multiplier    | `--cscale-primary`     | —              |
+| `--lum-dir`     | contrast/bump direction (−1 / +1)    | `-1`                   | `1`            |
+| `--lum-flip`    | arbitrary-value auto-flip (0 / 1)    | `0`                    | `1`            |
+| `--con-flip`    | surface L where contrast flips pole  | mid(lum-5,lum-6) light | dark midpoint  |
 
-That's it — **7 cascading vars**, down from ~72. `--hue` and `--cscale` travel together
-(a hue implies its chroma multiplier; an arbitrary `hue-[280]` sets `--cscale: 1`).
+**8 cascading vars**, down from ~72. The four "environment" signals are `--surface-l`,
+`--text-l`, `--mood-hue`, `--mood-chroma` (`--mood-cscale` rides with the hue; the rest are
+mode/scale constants). Note the surface needs only a *luminance* — a surface's chroma/hue come
+from the mood, so there is no `--surface-c`/`--surface-h`.
 
-> **Change from today:** `--bg-l` defaults to **`lum-1`, not `lum-5`.** With everything
-> leaning on the surface, the safe default is "the page is the surface" (field-report #3).
-
-Gradient stop luminances (`--gf-l`, `--gt-l`) are **not** in the cascade — they're leaf
-paint values for the element drawing the gradient (see §5).
+> **Changed from today:** `--surface-l` defaults to `lum-1` (the page is the surface), not
+> `lum-5` (field-report #3). Gradient stop luminances (`--gf-l`, `--gt-l`) are **not** in the
+> cascade — they're leaf paint values (see §5).
 
 ---
 
@@ -110,77 +120,77 @@ Every painting utility emits one `oklch()`:
 oklch( <L>  calc(<C> * <cscale> * <taper(L)>)  <H> )
 ```
 
-- **`<L>`** comes from exactly one source, in this precedence on the element itself:
-  a bump (bg only) → an absolute `lum-N` → a contrast `con-*` (non-bg) → else the default.
-- **`<C>`** = the element's own `chroma-*` override, else the ambient `--chroma`.
-- **`<cscale>`** = the multiplier for the element's own `hue-*` override, else ambient `--cscale`.
-- **`<H>`** = the element's own `hue-*` override, else the ambient `--hue`.
-- **`taper(L)`** = `clamp(0, calc((1 - L) * --chroma-taper), 1)` — chroma falls toward white
-  so a stop reads equally saturated across the ramp and the lightest surfaces stay clean.
+- **`<L>`** comes from one source, in precedence on the element itself: a bump (bg only) → an
+  absolute `lum-N` → a contrast `con-*` (non-bg) → else, for text, the inherited **`--text-l`**.
+- **`<C>`** = the element's own `chroma-*` override, else the ambient `--mood-chroma`.
+- **`<cscale>`** = the multiplier for the element's own `hue-*` override, else `--mood-cscale`.
+- **`<H>`** = the element's own `hue-*` override, else the ambient `--mood-hue`.
+- **`taper(L)`** = `clamp(0, calc((1 - L) * --chroma-taper), 1)`.
 
 Luminance scale (unchanged): front-loaded ramp, numbered `1..10`, auto-flipping for dark;
 `none`/`max` are the pure poles outside the numbered range. Contrast is auto-directional:
-`--con-dir = clamp(-1, (--con-flip − --bg-l) × 1000, 1)`, and
-`L_con = clamp(0, --bg-l + --con-dir × offset, 1)`.
+`--con-dir = clamp(-1, (--con-flip − --surface-l) × 1000, 1)`, and
+`L_con = clamp(0, --surface-l + --con-dir × offset, 1)`.
 
 ---
 
 ## 5. Utility families (what each emits)
 
-| Family              | Examples                          | Targets            | Writes to variable cascade? | Paints                    |
-|---------------------|-----------------------------------|--------------------|-----------------------------|---------------------------|
-| **Surface**         | `bg-lum-3`, `bg-lum-[60]`         | `bg` only          | **yes** — `--bg-l`          | `background-color`        |
-| **Bump**            | `bg-lum-up-1`, `bg-lum-down-2`    | `bg` only          | **yes** — `--bg-l`          | `background-color`        |
-| **Mood**            | `hue-danger`, `chroma-high`       | (property-less)    | **yes** — `--hue`/`--cscale`, `--chroma` | nothing      |
-| **Contrast leaf**   | `text-con-mid`, `border-con-low`  | text/border/ring/outline | no                    | that property, inline     |
-| **Absolute leaf**   | `text-lum-9`, `border-lum-4`      | any non-bg prop    | no                          | that property, inline     |
-| **Variable-leaf**   | `text-chroma-max`, `text-hue-danger` | any non-bg prop | no                          | that property, inline     |
+| Family              | Examples                          | Writes a cascading variable?             | Paints (Plane 2)          |
+|---------------------|-----------------------------------|------------------------------------------|---------------------------|
+| **Surface**         | `bg-lum-3`, `bg-lum-[60]`         | **yes** — `--surface-l`                  | `background-color`        |
+| **Bump**            | `bg-lum-up-1`, `bg-lum-down-2`    | **yes** — `--surface-l` (off parent)     | `background-color`        |
+| **Foreground**      | `text-lum-9`, `text-lum-[40]`     | **yes** — `--text-l`                     | `color` (inherits)        |
+| **Mood**            | `hue-danger`, `chroma-high`       | **yes** — `--mood-hue`/`-cscale`, `-chroma` | nothing                |
+| **Contrast leaf**   | `text-con-mid`, `border-con-low`  | no                                       | that property, inline     |
+| **Absolute leaf**   | `border-lum-4`, `ring-lum-6`      | no                                       | that property, inline     |
+| **Variable-leaf**   | `text-chroma-max`, `text-hue-danger` | no                                    | that property, inline     |
 
 Notes:
 
-- **Surface** publishes `--bg-l` and (for bump support) the anchor it measures from. It is
-  the *only* thing whose luminance descendants can read.
-- **Bump** reads the **parent** surface and writes a new `--bg-l`. Cycle-free when alone.
-  Combining an absolute stop **and** a bump on the **same element** forms a variable cycle;
-  because the axis vars are registered and inherit, it **degrades to the parent surface**
-  (verified in-browser), not to transparent. This combination is disallowed by convention;
-  hover states use absolute stops or CSS filters.
-- **Contrast leaf** reads `--bg-l` (own or inherited), never writes it. `bg` has no contrast
-  utility (a surface can't contrast itself); non-bg props have no bump (they don't make surfaces).
-- **Gradients** (`from-lum-*`/`to-lum-*`) are pure leaves — they paint the stops and do
-  **not** touch `--bg-l`. To get contrast on a gradient tile, state `bg-lum-N` alongside
-  (it paints a real background under the gradient *and* declares the contrast surface):
-  `from-lum-1 to-lum-5 bg-lum-3 text-con-high`. With no `bg-lum-*`, the tile inherits its
-  parent surface for contrast. This keeps gradients under invariant 2 with no special-casing.
+- **Surface** publishes `--surface-l` and the anchor bumps measure from; it's the only thing
+  whose luminance descendants *contrast against*.
+- **Bump** reads the parent surface and writes a new `--surface-l`. Cycle-free alone; an
+  absolute stop **and** a bump on the **same element** form a cycle that degrades to the
+  parent surface (registered inheriting vars) — disallowed by convention.
+- **Foreground** (`text-lum-*`) is the luminance counterpart to the mood: it cascades
+  `--text-l` *and* paints `color`. Absolute, so cascading it forms no cycle. Text-only —
+  `border-lum`/`ring-lum`/etc. are absolute **leaves** (a border's luminance isn't environmental).
+- **Contrast leaf** reads `--surface-l` (own or inherited), never writes it. `bg` has no
+  contrast (a surface can't contrast itself); non-bg props have no bump (they don't make surfaces).
+- **Gradients** (`from-lum-*`/`to-lum-*`) are pure leaves — they paint the stops and don't
+  touch `--surface-l`. For contrast on a gradient tile, also state `bg-lum-N` (it paints a real
+  background under the gradient and declares the contrast surface): `from-lum-1 to-lum-5 bg-lum-3
+  text-con-high`. No `bg-lum-*` → the tile inherits its parent surface. (Folds #2 into invariant 2.)
 
 ---
 
 ## 6. Invariants (the rules, stated flat)
 
-1. **Luminance is a surface property.** Only `bg-*` writes the cascading `--bg-l`.
+1. **Luminance cascades as a surface (`--surface-l`, from `bg-*`) and a foreground
+   (`--text-l`, from `text-lum-*`).** No other property's luminance cascades.
 2. **A surface you want contrast against must be stated with `bg-lum-*`.** A `bg-white`, a
-   semantic token, or a raw gradient leaves `--bg-l` stale, and contrast will measure a
-   surface that isn't there. (Optional escape hatch under Q3.)
+   token, or a raw gradient leaves `--surface-l` stale and contrast measures a phantom.
 3. **Bumps only on backgrounds; contrast only on non-backgrounds.**
-4. **Never combine an absolute `bg-lum-N` and a bump on one element** (cycle → parent-surface).
-5. **Hue/chroma cascade only when property-less.** `text-chroma-*` etc. are variable-leaves.
-6. **Repainting re-resolves from the mood.** A leaf's color reaches non-repainting text
-   descendants via CSS `color` inheritance only.
+4. **Never combine an absolute `bg-lum-N` and a bump on one element** (cycle → parent surface).
+5. **Hue/chroma cascade only when property-less; contrast never cascades** (both are local
+   leaves — `text-con-low` on an area doesn't survive a descendant's repaint; `text-lum-7` does).
+6. **A signal shows only through elements that paint.** Set moods/foreground at or above where
+   painting happens; establish a default text paint at `:root`.
 
 ---
 
 ## 7. What's deleted vs. today
 
-- **All per-property luminance vars** — `--tx-l`, `--dc-l`, `--bd-l`, `--bd{t,r,b,l,x,y,s,e}-l`,
-  `--ac-l`, `--sh-l`, `--rg-l`, `--ro-l`. Luminance cascades only as `--bg-l`.
-- **All per-property hue/chroma cascade** — the `--{stem}-c`, `--{stem}-cs`, `--{stem}-h`
-  sets collapse to the single `--chroma` / `--cscale` / `--hue`. Per-property setters remain
-  as leaves; they just stop writing cascading vars.
-- **`--bg-anchor-l` stays** (bumps are kept for backgrounds), but every other anchor/adjust
-  var that existed per-property goes away.
+- **All per-property luminance vars except the two that cascade** — gone: `--dc-l`, `--bd-l`,
+  `--bd{t,r,b,l,x,y,s,e}-l`, `--ac-l`, `--sh-l`, `--rg-l`, `--ro-l`. Kept/renamed: `--bg-l →
+  --surface-l`, and `--tx-l → --text-l` (now the cascading foreground).
+- **All per-property hue/chroma cascade** — the `--{stem}-c/-cs/-h` sets collapse to the
+  single `--mood-chroma` / `--mood-cscale` / `--mood-hue`. Per-property setters stay as leaves.
+- **`--bg-anchor-l` stays** (renamed with the surface) since bg bumps are kept.
 
-The per-property setters (`text-hue-danger`, `border-chroma-max`, `text-lum-9`) all still
-exist and paint exactly as before — they simply become leaves.
+Per-property setters (`text-hue-danger`, `border-chroma-max`, `border-lum-4`) still exist and
+paint exactly as before — they simply become leaves (write no cascading variable).
 
 ---
 
@@ -188,67 +198,64 @@ exist and paint exactly as before — they simply become leaves.
 
 **Dissolved by construction:**
 
-- **#4 (`text-con`/`border-con` share `--con-off`)** — leaves inline their own expression;
-  no shared intermediate var to collide.
+- **#4 (`text-con`/`border-con` share `--con-off`)** — leaves inline their own expression; no
+  shared intermediate var to collide.
 - **#11 (chroma/hue leak to descendants)** — per-property setters no longer write cascading
-  vars, so `border-chroma-max` can't reach a descendant's border.
-- **#1 (bg nudge cycle → transparent)** — already degrades gracefully via `@property`; and
-  the cycle can only arise from the disallowed absolute+bump combo (rule 4).
+  vars, so `border-chroma-max` can't reach a descendant's border. (A milder luminance path
+  remains via `--text-l`, by design; luminance-leak is benign and shared primitives pin their own.)
+- **#1 (bg nudge cycle → transparent)** — degrades gracefully via `@property`; and the cycle
+  can only arise from the disallowed absolute+bump combo (invariant 4).
 
-**Promoted to prerequisites** (the cost of leaning everything on the surface):
+**Promoted to prerequisites:**
 
-- **#3** — default `--bg-l` = `lum-1`; the "surfaces must be `bg-lum-*`" rule (invariant 2).
-- **#2** — folds into invariant 2: a gradient tile you want contrast on states `bg-lum-*`;
-  gradient stops themselves never touch `--bg-l`.
+- **#3** — default `--surface-l` = `lum-1`; the "surfaces must be `bg-lum-*`" rule.
+- **#2** — folds into invariant 2 (gradients declare `bg-lum-*` for contrast).
 
 ---
 
 ## 9. Migration (sunlo) — deltas & checklist
 
-Most of the app is untouched. From the usage survey on the v0.7 conversion:
+Most of the app is untouched (from the v0.7-conversion usage survey):
 
 - **Unchanged:** `bg-lum-*` (313), `text-con-*`/`border-con-*` (~750), `text-lum-*` (91),
-  bare `hue-*`/`chroma-*` (moods). These are the overwhelming majority.
-- **Now leaves (no code change, behavior identical — verified all are on painting leaves,
-  zero container-cascade reliance):** `text-chroma-*`, `border-chroma-*`, `text-hue-*`,
-  `border-hue-*` (~130 sites).
-- **`bg-lum-up-*` (6 sites):** kept. **Audit these** for the disallowed same-element
-  absolute+bump combo; convert any `bg-lum-N hover:bg-lum-up-M` to an absolute hover stop.
+  bare `hue-*`/`chroma-*`.
+- **Now leaves (identical paint; verified all on painting leaves, zero container-cascade
+  reliance):** `text-chroma-*`, `border-chroma-*`, `text-hue-*`, `border-hue-*` (~130 sites).
+- **`text-lum-*` now also cascades `--text-l`** — a *new* behavior. Repainting descendants
+  that state only chroma/hue will now inherit the ancestor's text luminance instead of a fixed
+  default. Confirm no place relied on the old "each text restates its own lightness" default in
+  a way this changes; expected impact is nil-to-positive.
+- **`bg-lum-up-*` (6 sites):** kept. Audit for the disallowed same-element absolute+bump combo.
 
-**Checklist to verify during implementation:**
+**Checklist:**
 
-- [ ] `lang-theme.ts` (and any runtime theming) sets per-property hue vars (`--bg-h`,
-      `--dc-h`, `--ac-h`, `--sh-h`, …). Under B1 this collapses to setting **`--hue`**
-      (+`--cscale`) once — a strict simplification, and it fixes field-report #7 (runtime
-      `--hue-primary` below `:root`). **Rewrite these call-sites.**
-- [ ] `globals.css` — any references to deleted internal vars (`--tx-*`, `--bd-*`, etc.),
-      and the custom `--cscale-neutral` / neutral-hue setup, re-expressed against `--hue`/`--chroma`.
-- [ ] Confirm no surface is painted by a non-`lum` background where contrast is then expected
-      (invariant 2); add `bg-lum-*` or the Q3 helper where found.
+- [ ] `lang-theme.ts` / runtime theming: per-property hue vars (`--bg-h`, `--dc-h`, …) collapse
+      to setting **`--mood-hue`** (+`--mood-cscale`) once — a strict simplification that also
+      fixes field-report #7 (runtime `--hue-primary` below `:root`). Rewrite these call-sites.
+- [ ] `globals.css`: references to deleted internal vars, and the custom neutral-hue setup,
+      re-expressed against `--mood-*`.
+- [ ] Establish/confirm a default text paint at `:root` so unstyled text is seeded (§2, §6.6).
+- [ ] No surface painted by a non-`lum` background where contrast is expected (invariant 2).
 
 ---
 
 ## 10. Resolved decisions
 
-- **Q1 — named `con` readability guarantee: deferred.** Named `con-low..max` stay as fixed
-  ΔL offsets (with `max` guaranteeing the pole). A tier that *guarantees* a WCAG/APCA ratio
-  against the surface is a worthwhile later feature, not part of this revision.
-- **Q2 — gradients don't set `--bg-l`.** Gradient stops are pure leaves; declare `bg-lum-*`
-  on a gradient tile to give it a contrast surface (see §5). This keeps
-  `from-lum-1 to-lum-5 bg-lum-3` fully controllable and folds #2 into invariant 2.
-- **Q3 — no `surface-lum-N`.** Rejected: a `--bg-l` that doesn't correspond to painted
-  pixels makes contrast *lie*. Surfaces must actually paint. Backgrounds drawn by an image
-  or token simply don't get trustworthy `con`; use absolute `text-lum-*` there.
-- **Q4 — contrast is a leaf; no cascading contrast level.** Considered and rejected a
-  cascading `--con` mood. Contrast reads only the immediate surface — the model has plain
-  CSS's locality (change a surface → restate its text). A leaf that states only chroma/hue
-  therefore paints its luminance from a **default contrast off the surface** (a readable
-  foreground), still a per-element leaf, no cascade. The moods remain exactly two: `--hue`
-  and `--chroma`.
+- **Q1 — named `con` readability guarantee: deferred.** Named `con-low..max` stay fixed ΔL
+  offsets; a WCAG/APCA-guaranteeing tier is a later feature.
+- **Q2 — gradients don't set `--surface-l`.** Declare `bg-lum-*` on a gradient tile for
+  contrast (§5). Keeps `from-lum-1 to-lum-5 bg-lum-3` controllable; folds #2 into invariant 2.
+- **Q3 — no `surface-lum-N`.** A `--surface-l` not matching painted pixels makes contrast lie;
+  surfaces must actually paint. Image/token surfaces use absolute `text-lum-*` for legibility.
+- **Q4 — chroma/hue-only leaf luminance = inherited `--text-l`.** Resolved by the `text-lum`
+  cascade decision: the "default" foreground *is* the `--text-l` signal (default `lum-10`).
+- **`text-lum-*` cascades `--text-l` (text-only).** Absolute foreground luminance is an
+  environment signal; contrast stays local; hue/chroma stay leaves (mood is their vehicle).
+- **Variable renaming:** `--bg-l → --surface-l`, `--tx-l → --text-l`, `--hue → --mood-hue`,
+  `--chroma → --mood-chroma`, `--cscale → --mood-cscale`. Class names unchanged.
 
 ## 11. Still to decide during implementation
 
-- Exact default-contrast offset for a chroma/hue-only leaf (Q4) — pick the ΔL that reads as
-  a comfortable default foreground; confirm against a few real surfaces.
-- Whether `border` shares the text default or wants its own (borders are ~always explicit in
-  practice, so likely moot).
+- Exact `:root` `--text-l` default (a comfortable strong foreground; `lum-10` proposed) and
+  the default text paint at `:root`.
+- Whether any non-text property ever wants the foreground cascade (currently text-only).
