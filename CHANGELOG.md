@@ -26,9 +26,11 @@ but it is pre-1.0 so we are informal and almost everything gets a minor version 
     declaration (which paints transparent). A relative nudge stacked on an
     absolute stop — e.g. `bg-lum-8 hover:bg-lum-up-1`, where `--bg-anchor-l` and
     `--bg-l` reference each other — now falls back to a real luminance instead of
-    a transparent background. (Verified in-browser: the cycle resolves to the
-    `initial-value` surface rather than `rgba(0,0,0,0)`. Note the fallback is the
-    static `initial-value`, not the intended un-nudged stop — sane, not exact.)
+    a transparent background. (Verified in-browser: because the axis vars
+    inherit, the cycle resolves to the *inherited* surface — the element's parent
+    surface — falling back to the registered `initial-value` only when no `lum`
+    surface sits above it. Sane degradation, though not the intended un-nudged
+    stop.)
 
 - **Per-side border colors** — `border-{t,r,b,l}-*` (physical), `border-{x,y}-*`
   (axis), `border-{s,e}-*` (logical), each carrying the full lum/chroma/hue trio;
