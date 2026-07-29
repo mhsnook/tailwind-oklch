@@ -136,7 +136,9 @@ computes its color inline and paints. It's non-compounding for the same reason
 | `--bg-anchor-l` | `bg-lum-N` (absolute) and `:root` only | `bg-lum-up/down` (its step) | ✅ |
 | `--bg-c` / `--bg-h` / `--bg-cs` | `chroma-*` / `hue-*`, `bg-chroma/hue-*` | every bg paint | ✅ |
 | `--tx-l` | `text-lum-N` (absolute) | `text-lum-up/down`, `text-con-*`'s hue/chroma path | ✅ |
-| `--con-dir` / `--con-off` | `con-*` (scratch, per element) | `con-*`'s own calc | — |
+| `--con-dir` | `con-*` (scratch, per element — shared, depends only on `--bg-l`) | `con-*`'s own calc | — |
+| `--tx-coff` / `--bd-coff` / … | `con-*` (scratch, one per property so stacked `con` leaves don't cross-wire) | that property's `con-*` calc | — |
+| `--tx-con` / `--bd-con` / … | `contrast-*` moods (default ΔL, `@property`-registered) | the **bare** `text-con` / `border-con` / … | ✅ |
 
 The takeaway: **absolute stops are the anchors, nudges drift from the nearest
 one, and `con` always speaks to the surface that's really there.**

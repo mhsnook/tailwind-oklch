@@ -54,6 +54,28 @@ const ADJ = [['1', '.08'], ['2', '.16'], ['3', '.24'], ['4', '.32'], ['5', '.40'
 // `max` uses a ≥1 offset so the clamp always snaps to pure black/white — a
 // guaranteed contrast-color(), regardless of surface.
 const CON = [['low', '.18'], ['mlow', '.25'], ['mid', '.32'], ['mhigh', '.42'], ['high', '.55'], ['max', '1']];
+// Numbered contrast ramp — a finer "bump" scale for decorative edges (borders,
+// outlines, SVG strokes). Smaller ΔL steps than the named ramp: text reaches for
+// the named stops, decoration for these numbers. Same background-relative math,
+// same utilities (border-con-2 resolves --con-2 just like border-con-low resolves
+// --con-low).
+const CON_STEP = [['1', '.06'], ['2', '.10'], ['3', '.15'], ['4', '.22'], ['5', '.30']];
+// resolve a con scale key (named or numbered) to its numeric ΔL
+const conVal = (k) => (CON.find(([n]) => n === k) || CON_STEP.find(([n]) => n === k))[1];
+// Contrast "moods": a named profile that fans one intent out across properties,
+// each to its own step (text a little more than borders, etc.). Set on an
+// ancestor; the bare *-con leaves below inherit these as their default ΔL. Values
+// are con scale keys, so a profile stays readable and re-themes with the scale.
+const CONTRAST = [
+  ['low',  { tx: 'mlow', dc: 'low',  bd: '1', ol: '1', rg: '1', st: '2', fl: 'mlow' }],
+  ['mid',  { tx: 'mid',  dc: 'mlow', bd: '2', ol: '2', rg: '2', st: '3', fl: 'mid' }],
+  ['high', { tx: 'high', dc: 'mid',  bd: '3', ol: '3', rg: '3', st: '4', fl: 'high' }],
+];
+// The per-property default-ΔL vars (one per con-capable leaf), and the 'mid'
+// profile that seeds their @property initial-value (so bare *-con works with no
+// mood set).
+const CON_DEF = ['tx', 'dc', 'bd', 'ol', 'rg', 'st', 'fl'];
+const CON_DEF_INIT = CONTRAST.find(([n]) => n === 'mid')[1];
 
 // property stem, utility prefix, and how it applies the resolved color.
 const PROPS = [
@@ -73,6 +95,8 @@ const PROPS = [
   { stem: 'sh',  pre: 'shadow',   apply: (col) => `--tw-shadow-color: ${col};` },
   { stem: 'rg',  pre: 'ring',     apply: (col) => `--tw-ring-color: ${col};` },
   { stem: 'ro',  pre: 'ring-offset', apply: (col) => `--tw-ring-offset-color: ${col};` },
+  { stem: 'st',  pre: 'stroke',   apply: (col) => `stroke: ${col};` },
+  { stem: 'fl',  pre: 'fill',     apply: (col) => `fill: ${col};` },
   { stem: 'gf',  pre: 'from',     grad: 'from' },
   { stem: 'gt',  pre: 'to',       grad: 'to' },
 ];
@@ -118,12 +142,20 @@ w(`/* tailwind-oklch — a cascade-first OKLCH color system for Tailwind v4
  *     ordinary CSS custom-property inheritance:
  *       hue-primary · hue-danger · …    sets hue (and its chroma scale) below
  *       chroma-mlow · chroma-high · …   sets chroma below
+ *       contrast-low · contrast-mid · … sets the default contrast ΔL below
  *
  *   - Per-property setters paint one property from one axis; hue and chroma
  *     inherit from an ancestor (or the :root default) unless set explicitly:
  *       bg-lum-2     bg-chroma-mlow     bg-hue-accent
  *       text-lum-9   text-chroma-high    text-hue-info
- *       …plus border-*, border-b-*, accent-*, shadow-*, ring-*, ring-offset-*, from-*, to-*
+ *       …plus border-*, border-b-*, accent-*, shadow-*, ring-*, ring-offset-*,
+ *       stroke-*, fill-*, from-*, to-*
+ *
+ *   - Contrast (con-*) is background-relative: text-con-mid picks a luminance a
+ *     ΔL off the surface, toward contrast. Valued (text-con-mid, text-con-2),
+ *     arbitrary (text-con-[40]), or BARE (text-con) — the bare form paints at the
+ *     ΔL the nearest contrast-* mood set. text · border · outline · ring ·
+ *     decoration · stroke · fill.
  *
  *   - Relative adjustments nudge off the nearest absolute luminance, and DON'T
  *     compound: bg-lum-up-1 · text-lum-down-1 · …. The numbered stops are your
@@ -175,6 +207,10 @@ w('');
 w(`  /* ── Contrast strength (ΔL off the background, toward contrast) ─────── */`);
 for (const [n, v] of CON) w(`  --con-${n}: ${v};`);
 w('');
+w(`  /* ── Numbered contrast bumps — finer decorative steps (borders, strokes).`);
+w(`     border-con-2 resolves --con-2 through the same utility as border-con-low. ─ */`);
+for (const [n, v] of CON_STEP) w(`  --con-${n}: ${v};`);
+w('');
 w(`  /* ── Luminance adjustment steps (~one 0–10 position each) ─────────── */`);
 for (const [n, v] of ADJ) w(`  --lum-adj-${n}: ${v};`);
 w(`}`);
@@ -195,8 +231,8 @@ w('');
 // ring-offset defaults to the page pole (lum-none): the offset is the gap the
 // ring sits in, so matching the page reads as a detached ring — and it auto-flips
 // white↔black for dark mode, unlike Tailwind's static white default.
-const defL = { bg: '5', tx: '10', dc: '6', bd: '3', bdt: '3', bdr: '3', bdb: '3', bdl: '3', bdx: '3', bdy: '3', bds: '3', bde: '3', ac: '5', sh: '5', rg: '5', ro: 'none', gf: '5', gt: '5' };
-const defC = { bg: 'low', tx: 'low', dc: 'low', bd: 'low', bdt: 'low', bdr: 'low', bdb: 'low', bdl: 'low', bdx: 'low', bdy: 'low', bds: 'low', bde: 'low', ac: 'mid', sh: 'low', rg: 'low', ro: 'low', gf: 'mid', gt: 'mid' };
+const defL = { bg: '5', tx: '10', dc: '6', bd: '3', bdt: '3', bdr: '3', bdb: '3', bdl: '3', bdx: '3', bdy: '3', bds: '3', bde: '3', ac: '5', sh: '5', rg: '5', ro: 'none', st: '6', fl: '6', gf: '5', gt: '5' };
+const defC = { bg: 'low', tx: 'low', dc: 'low', bd: 'low', bdt: 'low', bdr: 'low', bdb: 'low', bdl: 'low', bdx: 'low', bdy: 'low', bds: 'low', bde: 'low', ac: 'mid', sh: 'low', rg: 'low', ro: 'low', st: 'low', fl: 'low', gf: 'mid', gt: 'mid' };
 for (const p of PROPS) {
   w(`  --${p.stem}-l: var(--lum-${defL[p.stem]});`);
   if (p.stem === 'bg') w(`  --bg-anchor-l: var(--bg-l);`);
@@ -220,6 +256,19 @@ w(`  --lum-none: ${L_NONE[1]};`);
 for (let i = 1; i <= LUM_N; i++) w(`  --lum-${i}: ${L_DARK[i - 1]};`);
 w(`  --lum-max: ${L_MAX[1]};`);
 w(`}`);
+w('');
+
+// ── @property: contrast defaults ──────────────────────────────────────────
+// The per-property default ΔL that the bare *-con leaves read and the contrast-*
+// moods write. Registered so they're typed, inheriting (a mood cascades to a
+// subtree), and always resolve to a real number — the 'mid' profile — even before
+// any contrast-* is set, so a bare text-con paints out of the box.
+w(`/* ── Contrast defaults (@property) — the default ΔL each bare *-con leaf reads;
+   contrast-* moods write these. Registered so they inherit and always resolve to
+   a real number (the 'mid' profile) even with no contrast-* mood set. ───────── */`);
+for (const k of CON_DEF) {
+  w(`@property --${k}-con { syntax: "<number>"; inherits: true; initial-value: ${conVal(CON_DEF_INIT[k])}; }`);
+}
 w('');
 
 // ── property-less axis classes ──────────────────────────────────────────────
@@ -247,6 +296,16 @@ w(`  /* arbitrary chroma-[8]: chroma = n / 100 */`);
 for (const p of PROPS) w(`  --${p.stem}-c: calc(--value([integer]) / 100);`);
 w(`}`);
 w('');
+w(`/* ── Global (property-less) contrast — a named profile that sets the default
+   ΔL for every bare *-con leaf below, each property to its own step (text a
+   little, borders a lot). Paints nothing; a bare *-con (or valued *-con-*) does
+   the painting. The third mood axis, alongside hue-* and chroma-*. ─────────── */`);
+for (const [name, map] of CONTRAST) {
+  w(`@utility contrast-${name} {`);
+  for (const k of CON_DEF) w(`  --${k}-con: var(--con-${map[k]});`);
+  w(`}`);
+}
+w('');
 
 // ── per-property setters ───────────────────────────────────────────────────
 const titleOf = {
@@ -254,6 +313,7 @@ const titleOf = {
   bd: 'Border', bdt: 'Border Top', bdr: 'Border Right', bdb: 'Border Bottom', bdl: 'Border Left',
   bdx: 'Border Inline (x)', bdy: 'Border Block (y)', bds: 'Border Inline Start', bde: 'Border Inline End',
   ac: 'Accent Color', sh: 'Shadow Color', rg: 'Ring Color', ro: 'Ring Offset Color',
+  st: 'Stroke', fl: 'Fill',
   gf: 'Gradient From', gt: 'Gradient To',
 };
 for (const p of PROPS) {
@@ -327,32 +387,55 @@ for (const p of PROPS) {
 // --bd-*, ring reads --rg-*); only luminance is computed. A contrast-aware ring
 // is ideal for focus states. Like lum-up/down it's a leaf utility —
 // it paints without rewriting the cascading axis vars.
+//
+// Each family gets THREE forms:
+//   - valued   text-con-mid / text-con-2  → ΔL from the named or numbered scale
+//   - arbitrary text-con-[40]             → ΔL = n / 100
+//   - bare     text-con                   → ΔL from the inherited contrast-* mood
+// `key` names a PER-PROPERTY scratch offset (--tx-coff, --bd-coff, …) so stacking
+// text-con + border-con on one element (e.g. `* { @apply text-con border-con }`)
+// doesn't cross-wire — a single shared --con-off would make both read one value.
+// `def` is the inherited mood default the bare form reads (set by contrast-*).
 const CON_PROPS = [
-  { pre: 'text',    stem: 'tx', apply: (c) => `  color: ${c};` },
-  { pre: 'border',  stem: 'bd', apply: (c) => `  border-color: ${c};` },
-  { pre: 'outline', stem: 'bd', apply: (c) => `  outline-color: ${c};` },
-  { pre: 'ring',    stem: 'rg', apply: (c) => `  --tw-ring-color: ${c};` },
+  { pre: 'text',       stem: 'tx', key: 'tx', apply: (c) => `  color: ${c};` },
+  { pre: 'border',     stem: 'bd', key: 'bd', apply: (c) => `  border-color: ${c};` },
+  { pre: 'outline',    stem: 'bd', key: 'ol', apply: (c) => `  outline-color: ${c};` },
+  { pre: 'ring',       stem: 'rg', key: 'rg', apply: (c) => `  --tw-ring-color: ${c};` },
+  { pre: 'decoration', stem: 'dc', key: 'dc', apply: (c) => `  text-decoration-color: ${c};` },
+  { pre: 'stroke',     stem: 'st', key: 'st', apply: (c) => `  stroke: ${c};` },
+  { pre: 'fill',       stem: 'fl', key: 'fl', apply: (c) => `  fill: ${c};` },
 ];
 // direction: +1 when the background is dark (go lighter), −1 when light (go
 // darker); the ×1000 makes the clamp snap hard at the 0.6 luminance midpoint.
+// --con-dir is shared (identical for every property on an element — it depends
+// only on --bg-l), but the offset is per-property (--KEY-coff).
 const CON_DIR = `clamp(-1, calc((var(--con-flip) - var(--bg-l)) * 1000), 1)`;
-const conL = `clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--con-off)), 1)`;
+const conL = (key) => `clamp(0, calc(var(--bg-l) + var(--con-dir) * var(--${key}-coff)), 1)`;
 
 w(`/* ── Contrast (con-*) — luminance chosen to contrast with the element's own
    background (--bg-l), auto-directional so one class works on light OR dark
    surfaces. Inherits chroma/hue; only luminance is computed. A leaf utility:
-   like lum-up/down it paints without rewriting the cascading vars. ────────── */`);
+   like lum-up/down it paints without rewriting the cascading vars. The bare
+   form (text-con) reads the inherited contrast-* mood default. ────────────── */`);
 for (const p of CON_PROPS) {
+  const L = conL(p.key);
+  // valued: named (--con-mid) and numbered (--con-2) resolve through one utility
   w(`@utility ${p.pre}-con-* {`);
-  w(`  --con-off: --value(--con-*);`);
+  w(`  --${p.key}-coff: --value(--con-*);`);
   w(`  --con-dir: ${CON_DIR};`);
-  w(p.apply(col(p.stem, conL)));
+  w(p.apply(col(p.stem, L)));
   w(`}`);
   w(`@utility ${p.pre}-con-* {`);
   w(`  /* arbitrary ${p.pre}-con-[40]: ΔL = n / 100 off the background */`);
-  w(`  --con-off: calc(--value([integer]) / 100);`);
+  w(`  --${p.key}-coff: calc(--value([integer]) / 100);`);
   w(`  --con-dir: ${CON_DIR};`);
-  w(p.apply(col(p.stem, conL)));
+  w(p.apply(col(p.stem, L)));
+  w(`}`);
+  // bare: a no-op paint at the inherited contrast-* default ΔL (--KEY-con)
+  w(`@utility ${p.pre}-con {`);
+  w(`  --${p.key}-coff: var(--${p.key}-con);`);
+  w(`  --con-dir: ${CON_DIR};`);
+  w(p.apply(col(p.stem, L)));
   w(`}`);
   w('');
 }

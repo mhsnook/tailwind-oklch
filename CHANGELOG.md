@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html),
 but it is pre-1.0 so we are informal and almost everything gets a minor version bump.
 
+## [Unreleased]
+
+### Added
+
+- **`contrast-*` moods** — `contrast-low/mid/high`, the third cascading mood axis
+  alongside `hue-*` and `chroma-*`. A named profile that fans one intent out
+  across properties, each to its own step (text a little, borders a lot). Paints
+  nothing; the bare `*-con` leaves below inherit it. Defaults are
+  `@property`-registered so a bare `text-con` resolves even with no mood set.
+- **Bare `*-con`** — `text-con`, `border-con`, `outline-con`, `ring-con`,
+  `decoration-con`, `stroke-con`, `fill-con`: a no-op paint at the ΔL the nearest
+  `contrast-*` mood set. Apply globally (`* { @apply text-con border-con }`) or
+  per component.
+- **Numbered contrast bumps** — `con-1..5`, a finer decorative ramp resolved
+  through the same utilities as the named stops (`border-con-2`).
+- **`stroke-*` / `fill-*` families** — full lum/chroma/hue/con setters for SVG
+  paint, plus `stroke-con-*` / `fill-con-*`.
+- **`decoration-con-*`** — contrast-aware `text-decoration-color`.
+
+### Changed
+
+- The `con-*` scratch offset is now **per-property** (`--tx-coff`, `--bd-coff`, …)
+  instead of a shared `--con-off`, so stacking `con` leaves on one element (e.g.
+  `* { @apply text-con border-con }`) no longer cross-wires to a single ΔL.
+
 ## [0.8.0] - 2026-07-26
 
 ### Added
