@@ -1,0 +1,15 @@
+---
+import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import Layout from '@/layouts/Layout.astro'
+import Repl from '@/components/Repl.tsx'
+
+// Inline the real, shipped library CSS at build time and hand it to the REPL,
+// which feeds it to @tailwindcss/browser for runtime compilation (no build-time
+// tree-shaking — any class the user types is generated live in the iframe).
+const libCss = readFileSync(fileURLToPath(new URL('../../../index.css', import.meta.url)), 'utf8')
+---
+
+<Layout title="tailwind-oklch — REPL">
+	<Repl client:load libCss={libCss} />
+</Layout>
