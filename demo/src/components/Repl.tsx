@@ -56,6 +56,90 @@ h2 { @apply text-con-max; }
   <p>the .danger rule set the mood; these repaint into it.</p>
 </div>`,
 	},
+	{
+		name: 'Contrast mood — fans out per property',
+		body: 'bg-lum-1 text-con-mhigh',
+		css: `/* every element paints from the inherited contrast-* mood.
+   text and borders pick DIFFERENT steps from one profile. */
+* { @apply text-con border-con; }`,
+		markup: `<div class="space-y-3">
+  <div class="contrast-low bg-lum-2 rounded border p-3">
+    <p class="font-bold">contrast-low</p>
+    <p class="text-sm">text a little off the surface; border barely there</p>
+  </div>
+  <div class="contrast-mid bg-lum-2 rounded border p-3">
+    <p class="font-bold">contrast-mid</p>
+    <p class="text-sm">text mid; border a touch stronger</p>
+  </div>
+  <div class="contrast-high bg-lum-2 rounded border p-3">
+    <p class="font-bold">contrast-high</p>
+    <p class="text-sm">text high; border clearly visible</p>
+  </div>
+</div>`,
+	},
+	{
+		name: 'Two con ramps — named vs numbered',
+		body: 'bg-lum-3 text-con-mid',
+		css: '',
+		markup: `<div class="space-y-4">
+  <div class="space-y-1">
+    <p class="text-xs font-bold uppercase tracking-wide">named ramp — text</p>
+    <p class="text-con-low">text-con-low</p>
+    <p class="text-con-mid">text-con-mid</p>
+    <p class="text-con-high">text-con-high</p>
+  </div>
+  <div class="space-y-1">
+    <p class="text-xs font-bold uppercase tracking-wide">numbered ramp — decorative bumps</p>
+    <div class="flex gap-2">
+      <div class="border-con-1 grid size-14 place-items-center rounded border-2 text-xs">con-1</div>
+      <div class="border-con-2 grid size-14 place-items-center rounded border-2 text-xs">con-2</div>
+      <div class="border-con-3 grid size-14 place-items-center rounded border-2 text-xs">con-3</div>
+      <div class="border-con-low grid size-14 place-items-center rounded border-2 text-xs">con-low</div>
+    </div>
+  </div>
+</div>`,
+	},
+	{
+		name: 'SVG — fill/stroke: ride text vs independent',
+		body: 'bg-lum-1 text-con-mhigh hue-primary',
+		css: '',
+		markup: `<div class="flex items-center gap-5 text-con-high chroma-high">
+  <svg viewBox="0 0 24 24" class="size-10 fill-current"><circle cx="12" cy="12" r="10"/></svg>
+  <svg viewBox="0 0 24 24" class="size-10 fill-hue-info fill-chroma-high"><circle cx="12" cy="12" r="10"/></svg>
+  <svg viewBox="0 0 24 24" class="size-10 fill-none stroke-con-mid stroke-2"><circle cx="12" cy="12" r="9"/></svg>
+  <svg viewBox="0 0 24 24" class="size-10 fill-lum-6 stroke-con-1 stroke-2"><rect x="4" y="4" width="16" height="16" rx="3"/></svg>
+</div>
+<p class="mt-3 text-con-mid text-sm">
+  1 · fill-current follows the text colour &nbsp; 2 · fill-hue-info is independent &nbsp;
+  3 · stroke-con-mid off the surface &nbsp; 4 · fill-lum-6 + stroke-con-1 bump
+</p>`,
+	},
+	{
+		name: 'Edge — text-hue snaps to absolute L',
+		body: 'bg-lum-8 text-con-high',
+		css: '',
+		markup: `<div class="space-y-2">
+  <p>baseline — text-con-high on a dark surface (con → light text)</p>
+  <p class="text-hue-danger">+ text-hue-danger — snaps to the ABSOLUTE --tx-l (dark), not the con luminance</p>
+  <p class="hue-danger text-con-high">+ hue-danger mood with text-con-high — hue at the contrast luminance ✓</p>
+  <p class="text-con-high text-sm opacity-70">the fix: change hue via the hue-* mood, let the next text-con carry it</p>
+</div>`,
+	},
+	{
+		name: 'A mood is invisible until a paint',
+		body: 'bg-lum-1 text-con-mhigh',
+		css: '',
+		markup: `<div class="grid grid-cols-2 gap-4">
+  <div class="hue-warning bg-lum-2 rounded border p-3">
+    <p>hue-warning here — this text never repaints, so it stays the inherited colour</p>
+    <p class="text-con-mid">this one paints → picks up the warning hue</p>
+  </div>
+  <div class="bg-lum-2 rounded border p-3">
+    <p>no mood — identical to the sibling's un-painted line</p>
+    <p class="text-con-mid">painted, neutral</p>
+  </div>
+</div>`,
+	},
 ]
 
 function buildDoc(libCss: string, css: string, markup: string, body: string, dark: boolean) {
