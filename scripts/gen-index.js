@@ -258,6 +258,24 @@ w(`  --lum-max: ${L_MAX[1]};`);
 w(`}`);
 w('');
 
+// ── light ───────────────────────────────────────────────────────────────
+// The explicit inverse of .dark, so the scale flip NESTS both ways: a .light
+// subtree of a dark page (or of a .dark region) flips back to the light scale.
+// .dark/.light are absolute, not toggles — each just sets its scale — so they can
+// alternate to any depth. Emitted after .dark so an element carrying both resolves
+// to light. (:root is the implicit light default; this is the class form.)
+w(`/* ── Light scale (explicit) — the inverse of .dark, for a light island inside a
+   dark context. Absolute like .dark, so the two nest/alternate to any depth. */`);
+w(`.light {`);
+w(`  --lum-dir: -1;`);
+w(`  --lum-flip: 0;`);
+w(`  --con-flip: ${CON_MID[0]};`);
+w(`  --lum-none: ${L_NONE[0]};`);
+for (let i = 1; i <= LUM_N; i++) w(`  --lum-${i}: ${L_LIGHT[i - 1]};`);
+w(`  --lum-max: ${L_MAX[0]};`);
+w(`}`);
+w('');
+
 // ── @property: contrast defaults ──────────────────────────────────────────
 // The per-property default ΔL that the bare *-con leaves read and the contrast-*
 // moods write. Registered so they're typed, inheriting (a mood cascades to a

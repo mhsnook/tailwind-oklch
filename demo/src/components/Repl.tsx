@@ -212,6 +212,20 @@ h2 { @apply text-con-max; }
   </div>
 </div>`,
 	},
+	{
+		name: 'Scale flip — .dark / .light nest',
+		body: 'bg-lum-1 text-con-mhigh',
+		css: '',
+		markup: `<div class="bg-lum-2 space-y-2 rounded p-4">
+  <p class="text-con-mid">light page — bg-lum-2, low numbers hug the page</p>
+  <div class="dark bg-lum-2 space-y-2 rounded p-4">
+    <p class="text-con-mid">.dark island — same class names, flipped scale</p>
+    <div class="light bg-lum-2 rounded p-3">
+      <p class="text-con-mid">.light island inside the .dark one — flipped back</p>
+    </div>
+  </div>
+</div>`,
+	},
 ]
 
 function buildDoc(libCss: string, css: string, markup: string, body: string, dark: boolean, components: Component[]) {

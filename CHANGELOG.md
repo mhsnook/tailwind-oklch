@@ -24,6 +24,9 @@ but it is pre-1.0 so we are informal and almost everything gets a minor version 
 - **`stroke-*` / `fill-*` families** — full lum/chroma/hue/con setters for SVG
   paint, plus `stroke-con-*` / `fill-con-*`.
 - **`decoration-con-*`** — contrast-aware `text-decoration-color`.
+- **`.light`** — the explicit inverse of `.dark`, so the luminance scale flip
+  nests both ways: a `.light` island inside a dark page (or a `.dark` region)
+  flips back to the light scale. Both are absolute, so they alternate to any depth.
 
 ### Changed
 
