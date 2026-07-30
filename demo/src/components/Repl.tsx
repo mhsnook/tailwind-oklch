@@ -351,7 +351,7 @@ export default function Repl({ libCss }: { libCss: string }) {
 	function saveSnippet() {
 		const name = snipName.trim() || `snippet ${snippets.length + 1}`
 		setSnippets((prev) => [{ name, markup, body, css }, ...prev.filter((s) => s.name !== name)])
-		setSnipName('')
+		setSnipName(name) // keep the name so the next save updates this same entry
 	}
 	function deleteSnippet(name: string) {
 		setSnippets((prev) => prev.filter((s) => s.name !== name))
@@ -467,7 +467,7 @@ export default function Repl({ libCss }: { libCss: string }) {
 							style={{ ...field, flex: 1, resize: 'none', fontFamily: 'inherit', fontSize: '0.8rem', padding: '0.45rem 0.6rem' }}
 						/>
 						<button type="button" style={btn} onClick={saveSnippet}>
-							save scene
+							{snippets.some((s) => s.name === snipName.trim()) ? 'update scene' : 'save scene'}
 						</button>
 					</div>
 
@@ -483,7 +483,7 @@ export default function Repl({ libCss }: { libCss: string }) {
 						)}
 						{snippets.map((s) => (
 							<div key={s.name} style={{ ...chip, cursor: 'default' }}>
-								<button type="button" onClick={() => apply(s)} style={{ all: 'unset', cursor: 'pointer', flex: 1, fontFamily: mono, fontSize: '0.72rem' }}>
+								<button type="button" onClick={() => { apply(s); setSnipName(s.name) }} style={{ all: 'unset', cursor: 'pointer', flex: 1, fontFamily: mono, fontSize: '0.72rem' }}>
 									{s.name}
 								</button>
 								<button type="button" aria-label={`delete ${s.name}`} onClick={() => deleteSnippet(s.name)} style={{ all: 'unset', cursor: 'pointer', opacity: 0.6, padding: '0 4px' }}>
