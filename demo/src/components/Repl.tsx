@@ -5,6 +5,49 @@ type Snippet = { name: string; markup: string; body: string; css: string }
 const LS_KEY = 'twok-repl-v1'
 const DEFAULT_BODY = 'bg-lum-1 text-con-mhigh'
 
+type Component = { name: string; markup: string }
+
+// normalize a component name so <BigButton/>, <big-button/>, and {{big-button}}
+// all resolve to the same stored component.
+const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '')
+
+// Expand stored components referenced in the scene markup. Three interchangeable
+// forms, all equivalent:
+//   {{name}}     mustache
+//   <Name />     PascalCase, self-closing
+//   <name-x />   kebab / custom-element, self-closing
+// Attributes on a tag are ignored (components take no params). Only names present
+// in the store are replaced — anything else is left as-is, so real self-closing
+// HTML/SVG (<img/>, <circle/>) passes straight through. Re-runs so components can
+// nest inside each other; depth-capped so a self-reference can't hang.
+function expandComponents(src: string, components: Component[], depth = 0): string {
+	if (!components.length || depth > 10) return src
+	const map = new Map(components.map((c) => [norm(c.name), c.markup]))
+	let changed = false
+	const sub = (name: string, m: string) => {
+		const v = map.get(norm(name))
+		if (v == null) return m
+		changed = true
+		return v
+	}
+	const out = src
+		.replace(/\{\{\s*([\w-]+)\s*\}\}/g, (m, name) => sub(name, m))
+		.replace(/<([A-Za-z][\w-]*)(?:\s[^<>]*?)?\/>/g, (m, name) => sub(name, m))
+	return changed ? expandComponents(out, components, depth + 1) : out
+}
+
+// Seed component so the feature works out of the box. Uses lib classes that react
+// to the surrounding mood (con + lum-up), so the same button reads differently on
+// each surface it's dropped into.
+const DEFAULT_COMPONENTS: Component[] = [
+	{
+		name: 'big-button',
+		markup: `<button class="bg-lum-up-2 border-con-2 text-con-high rounded-lg border px-4 py-2 font-semibold">
+  Big Button
+</button>`,
+	},
+]
+
 const PRESETS: Snippet[] = [
 	{
 		name: 'Callout — mood on wrapper',
@@ -140,9 +183,26 @@ h2 { @apply text-con-max; }
   </div>
 </div>`,
 	},
+	{
+		name: 'Components — one button, three surfaces',
+		body: 'bg-lum-1 text-con-mhigh',
+		css: '',
+		markup: `<div class="flex flex-col gap-y-6">
+  <div>
+    {{big-button}}
+  </div>
+  <div class="hue-danger chroma-mhigh">
+    <BigButton />
+  </div>
+  <div class="contrast-low chroma-low">
+    <big-button />
+  </div>
+</div>`,
+	},
 ]
 
-function buildDoc(libCss: string, css: string, markup: string, body: string, dark: boolean) {
+function buildDoc(libCss: string, css: string, markup: string, body: string, dark: boolean, components: Component[]) {
+	const scene = expandComponents(markup, components)
 	return `<!doctype html><html class="${dark ? 'dark' : ''}"><head><meta charset="utf-8">
 <script>
 (function () {
@@ -169,11 +229,11 @@ ${css}
 </style>
 <style>*{box-sizing:border-box}html,body{margin:0}body{padding:1.5rem;font-family:ui-sans-serif,system-ui,sans-serif}</style>
 </head><body class="${body}">
-${markup}
+${scene}
 </body></html>`
 }
 
-type Persisted = { markup: string; body: string; css: string; dark: boolean; snippets: Snippet[] }
+type Persisted = { markup: string; body: string; css: string; dark: boolean; snippets: Snippet[]; components: Component[] }
 
 function loadState(): Persisted {
 	try {
@@ -186,12 +246,16 @@ function loadState(): Persisted {
 				css: p.css ?? '',
 				dark: !!p.dark,
 				snippets: (Array.isArray(p.snippets) ? p.snippets : []).map((s) => ({ ...s, css: s.css ?? '' })),
+				// undefined (older saved state) seeds the default; an explicit [] is respected.
+				components: Array.isArray(p.components)
+					? p.components.map((c) => ({ name: c.name, markup: c.markup ?? '' }))
+					: DEFAULT_COMPONENTS,
 			}
 		}
 	} catch {
 		/* ignore */
 	}
-	return { markup: PRESETS[0].markup, body: PRESETS[0].body, css: '', dark: false, snippets: [] }
+	return { markup: PRESETS[0].markup, body: PRESETS[0].body, css: '', dark: false, snippets: [], components: DEFAULT_COMPONENTS }
 }
 
 const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace'
@@ -203,6 +267,9 @@ export default function Repl({ libCss }: { libCss: string }) {
 	const [dark, setDark] = useState(false)
 	const [snippets, setSnippets] = useState<Snippet[]>([])
 	const [snipName, setSnipName] = useState('')
+	const [components, setComponents] = useState<Component[]>([])
+	const [compName, setCompName] = useState('')
+	const [compMarkup, setCompMarkup] = useState('')
 	const [hydrated, setHydrated] = useState(false)
 	const iframeRef = useRef<HTMLIFrameElement>(null)
 
@@ -213,23 +280,24 @@ export default function Repl({ libCss }: { libCss: string }) {
 		setCss(p.css)
 		setDark(p.dark)
 		setSnippets(p.snippets)
+		setComponents(p.components)
 		setHydrated(true)
 	}, [])
 
 	useEffect(() => {
 		if (!hydrated) return
-		localStorage.setItem(LS_KEY, JSON.stringify({ markup, body, css, dark, snippets }))
-	}, [hydrated, markup, body, css, dark, snippets])
+		localStorage.setItem(LS_KEY, JSON.stringify({ markup, body, css, dark, snippets, components }))
+	}, [hydrated, markup, body, css, dark, snippets, components])
 
 	// debounced re-render into the isolated preview
 	useEffect(() => {
 		if (!hydrated) return
 		const id = window.setTimeout(() => {
 			const f = iframeRef.current
-			if (f) f.srcdoc = buildDoc(libCss, css, markup, body, dark)
+			if (f) f.srcdoc = buildDoc(libCss, css, markup, body, dark, components)
 		}, 300)
 		return () => window.clearTimeout(id)
-	}, [hydrated, markup, body, css, dark, libCss])
+	}, [hydrated, markup, body, css, dark, libCss, components])
 
 	function apply(s: Snippet) {
 		setMarkup(s.markup)
@@ -243,6 +311,23 @@ export default function Repl({ libCss }: { libCss: string }) {
 	}
 	function deleteSnippet(name: string) {
 		setSnippets((prev) => prev.filter((s) => s.name !== name))
+	}
+
+	// ── components: the second save-point — reusable markup expanded into the scene
+	function saveComponent() {
+		const name = compName.trim()
+		if (!name) return
+		setComponents((prev) => [{ name, markup: compMarkup }, ...prev.filter((c) => norm(c.name) !== norm(name))])
+	}
+	function editComponent(c: Component) {
+		setCompName(c.name)
+		setCompMarkup(c.markup)
+	}
+	function deleteComponent(name: string) {
+		setComponents((prev) => prev.filter((c) => c.name !== name))
+	}
+	function insertComponent(c: Component) {
+		setMarkup((m) => `${m.replace(/\s*$/, '')}\n{{${c.name}}}\n`)
 	}
 
 	const btn: React.CSSProperties = {
@@ -330,15 +415,60 @@ export default function Repl({ libCss }: { libCss: string }) {
 						<textarea value={css} onChange={(e) => setCss(e.target.value)} spellCheck={false} rows={7} style={field} placeholder="p { @apply text-con-mid text-chroma-high; }" />
 					</label>
 
+					{/* ── components: reusable markup expanded into the scene by name ── */}
+					<div style={{ display: 'flex', flexDirection: 'column', gap: 6, borderTop: '1px solid var(--line)', paddingTop: '0.85rem' }}>
+						<div className="muted" style={heading}>components</div>
+						<p className="muted" style={{ fontSize: '0.72rem', margin: '0 0 2px', lineHeight: 1.5 }}>
+							reusable markup. drop it into the scene as <code style={{ fontFamily: mono }}>{'{{name}}'}</code>,{' '}
+							<code style={{ fontFamily: mono }}>&lt;Name /&gt;</code>, or <code style={{ fontFamily: mono }}>&lt;name /&gt;</code> — all equivalent. they nest.
+						</p>
+						<input
+							value={compName}
+							onChange={(e) => setCompName(e.target.value)}
+							placeholder="component name (e.g. big-button)"
+							spellCheck={false}
+							style={{ ...field, resize: 'none', fontFamily: mono, fontSize: '0.76rem', padding: '0.45rem 0.6rem' }}
+						/>
+						<textarea
+							value={compMarkup}
+							onChange={(e) => setCompMarkup(e.target.value)}
+							placeholder={'<button class="bg-lum-up-2 border-con-2 text-con-high …">…</button>'}
+							spellCheck={false}
+							rows={5}
+							style={field}
+						/>
+						<div style={{ display: 'flex', gap: 8 }}>
+							<button type="button" style={btn} onClick={saveComponent}>
+								save component
+							</button>
+							<button type="button" style={btn} onClick={() => { setCompName(''); setCompMarkup('') }}>
+								new
+							</button>
+						</div>
+						{components.map((c) => (
+							<div key={c.name} style={{ ...chip, cursor: 'default' }}>
+								<button type="button" onClick={() => editComponent(c)} style={{ all: 'unset', cursor: 'pointer', flex: 1, fontFamily: mono, fontSize: '0.72rem' }}>
+									{c.name}
+								</button>
+								<button type="button" title="insert into scene" aria-label={`insert ${c.name}`} onClick={() => insertComponent(c)} style={{ all: 'unset', cursor: 'pointer', opacity: 0.6, padding: '0 6px' }}>
+									＋
+								</button>
+								<button type="button" aria-label={`delete ${c.name}`} onClick={() => deleteComponent(c.name)} style={{ all: 'unset', cursor: 'pointer', opacity: 0.6, padding: '0 4px' }}>
+									✕
+								</button>
+							</div>
+						))}
+					</div>
+
 					<div style={{ display: 'flex', gap: 8 }}>
 						<input
 							value={snipName}
 							onChange={(e) => setSnipName(e.target.value)}
-							placeholder="name this example…"
+							placeholder="name this scene…"
 							style={{ ...field, flex: 1, resize: 'none', fontFamily: 'inherit', fontSize: '0.8rem', padding: '0.45rem 0.6rem' }}
 						/>
 						<button type="button" style={btn} onClick={saveSnippet}>
-							save
+							save scene
 						</button>
 					</div>
 
