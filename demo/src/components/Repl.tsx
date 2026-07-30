@@ -408,6 +408,40 @@ export default function Repl({ libCss }: { libCss: string }) {
 						<textarea value={css} onChange={(e) => setCss(e.target.value)} spellCheck={false} rows={7} style={field} placeholder="p { @apply text-con-mid text-chroma-high; }" />
 					</label>
 
+					<div style={{ display: 'flex', gap: 8, borderTop: '1px solid var(--line)', paddingTop: '0.85rem' }}>
+						<input
+							value={snipName}
+							onChange={(e) => setSnipName(e.target.value)}
+							placeholder="name this scene…"
+							style={{ ...field, flex: 1, resize: 'none', fontFamily: 'inherit', fontSize: '0.8rem', padding: '0.45rem 0.6rem' }}
+						/>
+						<button type="button" style={btn} onClick={saveSnippet}>
+							save scene
+						</button>
+					</div>
+
+					<div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+						<div className="muted" style={heading}>presets</div>
+						{PRESETS.map((s) => (
+							<button key={s.name} type="button" style={chip} onClick={() => apply(s)}>
+								<span>{s.name}</span>
+							</button>
+						))}
+						{snippets.length > 0 && (
+							<div className="muted" style={{ ...heading, marginTop: 6 }}>saved</div>
+						)}
+						{snippets.map((s) => (
+							<div key={s.name} style={{ ...chip, cursor: 'default' }}>
+								<button type="button" onClick={() => apply(s)} style={{ all: 'unset', cursor: 'pointer', flex: 1, fontFamily: mono, fontSize: '0.72rem' }}>
+									{s.name}
+								</button>
+								<button type="button" aria-label={`delete ${s.name}`} onClick={() => deleteSnippet(s.name)} style={{ all: 'unset', cursor: 'pointer', opacity: 0.6, padding: '0 4px' }}>
+									✕
+								</button>
+							</div>
+						))}
+					</div>
+
 					{/* ── components: reusable markup expanded into the scene by name ── */}
 					<div style={{ display: 'flex', flexDirection: 'column', gap: 6, borderTop: '1px solid var(--line)', paddingTop: '0.85rem' }}>
 						<div className="muted" style={heading}>components</div>
@@ -447,40 +481,6 @@ export default function Repl({ libCss }: { libCss: string }) {
 									＋
 								</button>
 								<button type="button" aria-label={`delete ${c.name}`} onClick={() => deleteComponent(c.name)} style={{ all: 'unset', cursor: 'pointer', opacity: 0.6, padding: '0 4px' }}>
-									✕
-								</button>
-							</div>
-						))}
-					</div>
-
-					<div style={{ display: 'flex', gap: 8 }}>
-						<input
-							value={snipName}
-							onChange={(e) => setSnipName(e.target.value)}
-							placeholder="name this scene…"
-							style={{ ...field, flex: 1, resize: 'none', fontFamily: 'inherit', fontSize: '0.8rem', padding: '0.45rem 0.6rem' }}
-						/>
-						<button type="button" style={btn} onClick={saveSnippet}>
-							save scene
-						</button>
-					</div>
-
-					<div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-						<div className="muted" style={heading}>presets</div>
-						{PRESETS.map((s) => (
-							<button key={s.name} type="button" style={chip} onClick={() => apply(s)}>
-								<span>{s.name}</span>
-							</button>
-						))}
-						{snippets.length > 0 && (
-							<div className="muted" style={{ ...heading, marginTop: 6 }}>saved</div>
-						)}
-						{snippets.map((s) => (
-							<div key={s.name} style={{ ...chip, cursor: 'default' }}>
-								<button type="button" onClick={() => apply(s)} style={{ all: 'unset', cursor: 'pointer', flex: 1, fontFamily: mono, fontSize: '0.72rem' }}>
-									{s.name}
-								</button>
-								<button type="button" aria-label={`delete ${s.name}`} onClick={() => deleteSnippet(s.name)} style={{ all: 'unset', cursor: 'pointer', opacity: 0.6, padding: '0 4px' }}>
 									✕
 								</button>
 							</div>
