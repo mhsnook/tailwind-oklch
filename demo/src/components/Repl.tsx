@@ -2,37 +2,30 @@ import { useEffect, useRef, useState } from 'react'
 
 type Snippet = { name: string; markup: string; body: string; css: string }
 
-const LS_KEY = 'twok-repl-v1'
+const LS_KEY = 'twok-repl-v2'
 const DEFAULT_BODY = 'bg-lum-1 text-con-mhigh'
 
 type Component = { name: string; markup: string }
 
-// normalize a name for matching, so <BigButton/> resolves to a component stored
-// as "BigButton" (or "big-button", or "Big Button") — casing/punctuation-agnostic.
-const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '')
-
-// a component's tag form: PascalCase, so any stored name inserts as <Name />.
-const toTag = (s: string) =>
-	s.split(/[^A-Za-z0-9]+/).filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join('') || 'Component'
-
 // Expand stored components referenced in the scene markup. One form, React-style:
 //   <BigButton />   — a self-closing PascalCase tag (uppercase first letter).
-// The uppercase first letter is what separates a component from real markup:
-// lowercase tags (<div/>, <circle/>, <my-web-component/>) are never touched, so
-// real self-closing HTML/SVG passes straight through. Attributes are ignored
-// (components take no params). Only names present in the store are replaced;
-// re-runs so components nest, depth-capped so a self-reference can't hang.
+// The name IS the key: <BigButton /> looks up a component saved as "BigButton",
+// verbatim — no case/punctuation munging. The uppercase first letter is what
+// separates a component from real markup: lowercase tags (<div/>, <circle/>,
+// <my-web-component/>) are never matched, so real self-closing HTML/SVG passes
+// straight through. Attributes are ignored (components take no params). Only names
+// present in the store are replaced; re-runs so components nest, depth-capped so a
+// self-reference can't hang.
 function expandComponents(src: string, components: Component[], depth = 0): string {
 	if (!components.length || depth > 10) return src
-	const map = new Map(components.map((c) => [norm(c.name), c.markup]))
+	const map = new Map(components.map((c) => [c.name, c.markup]))
 	let changed = false
-	const sub = (name: string, m: string) => {
-		const v = map.get(norm(name))
+	const out = src.replace(/<([A-Z][A-Za-z0-9]*)(?:\s[^<>]*?)?\/>/g, (m, name) => {
+		const v = map.get(name)
 		if (v == null) return m
 		changed = true
 		return v
-	}
-	const out = src.replace(/<([A-Z][A-Za-z0-9]*)(?:\s[^<>]*?)?\/>/g, (m, name) => sub(name, m))
+	})
 	return changed ? expandComponents(out, components, depth + 1) : out
 }
 
@@ -317,7 +310,7 @@ export default function Repl({ libCss }: { libCss: string }) {
 	function saveComponent() {
 		const name = compName.trim()
 		if (!name) return
-		setComponents((prev) => [{ name, markup: compMarkup }, ...prev.filter((c) => norm(c.name) !== norm(name))])
+		setComponents((prev) => [{ name, markup: compMarkup }, ...prev.filter((c) => c.name !== name)])
 	}
 	function editComponent(c: Component) {
 		setCompName(c.name)
@@ -327,7 +320,7 @@ export default function Repl({ libCss }: { libCss: string }) {
 		setComponents((prev) => prev.filter((c) => c.name !== name))
 	}
 	function insertComponent(c: Component) {
-		setMarkup((m) => `${m.replace(/\s*$/, '')}\n<${toTag(c.name)} />\n`)
+		setMarkup((m) => `${m.replace(/\s*$/, '')}\n<${c.name} />\n`)
 	}
 
 	const btn: React.CSSProperties = {
