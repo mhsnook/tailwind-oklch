@@ -7,24 +7,44 @@ const DEFAULT_BODY = 'bg-lum-1 text-con-mhigh'
 
 type Component = { name: string; markup: string }
 
+// grab a class="…" (or class='…') value out of an attribute string.
+const CLASS_ATTR = /class\s*=\s*"([^"]*)"|class\s*=\s*'([^']*)'/
+
+// Merge classes from an invocation (<BigButton class="hue-info" />) onto the
+// component's top-level element — appended to its existing class list, or added if
+// it has none. If a component has more than one top-level element only the first
+// gets them; that's on the author.
+function mergeClass(markup: string, classes: string): string {
+	if (!classes) return markup
+	return markup.replace(/<([a-zA-Z][\w-]*)((?:\s[^>]*?)?)(\/?)>/, (m, tag, attrs, selfClose) => {
+		const cls = CLASS_ATTR.exec(attrs)
+		if (!cls) return `<${tag}${attrs} class="${classes}"${selfClose}>`
+		const q = cls[1] != null ? '"' : "'"
+		const existing = cls[1] ?? cls[2] ?? ''
+		return `<${tag}${attrs.replace(cls[0], `class=${q}${(existing + ' ' + classes).trim()}${q}`)}${selfClose}>`
+	})
+}
+
 // Expand stored components referenced in the scene markup. One form, React-style:
-//   <BigButton />   — a self-closing PascalCase tag (uppercase first letter).
+//   <BigButton />                    — a self-closing PascalCase tag.
+//   <BigButton class="hue-info" />   — classes land on the component's top element.
 // The name IS the key: <BigButton /> looks up a component saved as "BigButton",
 // verbatim — no case/punctuation munging. The uppercase first letter is what
 // separates a component from real markup: lowercase tags (<div/>, <circle/>,
 // <my-web-component/>) are never matched, so real self-closing HTML/SVG passes
-// straight through. Attributes are ignored (components take no params). Only names
-// present in the store are replaced; re-runs so components nest, depth-capped so a
+// straight through. Attributes other than `class` are ignored. Only names present
+// in the store are replaced; re-runs so components nest, depth-capped so a
 // self-reference can't hang.
 function expandComponents(src: string, components: Component[], depth = 0): string {
 	if (!components.length || depth > 10) return src
 	const map = new Map(components.map((c) => [c.name, c.markup]))
 	let changed = false
-	const out = src.replace(/<([A-Z][A-Za-z0-9]*)(?:\s[^<>]*?)?\/>/g, (m, name) => {
+	const out = src.replace(/<([A-Z][A-Za-z0-9]*)((?:\s[^<>]*?)?)\/>/g, (m, name, attrs) => {
 		const v = map.get(name)
 		if (v == null) return m
 		changed = true
-		return v
+		const cls = CLASS_ATTR.exec(attrs || '')
+		return cls ? mergeClass(v, cls[1] ?? cls[2] ?? '') : v
 	})
 	return changed ? expandComponents(out, components, depth + 1) : out
 }
@@ -187,8 +207,8 @@ h2 { @apply text-con-max; }
   <div class="hue-danger chroma-mhigh">
     <BigButton />
   </div>
-  <div class="contrast-low chroma-low">
-    <BigButton />
+  <div>
+    <BigButton class="hue-info chroma-mhigh" />
   </div>
 </div>`,
 	},
@@ -447,7 +467,7 @@ export default function Repl({ libCss }: { libCss: string }) {
 						<div className="muted" style={heading}>components</div>
 						<p className="muted" style={{ fontSize: '0.72rem', margin: '0 0 2px', lineHeight: 1.5 }}>
 							reusable markup. drop it into the scene as <code style={{ fontFamily: mono }}>&lt;BigButton /&gt;</code> — a
-							self-closing PascalCase tag (like the component's name). they nest.
+							self-closing PascalCase tag (like the component's name). add <code style={{ fontFamily: mono }}>class="…"</code> and it lands on the component's top element. they nest.
 						</p>
 						<input
 							value={compName}
