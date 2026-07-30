@@ -276,6 +276,43 @@ w(`  --lum-max: ${L_MAX[0]};`);
 w(`}`);
 w('');
 
+// ── flip (context-relative) ───────────────────────────────────────────────
+// .flip becomes the OPPOSITE of its surroundings — invert a subtree without
+// knowing whether you're light or dark, and nested .flips alternate. A class
+// can't read its own inherited polarity and negate it (that's a cycle — see
+// cascade.md), so this queries the ANCESTOR's polarity (--lum-flip, already 0/1)
+// via a style container query and sets its own scale to the opposite. Different
+// scopes → no cycle. Requires style-query support (Chrome 111+, Safari 18+,
+// Firefox 128+); where unsupported it's a no-op (subtree keeps its scale), so
+// .dark/.light remain the universally-supported absolute tools.
+const scaleBlock = (flip, pad) => {
+  const L = flip ? L_DARK : L_LIGHT;
+  const lines = [
+    `${pad}--lum-dir: ${flip ? 1 : -1};`,
+    `${pad}--lum-flip: ${flip};`,
+    `${pad}--con-flip: ${CON_MID[flip]};`,
+    `${pad}--lum-none: ${L_NONE[flip]};`,
+  ];
+  for (let i = 1; i <= LUM_N; i++) lines.push(`${pad}--lum-${i}: ${L[i - 1]};`);
+  lines.push(`${pad}--lum-max: ${L_MAX[flip]};`);
+  return lines.join('\n');
+};
+w(`/* ── Flip (context-relative) — .flip inverts whatever scale it sits in, and
+   nested .flips alternate. Reads the ancestor's polarity (--lum-flip) via a
+   style query and applies the opposite scale, so there's no self-reference
+   cycle. Progressive: no-op where style queries are unsupported. */`);
+w(`@container style(--lum-flip: 0) {`);
+w(`  .flip {`);
+w(scaleBlock(1, '    '));
+w(`  }`);
+w(`}`);
+w(`@container style(--lum-flip: 1) {`);
+w(`  .flip {`);
+w(scaleBlock(0, '    '));
+w(`  }`);
+w(`}`);
+w('');
+
 // ── @property: contrast defaults ──────────────────────────────────────────
 // The per-property default ΔL that the bare *-con leaves read and the contrast-*
 // moods write. Registered so they're typed, inheriting (a mood cascades to a

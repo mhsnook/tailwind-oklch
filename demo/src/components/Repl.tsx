@@ -226,6 +226,23 @@ h2 { @apply text-con-max; }
   </div>
 </div>`,
 	},
+	{
+		name: 'Scale flip — .flip alternates by context',
+		body: 'bg-lum-1 text-con-mhigh',
+		css: '',
+		markup: `<div class="bg-lum-2 space-y-2 rounded p-4">
+  <p class="text-con-mid">page scale</p>
+  <div class="flip bg-lum-2 space-y-2 rounded p-4">
+    <p class="text-con-mid">.flip → opposite of the page</p>
+    <div class="flip bg-lum-2 space-y-2 rounded p-4">
+      <p class="text-con-mid">.flip again → back</p>
+      <div class="flip bg-lum-2 rounded p-3">
+        <p class="text-con-mid">…and again. same class every level, no light/dark named.</p>
+      </div>
+    </div>
+  </div>
+</div>`,
+	},
 ]
 
 function buildDoc(libCss: string, css: string, markup: string, body: string, dark: boolean, components: Component[]) {
