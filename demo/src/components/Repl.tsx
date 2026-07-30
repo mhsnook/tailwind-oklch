@@ -466,8 +466,8 @@ export default function Repl({ libCss }: { libCss: string }) {
 					<div style={{ display: 'flex', flexDirection: 'column', gap: 6, borderTop: '1px solid var(--line)', paddingTop: '0.85rem' }}>
 						<div className="muted" style={heading}>components</div>
 						<p className="muted" style={{ fontSize: '0.72rem', margin: '0 0 2px', lineHeight: 1.5 }}>
-							reusable markup. drop it into the scene as <code style={{ fontFamily: mono }}>&lt;BigButton /&gt;</code> — a
-							self-closing PascalCase tag (like the component's name). add <code style={{ fontFamily: mono }}>class="…"</code> and it lands on the component's top element. they nest.
+							reusable markup macros, always a self-closing PascalCase tag like <code style={{ fontFamily: mono }}>&lt;BigButton /&gt;</code>.
+							you can nest one inside another, but they don't take <code style={{ fontFamily: mono }}>{'{children}'}</code> and the only prop they accept is a class.
 						</p>
 						<input
 							value={compName}
