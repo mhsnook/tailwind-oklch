@@ -7,19 +7,21 @@ const DEFAULT_BODY = 'bg-lum-1 text-con-mhigh'
 
 type Component = { name: string; markup: string }
 
-// normalize a component name so <BigButton/>, <big-button/>, and {{big-button}}
-// all resolve to the same stored component.
+// normalize a name for matching, so <BigButton/> resolves to a component stored
+// as "BigButton" (or "big-button", or "Big Button") — casing/punctuation-agnostic.
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '')
 
-// Expand stored components referenced in the scene markup. Three interchangeable
-// forms, all equivalent:
-//   {{name}}     mustache
-//   <Name />     PascalCase, self-closing
-//   <name-x />   kebab / custom-element, self-closing
-// Attributes on a tag are ignored (components take no params). Only names present
-// in the store are replaced — anything else is left as-is, so real self-closing
-// HTML/SVG (<img/>, <circle/>) passes straight through. Re-runs so components can
-// nest inside each other; depth-capped so a self-reference can't hang.
+// a component's tag form: PascalCase, so any stored name inserts as <Name />.
+const toTag = (s: string) =>
+	s.split(/[^A-Za-z0-9]+/).filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join('') || 'Component'
+
+// Expand stored components referenced in the scene markup. One form, React-style:
+//   <BigButton />   — a self-closing PascalCase tag (uppercase first letter).
+// The uppercase first letter is what separates a component from real markup:
+// lowercase tags (<div/>, <circle/>, <my-web-component/>) are never touched, so
+// real self-closing HTML/SVG passes straight through. Attributes are ignored
+// (components take no params). Only names present in the store are replaced;
+// re-runs so components nest, depth-capped so a self-reference can't hang.
 function expandComponents(src: string, components: Component[], depth = 0): string {
 	if (!components.length || depth > 10) return src
 	const map = new Map(components.map((c) => [norm(c.name), c.markup]))
@@ -30,9 +32,7 @@ function expandComponents(src: string, components: Component[], depth = 0): stri
 		changed = true
 		return v
 	}
-	const out = src
-		.replace(/\{\{\s*([\w-]+)\s*\}\}/g, (m, name) => sub(name, m))
-		.replace(/<([A-Za-z][\w-]*)(?:\s[^<>]*?)?\/>/g, (m, name) => sub(name, m))
+	const out = src.replace(/<([A-Z][A-Za-z0-9]*)(?:\s[^<>]*?)?\/>/g, (m, name) => sub(name, m))
 	return changed ? expandComponents(out, components, depth + 1) : out
 }
 
@@ -41,7 +41,7 @@ function expandComponents(src: string, components: Component[], depth = 0): stri
 // each surface it's dropped into.
 const DEFAULT_COMPONENTS: Component[] = [
 	{
-		name: 'big-button',
+		name: 'BigButton',
 		markup: `<button class="bg-lum-up-2 border-con-2 text-con-high rounded-lg border px-4 py-2 font-semibold">
   Big Button
 </button>`,
@@ -184,18 +184,18 @@ h2 { @apply text-con-max; }
 </div>`,
 	},
 	{
-		name: 'Components — one button, three surfaces',
+		name: 'Components — one button, three moods',
 		body: 'bg-lum-1 text-con-mhigh',
 		css: '',
 		markup: `<div class="flex flex-col gap-y-6">
   <div>
-    {{big-button}}
+    <BigButton />
   </div>
   <div class="hue-danger chroma-mhigh">
     <BigButton />
   </div>
   <div class="contrast-low chroma-low">
-    <big-button />
+    <BigButton />
   </div>
 </div>`,
 	},
@@ -327,7 +327,7 @@ export default function Repl({ libCss }: { libCss: string }) {
 		setComponents((prev) => prev.filter((c) => c.name !== name))
 	}
 	function insertComponent(c: Component) {
-		setMarkup((m) => `${m.replace(/\s*$/, '')}\n{{${c.name}}}\n`)
+		setMarkup((m) => `${m.replace(/\s*$/, '')}\n<${toTag(c.name)} />\n`)
 	}
 
 	const btn: React.CSSProperties = {
@@ -419,13 +419,13 @@ export default function Repl({ libCss }: { libCss: string }) {
 					<div style={{ display: 'flex', flexDirection: 'column', gap: 6, borderTop: '1px solid var(--line)', paddingTop: '0.85rem' }}>
 						<div className="muted" style={heading}>components</div>
 						<p className="muted" style={{ fontSize: '0.72rem', margin: '0 0 2px', lineHeight: 1.5 }}>
-							reusable markup. drop it into the scene as <code style={{ fontFamily: mono }}>{'{{name}}'}</code>,{' '}
-							<code style={{ fontFamily: mono }}>&lt;Name /&gt;</code>, or <code style={{ fontFamily: mono }}>&lt;name /&gt;</code> — all equivalent. they nest.
+							reusable markup. drop it into the scene as <code style={{ fontFamily: mono }}>&lt;BigButton /&gt;</code> — a
+							self-closing PascalCase tag (like the component's name). they nest.
 						</p>
 						<input
 							value={compName}
 							onChange={(e) => setCompName(e.target.value)}
-							placeholder="component name (e.g. big-button)"
+							placeholder="component name, PascalCase (e.g. BigButton)"
 							spellCheck={false}
 							style={{ ...field, resize: 'none', fontFamily: mono, fontSize: '0.76rem', padding: '0.45rem 0.6rem' }}
 						/>
