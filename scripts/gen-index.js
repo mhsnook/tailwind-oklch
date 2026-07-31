@@ -299,9 +299,9 @@ w(conLines(0, '  '));
 w(`}`);
 w('');
 
-// ── flip (context-relative) ───────────────────────────────────────────────
-// .flip becomes the OPPOSITE of its surroundings — invert a subtree without
-// knowing whether you're light or dark, and nested .flips alternate. A class
+// ── lum-flip (context-relative) ───────────────────────────────────────────
+// .lum-flip becomes the OPPOSITE of its surroundings — invert a subtree without
+// knowing whether you're light or dark, and nested .lum-flips alternate. A class
 // can't read its own inherited polarity and negate it (that's a cycle — see
 // cascade.md), so this queries the ANCESTOR's polarity (--lum-flip, already 0/1)
 // via a style container query and sets its own scale to the opposite. Different
@@ -321,17 +321,17 @@ const scaleBlock = (flip, pad) => {
   lines.push(conLines(flip, pad));
   return lines.join('\n');
 };
-w(`/* ── Flip (context-relative) — .flip inverts whatever scale it sits in, and
-   nested .flips alternate. Reads the ancestor's polarity (--lum-flip) via a
+w(`/* ── Flip (context-relative) — .lum-flip inverts whatever scale it sits in, and
+   nested .lum-flips alternate. Reads the ancestor's polarity (--lum-flip) via a
    style query and applies the opposite scale, so there's no self-reference
    cycle. Progressive: no-op where style queries are unsupported. */`);
 w(`@container style(--lum-flip: 0) {`);
-w(`  .flip {`);
+w(`  .lum-flip {`);
 w(scaleBlock(1, '    '));
 w(`  }`);
 w(`}`);
 w(`@container style(--lum-flip: 1) {`);
-w(`  .flip {`);
+w(`  .lum-flip {`);
 w(scaleBlock(0, '    '));
 w(`  }`);
 w(`}`);

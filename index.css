@@ -286,12 +286,12 @@
   --con-max: 1;
 }
 
-/* ── Flip (context-relative) — .flip inverts whatever scale it sits in, and
-   nested .flips alternate. Reads the ancestor's polarity (--lum-flip) via a
+/* ── Flip (context-relative) — .lum-flip inverts whatever scale it sits in, and
+   nested .lum-flips alternate. Reads the ancestor's polarity (--lum-flip) via a
    style query and applies the opposite scale, so there's no self-reference
    cycle. Progressive: no-op where style queries are unsupported. */
 @container style(--lum-flip: 0) {
-  .flip {
+  .lum-flip {
     --lum-dir: 1;
     --lum-flip: 1;
     --con-flip: .639;
@@ -316,7 +316,7 @@
   }
 }
 @container style(--lum-flip: 1) {
-  .flip {
+  .lum-flip {
     --lum-dir: -1;
     --lum-flip: 0;
     --con-flip: .603;

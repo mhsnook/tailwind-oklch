@@ -27,8 +27,8 @@ but it is pre-1.0 so we are informal and almost everything gets a minor version 
 - **`.light`** — the explicit inverse of `.dark`, so the luminance scale flip
   nests both ways: a `.light` island inside a dark page (or a `.dark` region)
   flips back to the light scale. Both are absolute, so they alternate to any depth.
-- **`.flip`** — a context-relative scale flip: becomes the opposite of whatever
-  scale it sits in, and nested `.flip`s alternate, without hard-coding light/dark.
+- **`.lum-flip`** — a context-relative scale flip: becomes the opposite of whatever
+  scale it sits in, and nested `.lum-flip`s alternate, without hard-coding light/dark.
   Implemented with a style container query on `--lum-flip` (reads the ancestor's
   polarity, applies the opposite — no self-reference cycle). Progressive: a no-op
   where style queries are unsupported (Chrome 111+, Safari 18+, Firefox 128+), so

@@ -219,16 +219,16 @@ const PRESETS: Snippet[] = [
 </div>`,
 	},
 	{
-		name: '[10. standard]: .flip by context',
+		name: '[10. standard]: .lum-flip by context',
 		body: 'bg-lum-1 text-con-mhigh',
 		css: '',
 		markup: `<div class="bg-lum-2 space-y-2 rounded p-4">
   <p class="text-con-mid">page scale</p>
-  <div class="flip bg-lum-2 space-y-2 rounded p-4">
-    <p class="text-con-mid">.flip → opposite of the page</p>
-    <div class="flip bg-lum-2 space-y-2 rounded p-4">
-      <p class="text-con-mid">.flip again → back</p>
-      <div class="flip bg-lum-2 rounded p-3">
+  <div class="lum-flip bg-lum-2 space-y-2 rounded p-4">
+    <p class="text-con-mid">.lum-flip → opposite of the page</p>
+    <div class="lum-flip bg-lum-2 space-y-2 rounded p-4">
+      <p class="text-con-mid">.lum-flip again → back</p>
+      <div class="lum-flip bg-lum-2 rounded p-3">
         <p class="text-con-mid">…and again. same class every level, no light/dark named.</p>
       </div>
     </div>
@@ -292,12 +292,12 @@ const PRESETS: Snippet[] = [
 // Site theme: lift dark surfaces off pure black (dark stops start at ~.33 vs the
 // library's little-lift default of .22 — "medium" lift). A THEME override, not a
 // library change; this is what's active on the demo site + REPL. Applied to BOTH
-// dark-scale routes — an explicit .dark, and a .flip that resolves to dark (its
-// light-context branch) — so every dark surface on the site uses the same lift.
+// dark-scale routes — an explicit .dark, and a .lum-flip that resolves to dark
+// (its light-context branch) — so every dark surface on the site uses the lift.
 // (Derived from the same ramp with near = .33.)
 const DARK_LIFT = `--lum-1: .33; --lum-2: .405; --lum-3: .482; --lum-4: .561; --lum-5: .643; --lum-6: .723; --lum-7: .795; --lum-8: .853; --lum-9: .896; --lum-10: .92; --con-flip: .683;`
 const THEME_CSS = `.dark { ${DARK_LIFT} }
-@container style(--lum-flip: 0) { .flip { ${DARK_LIFT} } }`
+@container style(--lum-flip: 0) { .lum-flip { ${DARK_LIFT} } }`
 
 function buildDoc(libCss: string, css: string, markup: string, body: string, dark: boolean, components: Component[]) {
 	const scene = expandComponents(markup, components)
