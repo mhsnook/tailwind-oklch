@@ -18,27 +18,29 @@ const CSCALE = {
   primary: 0.86, accent: 0.90, success: 1.0,
   warning: 1.0, danger: 0.93, info: 0.88,
 };
-// Luminance scale. The numbered stops 1..N ride a front-loaded formula between a
-// near-page endpoint and a far (foreground) endpoint — never the pure extremes.
-// The pure poles live OUTSIDE the numbered scale, as named stops:
+// Luminance scale. The numbered stops 1..N run between a near-page endpoint and a
+// far (foreground) endpoint — never the pure extremes. The pure poles live OUTSIDE
+// the numbered scale, as named stops:
 //   none = the page color (white in light / black in dark) — zero contrast
 //   max  = full contrast   (black in light / white in dark)
-// Pull LUM_*_NEAR in (e.g. 0.90) for a lower-contrast theme; raise a gamma to hug
-// the page harder near stop 1. Light and dark carry SEPARATE gammas: near white a
-// tight front-load reads well, but near black the same curve muddies the low
-// surfaces (stops 1–3 crowd together) and leaves the mids too dark — so dark uses
-// a flatter gamma, opening the low-stop gaps and sitting the mid stops lighter.
+// Distribution is an ease-in-out S-curve, so stops bunch at BOTH edges (fine
+// surface control near the page AND near the foreground) and open up through the
+// middle. LUM_EASE > 1 sharpens the edge density; 1 = linear.
 const LUM_N = 10;
-const LUM_GAMMA_LIGHT = 1.45; // tight front-load: small steps near the white page
-const LUM_GAMMA_DARK = 1.15;  // flatter: low stops spread out, mid stops sit lighter
+const LUM_EASE = 1.5;
 const l3 = (x) => String(Math.round(x * 1000) / 1000).replace(/^0\./, '.');
-// front-loaded ramp from `near` (stop 1, hugging the page) to `far` (stop N)
-const ramp = (near, far, gamma) =>
-  Array.from({ length: LUM_N }, (_, k) =>
-    l3(near + (far - near) * Math.pow(k / (LUM_N - 1), gamma))
-  );
-const L_LIGHT = ramp(0.92, 0.13, LUM_GAMMA_LIGHT); // light: stop 1 near white, stop N a dark foreground
-const L_DARK  = ramp(0.185, 0.92, LUM_GAMMA_DARK); // dark: stop 1 near black, stop N a light foreground
+// symmetric ease-in-out on t∈[0,1]: dense near 0 and near 1, sparse in the middle
+const sCurve = (t, k) => {
+  const a = Math.pow(t, k), b = Math.pow(1 - t, k);
+  return a / (a + b);
+};
+const ramp = (near, far, k) =>
+  Array.from({ length: LUM_N }, (_, i) => l3(near + (far - near) * sCurve(i / (LUM_N - 1), k)));
+// Endpoints are asymmetric on purpose: light stop 1 hugs the white page (.92),
+// but dark stop 1 sits well OFF black (.30) — an elevated surface reads better on
+// a dark theme than one crushed against the page.
+const L_LIGHT = ramp(0.92, 0.13, LUM_EASE); // light: stop 1 hugs white, stop N a dark foreground
+const L_DARK  = ramp(0.30, 0.92, LUM_EASE); // dark: stop 1 elevated off black, stop N a light foreground
 const L_NONE = ['1', '0']; // [light, dark]
 const L_MAX  = ['0', '1'];
 // Contrast crossover: the surface L where con-* flips text direction (black↔white).
@@ -52,6 +54,12 @@ const CON_MID = [conMid(L_LIGHT), conMid(L_DARK)]; // [light, dark]
 // color, whatever that is here" — so a given hue clamps to its own ceiling.
 const CHROMA = [['low', '.02'], ['mlow', '.05'], ['mid', '.09'], ['mhigh', '.13'], ['high', '.17'], ['max', '.25']];
 const ADJ = [['1', '.08'], ['2', '.16'], ['3', '.24'], ['4', '.32'], ['5', '.40']];
+// Nudge parity: a fixed ΔL reads BIG on a light surface and TINY on a dark one, so
+// the nudge magnitude is scaled by (LUM_ADJ_PARITY − baseL). At white (L≈1) the
+// factor is ~0.5 (half step); at black (L≈0) it's ~1.5 (triple) — smaller bumps on
+// light shades, larger on dark, for even apparent steps. Uses the surface's own L,
+// so it works the same in light and dark mode. 1.5 keeps mid-scale (~L .5) at 1×.
+const LUM_ADJ_PARITY = 1.5;
 // Contrast strength: ΔL stepped off the background, toward contrast. Reuses the
 // low·mlow·mid·mhigh·high vocabulary — here it means "how much contrast". `high`
 // is a fixed ΔL that may or may not reach the extreme depending on the surface;
@@ -174,14 +182,15 @@ w(`/* tailwind-oklch — a cascade-first OKLCH color system for Tailwind v4
  *     write the result to --bg-l, so --bg-l always holds the REAL surface — which
  *     is what the con-* contrast utilities read.
  *
- * Luminance scale: numbered stops 1..10 on a front-loaded formula that auto-flips
+ * Luminance scale: numbered stops 1..10 on an ease-in-out curve that auto-flips
  * for dark mode, measuring contrast with the page. The pure poles are named:
  *   none = the page color: white (light) / black (dark) — zero contrast
- *   1    = the lightest usable surface (hugs the page)
+ *   1    = the lightest usable surface (light hugs the page; dark sits off black)
  *   10   = a strong foreground (near, but not, the max)
  *   max  = full contrast: black (light) / white (dark)
- * Stops hug the page near 1 and open up toward 10; none/max sit outside the
- * formula so a theme can pull the numbered range in without losing the extremes.
+ * Stops bunch at BOTH edges (fine control near the page and near the foreground)
+ * and open up through the middle; none/max sit outside the curve so a theme can
+ * pull the numbered range in without losing the extremes.
  *
  * Per-hue chroma: hues don't reach perceived saturation at the same chroma
  * (blue peaks early, yellow late), so each hue carries a --cscale-* multiplier
@@ -198,7 +207,7 @@ w('');
 w(`  /* ── Per-hue chroma scale — perceptual normalization multipliers ───── */`);
 for (const [n] of HUES) w(`  --cscale-${n}: ${CSCALE[n]};`);
 w('');
-w(`  /* ── Luminance scale (light). Numbered 1..${LUM_N} on a front-loaded formula;`);
+w(`  /* ── Luminance scale (light). Numbered 1..${LUM_N} on an ease-in-out curve;`);
 w(`     the pure poles are named: none = white (page), max = black (contrast). ── */`);
 w(`  --lum-none: ${L_NONE[0]};`);
 for (let i = 1; i <= LUM_N; i++) w(`  --lum-${i}: ${L_LIGHT[i - 1]};`);
@@ -429,8 +438,11 @@ for (const p of PROPS) {
   // compound.
   if (s === 'bg' || s === 'tx') {
     const base = s === 'bg' ? 'var(--bg-anchor-l)' : `var(--${s}-l)`;
-    const up = `clamp(0, calc(${base} + var(--lum-dir) * var(--${s}-l-adj)), 1)`;
-    const dn = `clamp(0, calc(${base} - var(--lum-dir) * var(--${s}-l-adj)), 1)`;
+    // parity: scale the step by (PARITY − baseL) so a nudge reads as an even
+    // perceptual jump — smaller on light shades, larger on dark. See LUM_ADJ_PARITY.
+    const step = `var(--${s}-l-adj) * (${LUM_ADJ_PARITY} - ${base})`;
+    const up = `clamp(0, calc(${base} + var(--lum-dir) * ${step}), 1)`;
+    const dn = `clamp(0, calc(${base} - var(--lum-dir) * ${step}), 1)`;
     w(`@utility ${p.pre}-lum-up-* {`);
     w(`  --${s}-l-adj: --value(--lum-adj-*);`);
     if (s === 'bg') { w(`  --bg-l: ${up};`); w(applyColor(p, 'var(--bg-l)')); }

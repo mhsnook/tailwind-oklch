@@ -39,12 +39,19 @@ but it is pre-1.0 so we are informal and almost everything gets a minor version 
 - The `con-*` scratch offset is now **per-property** (`--tx-coff`, `--bd-coff`, …)
   instead of a shared `--con-off`, so stacking `con` leaves on one element (e.g.
   `* { @apply text-con border-con }`) no longer cross-wires to a single ΔL.
-- **Dark scale retuned.** Light and dark now use separate luminance gammas (light
-  1.45, dark 1.15): near black the old front-load crowded the low stops and left
-  the mids dark, so dark now spreads the low-stop gaps (e.g. `lum-1`→`lum-2`) and
-  sits mid stops lighter (`lum-6` .498 → .559). The named `con-*` ramp is also
-  bumped in dark mode (`con-mid` .32 → .40) since dark surfaces need a bigger ΔL
-  for the same apparent contrast. Light mode is unchanged.
+- **Luminance scale reshaped to ease-in-out.** Numbered stops now ride a symmetric
+  S-curve, so they bunch at BOTH edges (fine surface control near the page *and*
+  near the foreground) and open through the middle — replacing the single-ended
+  front-load.
+- **Dark `lum-1` lifted off black** (.185 → .30): an elevated stop-1 surface reads
+  better on a dark theme than one crushed against the page. (Light stop 1 still
+  hugs white.)
+- **Nudges are now perceptual-parity scaled.** `lum-up/down` steps are multiplied
+  by `(1.5 − surfaceL)`, so a bump is smaller on a light shade and larger on a dark
+  one (a fixed ΔL otherwise reads big near white, tiny near black). Same behaviour
+  in light and dark, since it keys on the surface's own L.
+- **Dark `con-*` ramp bumped** (`con-mid` .32 → .40): dark surfaces need a bigger
+  ΔL for the same apparent contrast. Light mode contrast unchanged.
 
 ## [0.8.0] - 2026-07-26
 
