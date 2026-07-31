@@ -289,6 +289,16 @@ const PRESETS: Snippet[] = [
 	},
 ]
 
+// Site theme: lift dark surfaces off pure black — the numbered dark stops start at
+// ~.30 instead of the library default (.185). This is a THEME override, not a
+// library change: the library keeps its near-black default; this is what's active
+// on the demo site + REPL. (Derived from the same ramp with near = .30.)
+const THEME_CSS = `.dark {
+  --lum-1: .3; --lum-2: .379; --lum-3: .459; --lum-4: .543; --lum-5: .629;
+  --lum-6: .713; --lum-7: .788; --lum-8: .85; --lum-9: .895; --lum-10: .92;
+  --con-flip: .671;
+}`
+
 function buildDoc(libCss: string, css: string, markup: string, body: string, dark: boolean, components: Component[]) {
 	const scene = expandComponents(markup, components)
 	return `<!doctype html><html class="${dark ? 'dark' : ''}"><head><meta charset="utf-8">
@@ -313,6 +323,7 @@ function buildDoc(libCss: string, css: string, markup: string, body: string, dar
 @import "tailwindcss";
 @custom-variant dark (&:is(.dark, .dark *));
 ${libCss}
+${THEME_CSS}
 ${css}
 </style>
 <style>*{box-sizing:border-box}html,body{margin:0}body{padding:1.5rem;font-family:ui-sans-serif,system-ui,sans-serif}</style>

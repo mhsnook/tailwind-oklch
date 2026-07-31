@@ -23,24 +23,34 @@ const CSCALE = {
 // the numbered scale, as named stops:
 //   none = the page color (white in light / black in dark) — zero contrast
 //   max  = full contrast   (black in light / white in dark)
-// Distribution is an ease-in-out S-curve, so stops bunch at BOTH edges (fine
-// surface control near the page AND near the foreground) and open up through the
-// middle. LUM_EASE > 1 sharpens the edge density; 1 = linear.
+// Distribution concentrates stops toward high lightness (small gaps on light
+// shades, large on dark — even perceptual steps), with a gentle symmetric
+// edge-tightening on top — two shaping knobs:
+//   LUM_CRUNCH (medium): concentrate stops toward HIGH lightness, so stop-to-stop
+//     gaps are small on light shades and large on dark — even PERCEPTUAL steps
+//     (a fixed ΔL reads big near white, tiny near black). This is what makes
+//     lum-1→lum-2 tight in light mode and loose in dark, automatically: light
+//     stop 1 lives at high L, dark stop 1 at low L.
+//   LUM_EDGE (small): a gentle symmetric tightening at both ends, blended in.
 const LUM_N = 10;
-const LUM_EASE = 1.5;
+const LUM_CRUNCH = 1.4; // medium: stops denser toward high lightness
+const LUM_EDGE = 0.18;  // small: blend weight of the symmetric edge-ease
+const EDGE_K = 2;       // sharpness of the edge-ease curve
 const l3 = (x) => String(Math.round(x * 1000) / 1000).replace(/^0\./, '.');
-// symmetric ease-in-out on t∈[0,1]: dense near 0 and near 1, sparse in the middle
 const sCurve = (t, k) => {
   const a = Math.pow(t, k), b = Math.pow(1 - t, k);
   return a / (a + b);
 };
-const ramp = (near, far, k) =>
-  Array.from({ length: LUM_N }, (_, i) => l3(near + (far - near) * sCurve(i / (LUM_N - 1), k)));
-// Endpoints are asymmetric on purpose: light stop 1 hugs the white page (.92),
-// but dark stop 1 sits well OFF black (.30) — an elevated surface reads better on
-// a dark theme than one crushed against the page.
-const L_LIGHT = ramp(0.92, 0.13, LUM_EASE); // light: stop 1 hugs white, stop N a dark foreground
-const L_DARK  = ramp(0.30, 0.92, LUM_EASE); // dark: stop 1 elevated off black, stop N a light foreground
+// warp t∈[0,1]: crunch toward the higher-lightness endpoint (near for light, far
+// for dark), plus a small symmetric edge-ease blended in.
+const warp = (t, hiAtNear) => {
+  const crunch = hiAtNear ? Math.pow(t, LUM_CRUNCH) : 1 - Math.pow(1 - t, LUM_CRUNCH);
+  return (1 - LUM_EDGE) * crunch + LUM_EDGE * sCurve(t, EDGE_K);
+};
+const ramp = (near, far) =>
+  Array.from({ length: LUM_N }, (_, i) => l3(near + (far - near) * warp(i / (LUM_N - 1), near > far)));
+const L_LIGHT = ramp(0.92, 0.13);  // light: stop 1 hugs white; gaps tight up top, open toward the dark foreground
+const L_DARK  = ramp(0.185, 0.92); // dark: stop 1 near black; gaps open at the low end, tighten toward the light foreground
 const L_NONE = ['1', '0']; // [light, dark]
 const L_MAX  = ['0', '1'];
 // Contrast crossover: the surface L where con-* flips text direction (black↔white).
@@ -54,12 +64,6 @@ const CON_MID = [conMid(L_LIGHT), conMid(L_DARK)]; // [light, dark]
 // color, whatever that is here" — so a given hue clamps to its own ceiling.
 const CHROMA = [['low', '.02'], ['mlow', '.05'], ['mid', '.09'], ['mhigh', '.13'], ['high', '.17'], ['max', '.25']];
 const ADJ = [['1', '.08'], ['2', '.16'], ['3', '.24'], ['4', '.32'], ['5', '.40']];
-// Nudge parity: a fixed ΔL reads BIG on a light surface and TINY on a dark one, so
-// the nudge magnitude is scaled by (LUM_ADJ_PARITY − baseL). At white (L≈1) the
-// factor is ~0.5 (half step); at black (L≈0) it's ~1.5 (triple) — smaller bumps on
-// light shades, larger on dark, for even apparent steps. Uses the surface's own L,
-// so it works the same in light and dark mode. 1.5 keeps mid-scale (~L .5) at 1×.
-const LUM_ADJ_PARITY = 1.5;
 // Contrast strength: ΔL stepped off the background, toward contrast. Reuses the
 // low·mlow·mid·mhigh·high vocabulary — here it means "how much contrast". `high`
 // is a fixed ΔL that may or may not reach the extreme depending on the surface;
@@ -438,11 +442,8 @@ for (const p of PROPS) {
   // compound.
   if (s === 'bg' || s === 'tx') {
     const base = s === 'bg' ? 'var(--bg-anchor-l)' : `var(--${s}-l)`;
-    // parity: scale the step by (PARITY − baseL) so a nudge reads as an even
-    // perceptual jump — smaller on light shades, larger on dark. See LUM_ADJ_PARITY.
-    const step = `var(--${s}-l-adj) * (${LUM_ADJ_PARITY} - ${base})`;
-    const up = `clamp(0, calc(${base} + var(--lum-dir) * ${step}), 1)`;
-    const dn = `clamp(0, calc(${base} - var(--lum-dir) * ${step}), 1)`;
+    const up = `clamp(0, calc(${base} + var(--lum-dir) * var(--${s}-l-adj)), 1)`;
+    const dn = `clamp(0, calc(${base} - var(--lum-dir) * var(--${s}-l-adj)), 1)`;
     w(`@utility ${p.pre}-lum-up-* {`);
     w(`  --${s}-l-adj: --value(--lum-adj-*);`);
     if (s === 'bg') { w(`  --bg-l: ${up};`); w(applyColor(p, 'var(--bg-l)')); }
