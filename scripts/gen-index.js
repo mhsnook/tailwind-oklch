@@ -23,18 +23,22 @@ const CSCALE = {
 // The pure poles live OUTSIDE the numbered scale, as named stops:
 //   none = the page color (white in light / black in dark) — zero contrast
 //   max  = full contrast   (black in light / white in dark)
-// Pull LUM_*_NEAR in (e.g. 0.90) for a lower-contrast theme; raise LUM_GAMMA to
-// hug the page harder near stop 1.
+// Pull LUM_*_NEAR in (e.g. 0.90) for a lower-contrast theme; raise a gamma to hug
+// the page harder near stop 1. Light and dark carry SEPARATE gammas: near white a
+// tight front-load reads well, but near black the same curve muddies the low
+// surfaces (stops 1–3 crowd together) and leaves the mids too dark — so dark uses
+// a flatter gamma, opening the low-stop gaps and sitting the mid stops lighter.
 const LUM_N = 10;
-const LUM_GAMMA = 1.45; // >1 front-loads: small steps near the page, opening up lower
+const LUM_GAMMA_LIGHT = 1.45; // tight front-load: small steps near the white page
+const LUM_GAMMA_DARK = 1.15;  // flatter: low stops spread out, mid stops sit lighter
 const l3 = (x) => String(Math.round(x * 1000) / 1000).replace(/^0\./, '.');
 // front-loaded ramp from `near` (stop 1, hugging the page) to `far` (stop N)
-const ramp = (near, far) =>
+const ramp = (near, far, gamma) =>
   Array.from({ length: LUM_N }, (_, k) =>
-    l3(near + (far - near) * Math.pow(k / (LUM_N - 1), LUM_GAMMA))
+    l3(near + (far - near) * Math.pow(k / (LUM_N - 1), gamma))
   );
-const L_LIGHT = ramp(0.92, 0.13); // light: stop 1 near white, stop N a dark foreground
-const L_DARK  = ramp(0.185, 0.92); // dark: stop 1 near black, stop N a light foreground
+const L_LIGHT = ramp(0.92, 0.13, LUM_GAMMA_LIGHT); // light: stop 1 near white, stop N a dark foreground
+const L_DARK  = ramp(0.185, 0.92, LUM_GAMMA_DARK); // dark: stop 1 near black, stop N a light foreground
 const L_NONE = ['1', '0']; // [light, dark]
 const L_MAX  = ['0', '1'];
 // Contrast crossover: the surface L where con-* flips text direction (black↔white).
@@ -54,6 +58,10 @@ const ADJ = [['1', '.08'], ['2', '.16'], ['3', '.24'], ['4', '.32'], ['5', '.40'
 // `max` uses a ≥1 offset so the clamp always snaps to pure black/white — a
 // guaranteed contrast-color(), regardless of surface.
 const CON = [['low', '.18'], ['mlow', '.25'], ['mid', '.32'], ['mhigh', '.42'], ['high', '.55'], ['max', '1']];
+// Dark surfaces need a bigger ΔL for the same apparent contrast, so the named
+// ramp is bumped in dark mode (numbered bumps stay put — they're decorative).
+const CON_DARK = [['low', '.24'], ['mlow', '.32'], ['mid', '.40'], ['mhigh', '.50'], ['high', '.65'], ['max', '1']];
+const conLines = (flip, pad) => (flip ? CON_DARK : CON).map(([n, v]) => `${pad}--con-${n}: ${v};`).join('\n');
 // Numbered contrast ramp — a finer "bump" scale for decorative edges (borders,
 // outlines, SVG strokes). Smaller ΔL steps than the named ramp: text reaches for
 // the named stops, decoration for these numbers. Same background-relative math,
@@ -255,6 +263,7 @@ w(`  --con-flip: ${CON_MID[1]};`);
 w(`  --lum-none: ${L_NONE[1]};`);
 for (let i = 1; i <= LUM_N; i++) w(`  --lum-${i}: ${L_DARK[i - 1]};`);
 w(`  --lum-max: ${L_MAX[1]};`);
+w(conLines(1, '  '));
 w(`}`);
 w('');
 
@@ -273,6 +282,7 @@ w(`  --con-flip: ${CON_MID[0]};`);
 w(`  --lum-none: ${L_NONE[0]};`);
 for (let i = 1; i <= LUM_N; i++) w(`  --lum-${i}: ${L_LIGHT[i - 1]};`);
 w(`  --lum-max: ${L_MAX[0]};`);
+w(conLines(0, '  '));
 w(`}`);
 w('');
 
@@ -295,6 +305,7 @@ const scaleBlock = (flip, pad) => {
   ];
   for (let i = 1; i <= LUM_N; i++) lines.push(`${pad}--lum-${i}: ${L[i - 1]};`);
   lines.push(`${pad}--lum-max: ${L_MAX[flip]};`);
+  lines.push(conLines(flip, pad));
   return lines.join('\n');
 };
 w(`/* ── Flip (context-relative) — .flip inverts whatever scale it sits in, and

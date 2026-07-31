@@ -238,19 +238,25 @@
 .dark {
   --lum-dir: 1;
   --lum-flip: 1;
-  --con-flip: .455;
+  --con-flip: .517;
   --lum-none: 0;
   --lum-1: .185;
-  --lum-2: .215;
-  --lum-3: .268;
-  --lum-4: .334;
-  --lum-5: .412;
-  --lum-6: .498;
-  --lum-7: .593;
-  --lum-8: .696;
-  --lum-9: .805;
+  --lum-2: .244;
+  --lum-3: .315;
+  --lum-4: .393;
+  --lum-5: .474;
+  --lum-6: .559;
+  --lum-7: .646;
+  --lum-8: .736;
+  --lum-9: .827;
   --lum-10: .92;
   --lum-max: 1;
+  --con-low: .24;
+  --con-mlow: .32;
+  --con-mid: .40;
+  --con-mhigh: .50;
+  --con-high: .65;
+  --con-max: 1;
 }
 
 /* ── Light scale (explicit) — the inverse of .dark, for a light island inside a
@@ -271,6 +277,12 @@
   --lum-9: .254;
   --lum-10: .13;
   --lum-max: 0;
+  --con-low: .18;
+  --con-mlow: .25;
+  --con-mid: .32;
+  --con-mhigh: .42;
+  --con-high: .55;
+  --con-max: 1;
 }
 
 /* ── Flip (context-relative) — .flip inverts whatever scale it sits in, and
@@ -281,19 +293,25 @@
   .flip {
     --lum-dir: 1;
     --lum-flip: 1;
-    --con-flip: .455;
+    --con-flip: .517;
     --lum-none: 0;
     --lum-1: .185;
-    --lum-2: .215;
-    --lum-3: .268;
-    --lum-4: .334;
-    --lum-5: .412;
-    --lum-6: .498;
-    --lum-7: .593;
-    --lum-8: .696;
-    --lum-9: .805;
+    --lum-2: .244;
+    --lum-3: .315;
+    --lum-4: .393;
+    --lum-5: .474;
+    --lum-6: .559;
+    --lum-7: .646;
+    --lum-8: .736;
+    --lum-9: .827;
     --lum-10: .92;
     --lum-max: 1;
+    --con-low: .24;
+    --con-mlow: .32;
+    --con-mid: .40;
+    --con-mhigh: .50;
+    --con-high: .65;
+    --con-max: 1;
   }
 }
 @container style(--lum-flip: 1) {
@@ -313,6 +331,12 @@
     --lum-9: .254;
     --lum-10: .13;
     --lum-max: 0;
+    --con-low: .18;
+    --con-mlow: .25;
+    --con-mid: .32;
+    --con-mhigh: .42;
+    --con-high: .55;
+    --con-max: 1;
   }
 }
 

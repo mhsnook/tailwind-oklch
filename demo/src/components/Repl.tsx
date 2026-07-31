@@ -55,7 +55,7 @@ function expandComponents(src: string, components: Component[], depth = 0): stri
 const DEFAULT_COMPONENTS: Component[] = [
 	{
 		name: 'BigButton',
-		markup: `<button class="bg-lum-up-2 border-con-2 text-con-high rounded-lg border px-4 py-2 font-semibold">
+		markup: `<button class="bg-lum-up-2 hover:bg-lum-up-3 border-con-2 text-con-high rounded-lg border px-4 py-2 font-semibold transition-colors">
   Big Button
 </button>`,
 	},
@@ -64,7 +64,7 @@ const DEFAULT_COMPONENTS: Component[] = [
 const PRESETS: Snippet[] = [
 	{
 		name: '[1. showcase]: an upgrade card, mood down the tree',
-		body: 'bg-lum-3',
+		body: 'bg-lum-none',
 		css: '',
 		markup: `<section class="hue-primary chroma-mid contrast-mid bg-lum-1 mx-auto max-w-md space-y-4 rounded-xl border border-con-2 p-6">
   <header class="space-y-1">
@@ -88,12 +88,12 @@ const PRESETS: Snippet[] = [
   <aside class="hue-success chroma-mhigh bg-lum-2 space-y-1 rounded-lg border border-con-1 p-4">
     <p class="text-con-high text-sm font-semibold">Upgrade to Pro</p>
     <p class="text-con-mid text-xs">Analytics, priority support, and custom domains.</p>
-    <button class="bg-lum-6 text-con-max chroma-high mt-2 w-full rounded-lg px-4 py-2 text-sm font-semibold">Upgrade — $29/mo</button>
+    <button class="bg-lum-6 hover:bg-lum-7 text-con-max chroma-high mt-2 w-full rounded-lg px-4 py-2 text-sm font-semibold transition-colors">Upgrade — $29/mo</button>
   </aside>
 
   <footer class="flex items-center justify-between">
-    <button class="text-con-mid text-sm">Manage billing</button>
-    <button class="text-con-high border-con-2 rounded-lg border px-3 py-1.5 text-sm font-medium">Cancel plan</button>
+    <button class="text-con-mid hover:text-con-high text-sm transition-colors">Manage billing</button>
+    <button class="text-con-high border-con-2 hover:bg-lum-2 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors">Cancel plan</button>
   </footer>
 </section>`,
 	},

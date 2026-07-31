@@ -39,6 +39,12 @@ but it is pre-1.0 so we are informal and almost everything gets a minor version 
 - The `con-*` scratch offset is now **per-property** (`--tx-coff`, `--bd-coff`, …)
   instead of a shared `--con-off`, so stacking `con` leaves on one element (e.g.
   `* { @apply text-con border-con }`) no longer cross-wires to a single ΔL.
+- **Dark scale retuned.** Light and dark now use separate luminance gammas (light
+  1.45, dark 1.15): near black the old front-load crowded the low stops and left
+  the mids dark, so dark now spreads the low-stop gaps (e.g. `lum-1`→`lum-2`) and
+  sits mid stops lighter (`lum-6` .498 → .559). The named `con-*` ramp is also
+  bumped in dark mode (`con-mid` .32 → .40) since dark surfaces need a bigger ΔL
+  for the same apparent contrast. Light mode is unchanged.
 
 ## [0.8.0] - 2026-07-26
 
