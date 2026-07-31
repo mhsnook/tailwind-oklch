@@ -289,15 +289,15 @@ const PRESETS: Snippet[] = [
 	},
 ]
 
-// Site theme: lift dark surfaces off pure black — the numbered dark stops start at
-// ~.30 instead of the library default (.185). This is a THEME override, not a
-// library change: the library keeps its near-black default; this is what's active
-// on the demo site + REPL. (Derived from the same ramp with near = .30.)
-const THEME_CSS = `.dark {
-  --lum-1: .3; --lum-2: .379; --lum-3: .459; --lum-4: .543; --lum-5: .629;
-  --lum-6: .713; --lum-7: .788; --lum-8: .85; --lum-9: .895; --lum-10: .92;
-  --con-flip: .671;
-}`
+// Site theme: lift dark surfaces off pure black (dark stops start at ~.33 vs the
+// library's little-lift default of .22 — "medium" lift). A THEME override, not a
+// library change; this is what's active on the demo site + REPL. Applied to BOTH
+// dark-scale routes — an explicit .dark, and a .flip that resolves to dark (its
+// light-context branch) — so every dark surface on the site uses the same lift.
+// (Derived from the same ramp with near = .33.)
+const DARK_LIFT = `--lum-1: .33; --lum-2: .405; --lum-3: .482; --lum-4: .561; --lum-5: .643; --lum-6: .723; --lum-7: .795; --lum-8: .853; --lum-9: .896; --lum-10: .92; --con-flip: .683;`
+const THEME_CSS = `.dark { ${DARK_LIFT} }
+@container style(--lum-flip: 0) { .flip { ${DARK_LIFT} } }`
 
 function buildDoc(libCss: string, css: string, markup: string, body: string, dark: boolean, components: Component[]) {
 	const scene = expandComponents(markup, components)

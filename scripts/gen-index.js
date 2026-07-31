@@ -50,7 +50,7 @@ const warp = (t, hiAtNear) => {
 const ramp = (near, far) =>
   Array.from({ length: LUM_N }, (_, i) => l3(near + (far - near) * warp(i / (LUM_N - 1), near > far)));
 const L_LIGHT = ramp(0.92, 0.13);  // light: stop 1 hugs white; gaps tight up top, open toward the dark foreground
-const L_DARK  = ramp(0.185, 0.92); // dark: stop 1 near black; gaps open at the low end, tighten toward the light foreground
+const L_DARK  = ramp(0.22, 0.92);  // dark: stop 1 just off black (a little lift; a theme can lift it further)
 const L_NONE = ['1', '0']; // [light, dark]
 const L_MAX  = ['0', '1'];
 // Contrast crossover: the surface L where con-* flips text direction (black↔white).
@@ -442,8 +442,14 @@ for (const p of PROPS) {
   // compound.
   if (s === 'bg' || s === 'tx') {
     const base = s === 'bg' ? 'var(--bg-anchor-l)' : `var(--${s}-l)`;
-    const up = `clamp(0, calc(${base} + var(--lum-dir) * var(--${s}-l-adj)), 1)`;
-    const dn = `clamp(0, calc(${base} - var(--lum-dir) * var(--${s}-l-adj)), 1)`;
+    // Track the stop spacing so a nudge ≈ one local stop (bg-lum-up-1 ≈ bg-lum-2):
+    // stop gaps are widest through low/mid L and tighten toward white, so scale the
+    // step by a factor of the surface's own L — full through the low/mid plateau,
+    // dropping to ~0.4 near white. See the ramp's LUM_CRUNCH.
+    const factor = `clamp(0.4, calc(1.35 - (${base} - 0.6) * 3), 1.35)`;
+    const step = `calc(var(--${s}-l-adj) * ${factor})`;
+    const up = `clamp(0, calc(${base} + var(--lum-dir) * ${step}), 1)`;
+    const dn = `clamp(0, calc(${base} - var(--lum-dir) * ${step}), 1)`;
     w(`@utility ${p.pre}-lum-up-* {`);
     w(`  --${s}-l-adj: --value(--lum-adj-*);`);
     if (s === 'bg') { w(`  --bg-l: ${up};`); w(applyColor(p, 'var(--bg-l)')); }

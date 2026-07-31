@@ -46,6 +46,13 @@ but it is pre-1.0 so we are informal and almost everything gets a minor version 
   dark automatically (light stop 1 lives at high L, dark stop 1 at low L). A small
   symmetric edge-tightening (`LUM_EDGE`) is blended on top. Replaces the old
   single-ended front-load.
+- **Nudges track the stop spacing.** `lum-up/down` steps are scaled by a factor of
+  the surface's own L so a nudge lands on ≈ one local stop — `bg-lum-up-1` ≈
+  `bg-lum-2`. The gap is widest through low/mid L and tightens toward white, so the
+  factor is full through the plateau and drops to ~0.4 near white (matching the
+  crunch). Works the same in light and dark, since it keys on the surface's L.
+- **Dark stop 1 lifted a little off black** (.185 → .22) as the library default —
+  a hair of elevation reads better than pure near-black; a theme can lift further.
 - **Dark `con-*` ramp bumped** (`con-mid` .32 → .40): dark surfaces need a bigger
   ΔL for the same apparent contrast. Light mode contrast unchanged.
 

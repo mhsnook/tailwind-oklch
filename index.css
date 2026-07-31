@@ -239,17 +239,17 @@
 .dark {
   --lum-dir: 1;
   --lum-flip: 1;
-  --con-flip: .625;
+  --con-flip: .639;
   --lum-none: 0;
-  --lum-1: .185;
-  --lum-2: .279;
-  --lum-3: .374;
-  --lum-4: .473;
-  --lum-5: .575;
-  --lum-6: .675;
-  --lum-7: .764;
-  --lum-8: .837;
-  --lum-9: .89;
+  --lum-1: .22;
+  --lum-2: .309;
+  --lum-3: .4;
+  --lum-4: .494;
+  --lum-5: .591;
+  --lum-6: .686;
+  --lum-7: .772;
+  --lum-8: .841;
+  --lum-9: .892;
   --lum-10: .92;
   --lum-max: 1;
   --con-low: .24;
@@ -294,17 +294,17 @@
   .flip {
     --lum-dir: 1;
     --lum-flip: 1;
-    --con-flip: .625;
+    --con-flip: .639;
     --lum-none: 0;
-    --lum-1: .185;
-    --lum-2: .279;
-    --lum-3: .374;
-    --lum-4: .473;
-    --lum-5: .575;
-    --lum-6: .675;
-    --lum-7: .764;
-    --lum-8: .837;
-    --lum-9: .89;
+    --lum-1: .22;
+    --lum-2: .309;
+    --lum-3: .4;
+    --lum-4: .494;
+    --lum-5: .591;
+    --lum-6: .686;
+    --lum-7: .772;
+    --lum-8: .841;
+    --lum-9: .892;
     --lum-10: .92;
     --lum-max: 1;
     --con-low: .24;
@@ -555,12 +555,12 @@
 }
 @utility bg-lum-up-* {
   --bg-l-adj: --value(--lum-adj-*);
-  --bg-l: clamp(0, calc(var(--bg-anchor-l) + var(--lum-dir) * var(--bg-l-adj)), 1);
+  --bg-l: clamp(0, calc(var(--bg-anchor-l) + var(--lum-dir) * calc(var(--bg-l-adj) * clamp(0.4, calc(1.35 - (var(--bg-anchor-l) - 0.6) * 3), 1.35))), 1);
   background-color: oklch(var(--bg-l) calc(var(--bg-c) * var(--bg-cs) * clamp(0, calc((1 - (var(--bg-l))) * var(--chroma-taper)), 1)) var(--bg-h));
 }
 @utility bg-lum-down-* {
   --bg-l-adj: --value(--lum-adj-*);
-  --bg-l: clamp(0, calc(var(--bg-anchor-l) - var(--lum-dir) * var(--bg-l-adj)), 1);
+  --bg-l: clamp(0, calc(var(--bg-anchor-l) - var(--lum-dir) * calc(var(--bg-l-adj) * clamp(0.4, calc(1.35 - (var(--bg-anchor-l) - 0.6) * 3), 1.35))), 1);
   background-color: oklch(var(--bg-l) calc(var(--bg-c) * var(--bg-cs) * clamp(0, calc((1 - (var(--bg-l))) * var(--chroma-taper)), 1)) var(--bg-h));
 }
 
@@ -595,11 +595,11 @@
 }
 @utility text-lum-up-* {
   --tx-l-adj: --value(--lum-adj-*);
-  color: oklch(clamp(0, calc(var(--tx-l) + var(--lum-dir) * var(--tx-l-adj)), 1) calc(var(--tx-c) * var(--tx-cs) * clamp(0, calc((1 - (clamp(0, calc(var(--tx-l) + var(--lum-dir) * var(--tx-l-adj)), 1))) * var(--chroma-taper)), 1)) var(--tx-h));
+  color: oklch(clamp(0, calc(var(--tx-l) + var(--lum-dir) * calc(var(--tx-l-adj) * clamp(0.4, calc(1.35 - (var(--tx-l) - 0.6) * 3), 1.35))), 1) calc(var(--tx-c) * var(--tx-cs) * clamp(0, calc((1 - (clamp(0, calc(var(--tx-l) + var(--lum-dir) * calc(var(--tx-l-adj) * clamp(0.4, calc(1.35 - (var(--tx-l) - 0.6) * 3), 1.35))), 1))) * var(--chroma-taper)), 1)) var(--tx-h));
 }
 @utility text-lum-down-* {
   --tx-l-adj: --value(--lum-adj-*);
-  color: oklch(clamp(0, calc(var(--tx-l) - var(--lum-dir) * var(--tx-l-adj)), 1) calc(var(--tx-c) * var(--tx-cs) * clamp(0, calc((1 - (clamp(0, calc(var(--tx-l) - var(--lum-dir) * var(--tx-l-adj)), 1))) * var(--chroma-taper)), 1)) var(--tx-h));
+  color: oklch(clamp(0, calc(var(--tx-l) - var(--lum-dir) * calc(var(--tx-l-adj) * clamp(0.4, calc(1.35 - (var(--tx-l) - 0.6) * 3), 1.35))), 1) calc(var(--tx-c) * var(--tx-cs) * clamp(0, calc((1 - (clamp(0, calc(var(--tx-l) - var(--lum-dir) * calc(var(--tx-l-adj) * clamp(0.4, calc(1.35 - (var(--tx-l) - 0.6) * 3), 1.35))), 1))) * var(--chroma-taper)), 1)) var(--tx-h));
 }
 
 /* ── Text Decoration ─────────────────────────────────────────────────── */
