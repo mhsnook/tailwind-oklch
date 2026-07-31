@@ -63,7 +63,42 @@ const DEFAULT_COMPONENTS: Component[] = [
 
 const PRESETS: Snippet[] = [
 	{
-		name: 'Callout — mood on wrapper',
+		name: '[1. showcase]: an upgrade card, mood down the tree',
+		body: 'bg-lum-3',
+		css: '',
+		markup: `<section class="hue-primary chroma-mid contrast-mid bg-lum-1 mx-auto max-w-md space-y-4 rounded-xl border border-con-2 p-6">
+  <header class="space-y-1">
+    <p class="text-con-mlow text-xs font-semibold uppercase tracking-wide">Current plan</p>
+    <h1 class="text-con-high text-2xl font-bold">Starter</h1>
+    <p class="text-con-mid text-sm">Everything you need to get going, with room to grow.</p>
+  </header>
+
+  <div class="bg-lum-2 space-y-2 rounded-lg p-4">
+    <div class="flex items-baseline justify-between">
+      <span class="text-con-high text-lg font-semibold">$12</span>
+      <span class="text-con-mlow text-xs">/ month</span>
+    </div>
+    <ul class="text-con-mid space-y-1 text-sm">
+      <li>10 projects</li>
+      <li>Unlimited collaborators</li>
+      <li>Email support</li>
+    </ul>
+  </div>
+
+  <aside class="hue-success chroma-mhigh bg-lum-2 space-y-1 rounded-lg border border-con-1 p-4">
+    <p class="text-con-high text-sm font-semibold">Upgrade to Pro</p>
+    <p class="text-con-mid text-xs">Analytics, priority support, and custom domains.</p>
+    <button class="bg-lum-6 text-con-max chroma-high mt-2 w-full rounded-lg px-4 py-2 text-sm font-semibold">Upgrade — $29/mo</button>
+  </aside>
+
+  <footer class="flex items-center justify-between">
+    <button class="text-con-mid text-sm">Manage billing</button>
+    <button class="text-con-high border-con-2 rounded-lg border px-3 py-1.5 text-sm font-medium">Cancel plan</button>
+  </footer>
+</section>`,
+	},
+	{
+		name: '[2. standard]: mood on a wrapper',
 		body: DEFAULT_BODY,
 		css: '',
 		markup: `<div class="hue-danger chroma-mid bg-lum-2 border-lum-4 flex gap-3 rounded border p-4">
@@ -75,16 +110,7 @@ const PRESETS: Snippet[] = [
 </div>`,
 	},
 	{
-		name: 'Composition — con + chroma',
-		body: DEFAULT_BODY,
-		css: '',
-		markup: `<div class="space-y-2">
-  <p class="text-con-mid text-chroma-max">text-con-mid text-chroma-max  (0.7: chroma wins, near-black)</p>
-  <p class="text-con-mid chroma-max">text-con-mid + bare chroma-max seeder  (composes)</p>
-</div>`,
-	},
-	{
-		name: 'Surfaces — contrast flips',
+		name: '[3. standard]: contrast against any surface',
 		body: DEFAULT_BODY,
 		css: '',
 		markup: `<div class="bg-lum-2 space-y-1 rounded p-4">
@@ -97,44 +123,26 @@ const PRESETS: Snippet[] = [
 </div>`,
 	},
 	{
-		name: 'CSS — p { @apply … }',
-		body: DEFAULT_BODY,
-		css: `/* injected where your stylesheet's @apply rules would live.
-   every <p> now PAINTS (vs. inheriting) — compare with a bare mood. */
-p { @apply text-con-mid text-chroma-high; }
-h2 { @apply text-con-max; }
-.danger { @apply hue-danger; }`,
-		markup: `<h2>A heading</h2>
-<p>First paragraph — coloured by the rule, no class on it.</p>
-<p>Second paragraph, same.</p>
-<div class="danger">
-  <h2>Danger region</h2>
-  <p>the .danger rule set the mood; these repaint into it.</p>
-</div>`,
-	},
-	{
-		name: 'Contrast mood — fans out per property',
+		name: '[4. standard]: contrast as a mood',
 		body: 'bg-lum-1 text-con-mhigh',
-		css: `/* every element paints from the inherited contrast-* mood.
-   text and borders pick DIFFERENT steps from one profile. */
-* { @apply text-con border-con; }`,
+		css: '',
 		markup: `<div class="space-y-3">
-  <div class="contrast-low bg-lum-2 rounded border p-3">
-    <p class="font-bold">contrast-low</p>
-    <p class="text-sm">text a little off the surface; border barely there</p>
+  <div class="contrast-low bg-lum-2 rounded border border-con p-3">
+    <p class="text-con font-bold">contrast-low</p>
+    <p class="text-con text-sm">text a little off the surface; border barely there</p>
   </div>
-  <div class="contrast-mid bg-lum-2 rounded border p-3">
-    <p class="font-bold">contrast-mid</p>
-    <p class="text-sm">text mid; border a touch stronger</p>
+  <div class="contrast-mid bg-lum-2 rounded border border-con p-3">
+    <p class="text-con font-bold">contrast-mid</p>
+    <p class="text-con text-sm">text mid; border a touch stronger</p>
   </div>
-  <div class="contrast-high bg-lum-2 rounded border p-3">
-    <p class="font-bold">contrast-high</p>
-    <p class="text-sm">text high; border clearly visible</p>
+  <div class="contrast-high bg-lum-2 rounded border border-con p-3">
+    <p class="text-con font-bold">contrast-high</p>
+    <p class="text-con text-sm">text high; border clearly visible</p>
   </div>
 </div>`,
 	},
 	{
-		name: 'Two con ramps — named vs numbered',
+		name: '[5. standard]: two contrast ramps',
 		body: 'bg-lum-3 text-con-mid',
 		css: '',
 		markup: `<div class="space-y-4">
@@ -156,7 +164,17 @@ h2 { @apply text-con-max; }
 </div>`,
 	},
 	{
-		name: 'SVG — fill/stroke: ride text vs independent',
+		name: '[6. standard]: compose con + chroma',
+		body: DEFAULT_BODY,
+		css: '',
+		markup: `<div class="space-y-2">
+  <p class="text-con-mid">text-con-mid — contrast against the surface, mood chroma</p>
+  <p class="text-con-mid chroma-max">text-con-mid + chroma-max — same contrast, louder colour</p>
+  <p class="text-con-mid chroma-low">text-con-mid + chroma-low — same contrast, near-grey</p>
+</div>`,
+	},
+	{
+		name: '[7. standard]: SVG fill & stroke',
 		body: 'bg-lum-1 text-con-mhigh hue-primary',
 		css: '',
 		markup: `<div class="flex items-center gap-5 text-con-high chroma-high">
@@ -171,33 +189,7 @@ h2 { @apply text-con-max; }
 </p>`,
 	},
 	{
-		name: 'Edge — text-hue snaps to absolute L',
-		body: 'bg-lum-8 text-con-high',
-		css: '',
-		markup: `<div class="space-y-2">
-  <p>baseline — text-con-high on a dark surface (con → light text)</p>
-  <p class="text-hue-danger">+ text-hue-danger — snaps to the ABSOLUTE --tx-l (dark), not the con luminance</p>
-  <p class="hue-danger text-con-high">+ hue-danger mood with text-con-high — hue at the contrast luminance ✓</p>
-  <p class="text-con-high text-sm opacity-70">the fix: change hue via the hue-* mood, let the next text-con carry it</p>
-</div>`,
-	},
-	{
-		name: 'A mood is invisible until a paint',
-		body: 'bg-lum-1 text-con-mhigh',
-		css: '',
-		markup: `<div class="grid grid-cols-2 gap-4">
-  <div class="hue-warning bg-lum-2 rounded border p-3">
-    <p>hue-warning here — this text never repaints, so it stays the inherited colour</p>
-    <p class="text-con-mid">this one paints → picks up the warning hue</p>
-  </div>
-  <div class="bg-lum-2 rounded border p-3">
-    <p>no mood — identical to the sibling's un-painted line</p>
-    <p class="text-con-mid">painted, neutral</p>
-  </div>
-</div>`,
-	},
-	{
-		name: 'Components — one button, three moods',
+		name: '[8. standard]: a component across moods',
 		body: 'bg-lum-1 text-con-mhigh',
 		css: '',
 		markup: `<div class="flex flex-col gap-y-6">
@@ -213,7 +205,7 @@ h2 { @apply text-con-max; }
 </div>`,
 	},
 	{
-		name: 'Scale flip — .dark / .light nest',
+		name: '[9. standard]: light / dark islands nest',
 		body: 'bg-lum-1 text-con-mhigh',
 		css: '',
 		markup: `<div class="bg-lum-2 space-y-2 rounded p-4">
@@ -227,7 +219,7 @@ h2 { @apply text-con-max; }
 </div>`,
 	},
 	{
-		name: 'Scale flip — .flip alternates by context',
+		name: '[10. standard]: .flip by context',
 		body: 'bg-lum-1 text-con-mhigh',
 		css: '',
 		markup: `<div class="bg-lum-2 space-y-2 rounded p-4">
@@ -241,6 +233,58 @@ h2 { @apply text-con-max; }
       </div>
     </div>
   </div>
+</div>`,
+	},
+	{
+		name: '[11. standard]: repaint all text + borders (one rule)',
+		body: 'bg-lum-1 text-con-mhigh',
+		css: `/* Opt every element into repainting its text and border from the current
+   mood. Costs a little computation, but text (color) and border (currentColor)
+   are the two colours that otherwise keep their LAST-painted value — so one rule
+   keeps them tracking the mood everywhere, with no per-element con classes. */
+* { @apply text-con border-con; }`,
+		markup: `<div class="space-y-3">
+  <div class="contrast-mid bg-lum-2 rounded border p-3">
+    <p class="font-bold">contrast-mid — no con classes on these lines</p>
+    <p class="text-sm">text and border are both painted by the * rule</p>
+  </div>
+  <div class="hue-danger contrast-high bg-lum-2 rounded border p-3">
+    <p class="font-bold">hue-danger + contrast-high</p>
+    <p class="text-sm">same markup, different mood — it repaints into it</p>
+  </div>
+</div>`,
+	},
+	{
+		name: '[12. edge case]: a new mood paints nothing by itself',
+		body: 'bg-lum-1 text-con-mhigh',
+		css: '',
+		markup: `<div class="hue-warning bg-lum-2 rounded border border-con-2 p-4">
+  <p>hue-warning is set on this box, but this line never repaints — it keeps the colour it inherited from the page, not the warning hue.</p>
+</div>`,
+	},
+	{
+		name: '[12. the fix]: paint, and the mood shows',
+		body: 'bg-lum-1 text-con-mhigh',
+		css: '',
+		markup: `<div class="hue-warning bg-lum-2 rounded border border-con-2 p-4">
+  <p class="text-con-mid">same mood — but this line paints (text-con-mid), so it picks up hue-warning.</p>
+</div>`,
+	},
+	{
+		name: '[13. edge case]: text-hue snaps to absolute L',
+		body: 'bg-lum-8 text-con-high',
+		css: '',
+		markup: `<div class="space-y-2">
+  <p>baseline — text-con-high on this dark surface paints light, readable text.</p>
+  <p class="text-hue-danger">text-hue-danger repaints at the ABSOLUTE --tx-l (dark) — barely readable on the dark surface.</p>
+</div>`,
+	},
+	{
+		name: '[13. the fix]: change hue through the mood',
+		body: 'bg-lum-8 text-con-high',
+		css: '',
+		markup: `<div class="hue-danger space-y-2">
+  <p class="text-con-high">hue-danger on the wrapper + text-con-high here — the danger hue at the contrast luminance ✓</p>
 </div>`,
 	},
 ]
