@@ -1,6 +1,6 @@
 ---
 name: Simplified Technical English (ASD-STE100)
-description: 'Rewrites ambiguous English into ASD-STE100 style — one meaning per word, active voice, simple tense, short sentences. Use when agent output is hard to parse; triggers: simplify this, STE100 rewrite.'
+description: 'Rewrites ambiguous English into ASD-STE100 style — one meaning per word, active voice, simple tense, short sentences. Use when any human-facing text is hard to parse — chat, docs, code comments, PR or issue text, product copy; triggers: simplify this, STE100 rewrite.'
 version: 0.1.0
 ---
 
@@ -8,16 +8,16 @@ version: 0.1.0
 
 ASD-STE100 is a controlled-language standard built by the aerospace and defense industry (ASD, the AeroSpace and Defense Industries Association of Europe) to stop maintenance technicians from misreading English instructions. The standard removes the two biggest sources of misreading: words with more than one meaning, and sentences with more than one possible structure.
 
-This skill borrows that same discipline for a different reader: an **AI agent or a downstream system** that has to parse an English string — an error message, a tool description, an inter-agent instruction, a status report — without a human in the loop to resolve ambiguity. If a maintenance technician can misread "close the valve" as an adjective ("the valve that is near") instead of a command, so can a language model.
+This skill borrows that same discipline for a different reader: **a person or a system** that has to parse an English string — a chat message, a code comment, an error message, a button label, a PR description — with no chance to ask a follow-up question. If a maintenance technician can misread "close the valve" as an adjective ("the valve that is near") instead of a command, so can a hurried reader or a language model.
 
 ## When to Use This Skill
 
-- An agent's output (explanation, instruction, log message, tool description) reads as dense, jargon-heavy, or ambiguous.
-- Text will be consumed by another agent, a translation pipeline, or a non-native English reader, and misparsing has a real cost.
+- Any human-facing text (chat reply, explanation, code comment, PR or issue text, button label, error message) reads as dense, jargon-heavy, or ambiguous.
+- A reader must act on the text with no chance to ask you a follow-up question, so a misread has a real cost.
 - You are writing a prompt, system message, or tool description and want to remove ambiguity before a model ever sees it.
 - You want a **before/after** comparison showing exactly which rule was violated and how the rewrite fixes it.
 
-This skill is not for creative or marketing copy — STE is deliberately flat and literal. Do not apply it to text where voice, nuance, or persuasion is the point.
+Apply it to functional copy and microcopy — button labels, empty states, form help, error text — where clarity matters most. For brand or marketing copy where a distinct voice is the point, borrow the clarity but keep the voice; do not flatten it.
 
 ## Source and Scope
 
@@ -40,6 +40,17 @@ It does **not** reproduce ASD's ~900-word approved dictionary verbatim — that 
 | Paragraph limits             | One topic per paragraph, ≤6 sentences                                                                                                                | Multi-topic paragraphs                                                                      |
 | Lists for sequences          | Use a numbered or bulleted list for 3+ steps or conditions                                                                                           | Bury a sequence inside one prose sentence                                                   |
 | Domain terms                 | Keep necessary technical nouns/verbs, but define them once if not common English (STE allows a project-specific glossary beyond its base dictionary) | Use jargon without ever defining it                                                         |
+
+## Also for Human-Facing Output
+
+Beyond the sentence mechanics above, cut writing that adds reader effort but no information:
+
+- **Keep the locator.** When you shorten a reference, keep the word that says which one. "The vite build," not "the build." "The server log," not "the log." The extra word lets a reader track many builds or logs at once without losing which is which.
+- **One name per thing.** Name a thing the same way every time. Do not rename it mid-paragraph for variety.
+- **No rule of threes.** Use the number of items the point actually has. Do not pad a list to three or trim it to three for rhythm.
+- **No flattery.** Do not praise the reader or the work to soften a message. Do not sell the reader their own idea back to them.
+- **Ground world-claims in what you checked.** Replace "this is new" with "I did a quick search — this _appears_ to be new." Keep the claim inside what you verified.
+- **Weight by impact, not token spend.** Do not hyperfocus on a small point because it filled a lot of the conversation.
 
 ## Process
 
@@ -72,7 +83,7 @@ Follow the table with a one-line note on anything you deliberately did **not** s
 **Will not:**
 
 - Reproduce ASD's official ~900-word dictionary as if it were memorized verbatim — always treat the official download as the source of truth for exact approved wording.
-- Simplify creative, marketing, or persuasive copy where voice and nuance are the point.
+- Flatten brand or marketing copy where a distinct voice is the point — it applies the clarity but keeps the voice.
 - Silently drop a safety condition, exception, or scope qualifier to shorten a sentence — it will flag the trade-off instead.
 - Guarantee an aerospace/defense-grade STE-compliant document; this is a general-purpose clarity tool inspired by STE, not a certified STE authoring tool.
 
