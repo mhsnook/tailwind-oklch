@@ -53,6 +53,8 @@ but it is pre-1.0 so we are informal and almost everything gets a minor version 
   crunch). Works the same in light and dark, since it keys on the surface's L.
 - **Dark stop 1 lifted a little off black** (.185 → .22) as the library default —
   a hair of elevation reads better than pure near-black; a theme can lift further.
+- **Light stop 1 sits closer to white** (.92 → .95) — lower contrast with the page,
+  so stop 1 hugs it as intended. The `lum-1`→`lum-2` distance is preserved.
 - **Dark `con-*` ramp bumped** (`con-mid` .32 → .40): dark surfaces need a bigger
   ΔL for the same apparent contrast. Light mode contrast unchanged.
 

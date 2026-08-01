@@ -49,7 +49,7 @@ const warp = (t, hiAtNear) => {
 };
 const ramp = (near, far) =>
   Array.from({ length: LUM_N }, (_, i) => l3(near + (far - near) * warp(i / (LUM_N - 1), near > far)));
-const L_LIGHT = ramp(0.92, 0.13);  // light: stop 1 hugs white; gaps tight up top, open toward the dark foreground
+const L_LIGHT = ramp(0.95, 0.13);  // light: stop 1 hugs white closely (.95, low contrast with the page); opens toward the dark foreground
 const L_DARK  = ramp(0.22, 0.92);  // dark: stop 1 just off black (a little lift; a theme can lift it further)
 const L_NONE = ['1', '0']; // [light, dark]
 const L_MAX  = ['0', '1'];
