@@ -23,7 +23,7 @@ Apply these to sentences you write:
 - **Consistent verbs.** Pick one verb for one action and reuse it. Do not rotate "check" / "verify" / "confirm" for the same act.
 - **Small noun clusters.** Unstack 4+ noun chains. "The handler that sets task-queue priority," not "the task queue priority handler."
 - **Keep the precise term.** Do not swap a domain term (`pid`, `RLS`, `collection.preload`) for a vague plain-English paraphrase. Define an unfamiliar term once, then reuse it.
-- **Keep the locator.** When you shorten a reference, keep the word that says which one. "The vite build," not "the build." "The server log," not "the log." The extra word lets a reader track many builds or logs at once without losing which is which.
+- **Keep the distinguishing word.** When you shorten a reference, keep the word that says which one. "The vite build," not "the build." "The server log," not "the log." That word lets a reader track many builds or logs at once without losing which is which.
 - **One name per thing.** Name a thing the same way every time. Do not rename it mid-paragraph for variety — the variety is reader effort that carries no information.
 
 ## What this style does NOT do

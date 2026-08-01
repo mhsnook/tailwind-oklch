@@ -45,7 +45,7 @@ It does **not** reproduce ASD's ~900-word approved dictionary verbatim — that 
 
 Beyond the sentence mechanics above, cut writing that adds reader effort but no information:
 
-- **Keep the locator.** When you shorten a reference, keep the word that says which one. "The vite build," not "the build." "The server log," not "the log." The extra word lets a reader track many builds or logs at once without losing which is which.
+- **Keep the distinguishing word.** When you shorten a reference, keep the word that says which one. "The vite build," not "the build." "The server log," not "the log." That word lets a reader track many builds or logs at once without losing which is which.
 - **One name per thing.** Name a thing the same way every time. Do not rename it mid-paragraph for variety.
 - **No rule of threes.** Use the number of items the point actually has. Do not pad a list to three or trim it to three for rhythm.
 - **No flattery.** Do not praise the reader or the work to soften a message. Do not sell the reader their own idea back to them.
