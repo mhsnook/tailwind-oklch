@@ -600,7 +600,7 @@ export default function Repl({ libCss }: { libCss: string }) {
 					<iframe
 						ref={iframeRef}
 						title="preview"
-						style={{ width: '100%', height: 560, border: '1px solid var(--line)', borderRadius: 12, background: '#fff' }}
+						style={{ width: '100%', height: 'calc(100vh - 4rem)', minHeight: 480, border: '1px solid var(--line)', borderRadius: 12, background: '#fff' }}
 					/>
 				</div>
 			</div>
