@@ -6,6 +6,58 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html),
 but it is pre-1.0 so we are informal and almost everything gets a minor version bump.
 
+## [Unreleased]
+
+### Added
+
+- **`contrast-*` moods** — `contrast-low/mid/high`, the third cascading mood axis
+  alongside `hue-*` and `chroma-*`. A named profile that fans one intent out
+  across properties, each to its own step (text a little, borders a lot). Paints
+  nothing; the bare `*-con` leaves below inherit it. Defaults are
+  `@property`-registered so a bare `text-con` resolves even with no mood set.
+- **Bare `*-con`** — `text-con`, `border-con`, `outline-con`, `ring-con`,
+  `decoration-con`, `stroke-con`, `fill-con`: a no-op paint at the ΔL the nearest
+  `contrast-*` mood set. Apply globally (`* { @apply text-con border-con }`) or
+  per component.
+- **Numbered contrast bumps** — `con-1..5`, a finer decorative ramp resolved
+  through the same utilities as the named stops (`border-con-2`).
+- **`stroke-*` / `fill-*` families** — full lum/chroma/hue/con setters for SVG
+  paint, plus `stroke-con-*` / `fill-con-*`.
+- **`decoration-con-*`** — contrast-aware `text-decoration-color`.
+- **`.light`** — the explicit inverse of `.dark`, so the luminance scale flip
+  nests both ways: a `.light` island inside a dark page (or a `.dark` region)
+  flips back to the light scale. Both are absolute, so they alternate to any depth.
+- **`.lum-flip`** — a context-relative scale flip: becomes the opposite of whatever
+  scale it sits in, and nested `.lum-flip`s alternate, without hard-coding light/dark.
+  Implemented with a style container query on `--lum-flip` (reads the ancestor's
+  polarity, applies the opposite — no self-reference cycle). Progressive: a no-op
+  where style queries are unsupported (Chrome 111+, Safari 18+, Firefox 128+), so
+  `.dark`/`.light` remain the universally-supported absolute tools.
+
+### Changed
+
+- The `con-*` scratch offset is now **per-property** (`--tx-coff`, `--bd-coff`, …)
+  instead of a shared `--con-off`, so stacking `con` leaves on one element (e.g.
+  `* { @apply text-con border-con }`) no longer cross-wires to a single ΔL.
+- **Luminance stops reshaped for perceptual parity.** Stops now concentrate toward
+  high lightness (`LUM_CRUNCH`), so stop-to-stop gaps are *small on light shades
+  and large on dark* — a fixed ΔL reads big near white and tiny near black, so the
+  spacing compensates. This makes `lum-1`→`lum-2` tight in light mode and loose in
+  dark automatically (light stop 1 lives at high L, dark stop 1 at low L). A small
+  symmetric edge-tightening (`LUM_EDGE`) is blended on top. Replaces the old
+  single-ended front-load.
+- **Nudges track the stop spacing.** `lum-up/down` steps are scaled by a factor of
+  the surface's own L so a nudge lands on ≈ one local stop — `bg-lum-up-1` ≈
+  `bg-lum-2`. The gap is widest through low/mid L and tightens toward white, so the
+  factor is full through the plateau and drops to ~0.4 near white (matching the
+  crunch). Works the same in light and dark, since it keys on the surface's L.
+- **Dark stop 1 lifted a little off black** (.185 → .22) as the library default —
+  a hair of elevation reads better than pure near-black; a theme can lift further.
+- **Light stop 1 sits closer to white** (.92 → .95) — lower contrast with the page,
+  so stop 1 hugs it as intended. The `lum-1`→`lum-2` distance is preserved.
+- **Dark `con-*` ramp bumped** (`con-mid` .32 → .40): dark surfaces need a bigger
+  ΔL for the same apparent contrast. Light mode contrast unchanged.
+
 ## [0.8.0] - 2026-07-26
 
 ### Added
